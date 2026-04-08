@@ -1,39 +1,50 @@
 import { useEffect, useState } from "react";
 
 export default function SplashScreen({ onFinish }) {
-  const [phase, setPhase] = useState(1); // 1 = first image, 2 = second image, 3 = done
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase(2), 1000);
-    const t2 = setTimeout(() => {
-      setPhase(3);
+    const t = setTimeout(() => {
+      setVisible(false);
       onFinish();
-    }, 3000); // 1s + 2s
-
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
+    }, 3200);
+    return () => clearTimeout(t);
   }, [onFinish]);
 
-  if (phase === 3) return null;
+  if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center" style={{ backgroundColor: "#021a30" }}>
-      {phase === 1 && (
-        <img
-          src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/aee759d6c_IMG_7107.jpg"
-          alt="Ticketek"
-          className="w-full h-full object-cover"
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center"
+      style={{ backgroundColor: "#001a35" }}
+    >
+      <div
+        className="flex flex-col items-center"
+        style={{ animation: "fadeIn 0.6s ease-in" }}
+      >
+        <div style={{ width: "70%", maxWidth: 280, marginBottom: 80 }}>
+          <img
+            src="https://image2url.com/r2/default/images/1775680602688-74d1916c-f13e-492b-aaaf-20e00c0a9469.jpeg"
+            alt="Ticketek"
+            style={{ width: "100%", height: "auto", display: "block" }}
+          />
+        </div>
+        <div
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: "50%",
+            border: "3px solid rgba(255,255,255,0.1)",
+            borderTop: "3px solid #4690e8",
+            borderRight: "3px solid #4690e8",
+            animation: "spin 0.9s linear infinite",
+          }}
         />
-      )}
-      {phase === 2 && (
-        <img
-          src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/fbb88c8c3_IMG_7108.png"
-          alt="Ticketek Loading"
-          className="w-full h-full object-cover"
-        />
-      )}
+      </div>
+      <style>{`
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      `}</style>
     </div>
   );
 }
