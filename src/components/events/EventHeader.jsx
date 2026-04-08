@@ -10,19 +10,11 @@ export default function EventHeader() {
     <header className="sticky top-0 z-50" style={{ backgroundColor: "#021a30" }}>
       <div className="flex items-center px-4 py-3 gap-4">
         <div className="flex-shrink-0">
-          <svg viewBox="0 0 24 24" className="w-8 h-8">
-            <defs>
-              <mask id="t-cutout">
-                <rect width="24" height="24" fill="white" />
-                <path d="M8 8h8v2.5h-2.5v5.5h-3v-5.5H8V8z" fill="black" />
-              </mask>
-            </defs>
-            <polygon
-              points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
-              fill="white"
-              mask="url(#t-cutout)"
-            />
-          </svg>
+          <img
+            src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/4f3732a50_IMG_7107.jpeg"
+            alt="Ticketek"
+            className="w-9 h-9 object-contain rounded"
+          />
         </div>
         <div className="flex-1 flex items-center rounded px-3 py-2" style={{ backgroundColor: "#1a334a" }}>
           <Search className="w-5 h-5 text-gray-400 mr-2" />

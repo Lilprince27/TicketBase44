@@ -20,6 +20,8 @@ export default function CreateTicketPage() {
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
 
+  const [seats, setSeats] = useState([{ row: "", seat_number: "" }]);
+
   const [form, setForm] = useState({
     venue_name: "",
     presenter: "",
@@ -71,20 +73,23 @@ export default function CreateTicketPage() {
       imageUrl = result.file_url;
     }
 
-    const ticketData = {
-      ...form,
-      event_image: imageUrl,
-      serial_number: generateSerialNumber(),
-      pax_number: generatePaxNumber(),
-      purchase_date: generatePurchaseDate(),
-      seller_id: generateSellerId(),
-      transaction_number: generateTransactionNumber(),
-      event_code: generateEventCode(form.venue_name, form.event_date, form.event_name),
-      order_number: generateOrderNumber(),
-      owner_email: user.email,
-    };
-
-    await base44.entities.Ticket.create(ticketData);
+    for (const seat of seats) {
+      const ticketData = {
+        ...form,
+        row: seat.row,
+        seat_number: seat.seat_number,
+        event_image: imageUrl,
+        serial_number: generateSerialNumber(),
+        pax_number: generatePaxNumber(),
+        purchase_date: generatePurchaseDate(),
+        seller_id: generateSellerId(),
+        transaction_number: generateTransactionNumber(),
+        event_code: generateEventCode(form.venue_name, form.event_date, form.event_name),
+        order_number: generateOrderNumber(),
+        owner_email: user.email,
+      };
+      await base44.entities.Ticket.create(ticketData);
+    }
     setCreating(false);
     navigate("/tickets");
   };
@@ -125,8 +130,7 @@ export default function CreateTicketPage() {
     { key: "level_stand", label: "Level/Stand", placeholder: "e.g., Level 3" },
     { key: "door_area", label: "Door/Area", placeholder: "e.g., 66" },
     { key: "section_bay", label: "Section/Bay", placeholder: "e.g., 65" },
-    { key: "row", label: "Row", placeholder: "e.g., B" },
-    { key: "seat_number", label: "Seat Number", placeholder: "e.g., 289" },
+
     { key: "holder_name", label: "Ticket Holder Name", placeholder: "e.g., Mr Luke Griffiths" },
     { key: "ticket_type", label: "Ticket Type", placeholder: "e.g., Mastercard Presale Admit" },
     { key: "price", label: "Price", placeholder: "e.g., $178.39 Inc GST" },
@@ -175,7 +179,7 @@ export default function CreateTicketPage() {
 
         {/* Section: Seating */}
         <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4 mt-8">2. Seating & Entry Details</h3>
-        {fields.slice(4, 10).map((f) => (
+        {fields.slice(4, 8).map((f) => (
           <div key={f.key} className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">{f.label}</label>
             <input
@@ -188,9 +192,52 @@ export default function CreateTicketPage() {
           </div>
         ))}
 
+        {/* Dynamic Row & Seat entries */}
+        {seats.map((seat, idx) => (
+          <div key={idx} className="border border-gray-200 rounded-lg p-4 mb-3 bg-gray-50">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-semibold text-gray-600">Seat {idx + 1}</span>
+              {seats.length > 1 && (
+                <button
+                  onClick={() => setSeats(seats.filter((_, i) => i !== idx))}
+                  className="text-red-400 text-xs font-medium"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+            <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Row</label>
+              <input
+                type="text"
+                value={seat.row}
+                onChange={(e) => setSeats(seats.map((s, i) => i === idx ? { ...s, row: e.target.value } : s))}
+                placeholder="e.g., B"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Seat Number</label>
+              <input
+                type="text"
+                value={seat.seat_number}
+                onChange={(e) => setSeats(seats.map((s, i) => i === idx ? { ...s, seat_number: e.target.value } : s))}
+                placeholder="e.g., 289"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400"
+              />
+            </div>
+          </div>
+        ))}
+        <button
+          onClick={() => setSeats([...seats, { row: "", seat_number: "" }])}
+          className="w-full py-3 rounded-lg border-2 border-dashed border-gray-300 text-gray-500 text-sm font-medium mb-4 bg-white cursor-pointer"
+        >
+          + Add Another Seat
+        </button>
+
         {/* Section: Financial */}
         <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4 mt-8">3. Financial & Legal Details</h3>
-        {fields.slice(10).map((f) => (
+        {fields.slice(8).map((f) => (
           <div key={f.key} className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">{f.label}</label>
             <input
@@ -205,7 +252,7 @@ export default function CreateTicketPage() {
 
         <button
           onClick={handleCreate}
-          disabled={creating || !form.venue_name || !form.event_name || !form.event_date || !form.holder_name || !form.seat_number}
+          disabled={creating || !form.venue_name || !form.event_name || !form.event_date || !form.holder_name || seats.every(s => !s.seat_number)}
           className="w-full py-4 rounded-lg text-white font-bold text-base border-none cursor-pointer mt-6 mb-20 disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ backgroundColor: "#003057" }}
         >

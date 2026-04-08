@@ -4,7 +4,7 @@ import { User, Ticket, MessageSquare, FileText, Lock, Settings, Ban, ChevronRigh
 import { base44 } from "@/api/base44Client";
 
 const menuItems = [
-  { icon: User, label: "Your Profile", path: "#" },
+  { icon: User, label: "Your Profile", path: "/profile" },
   { icon: Ticket, label: "Your Tickets", path: "/tickets" },
   { icon: MessageSquare, label: "Your Subscriptions", path: "/subscriptions" },
   { icon: FileText, label: "Terms & Conditions", path: "#" },
@@ -19,6 +19,9 @@ export default function AccountPage() {
   useEffect(() => {
     base44.auth.me().then(setUser);
   }, []);
+
+  const displayName = user?.display_name || user?.full_name || "there";
+  const firstName = displayName.split(" ")[0];
 
   const handleSignOut = () => {
     base44.auth.logout();
@@ -37,7 +40,7 @@ export default function AccountPage() {
       {/* Welcome */}
       <div className="px-6 pt-8 pb-4">
         <h2 className="text-2xl font-semibold text-gray-900">
-          Hi {user?.full_name || "there"}
+          Hi {firstName}
         </h2>
         <p className="text-gray-500 mt-1 text-base">Welcome.</p>
       </div>

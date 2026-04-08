@@ -14,6 +14,7 @@ import TicketsPage from './pages/TicketsPage';
 import TicketDetailPage from './pages/TicketDetailPage';
 import CreateTicketPage from './pages/CreateTicketPage';
 import SubscriptionPage from './pages/SubscriptionPage';
+import ProfilePage from './pages/ProfilePage';
 
 const AuthenticatedApp = () => {
   const [splashDone, setSplashDone] = useState(false);
@@ -52,6 +53,7 @@ const AuthenticatedApp = () => {
         <Route path="/tickets" element={<TicketsPage />} />
         <Route path="/subscriptions" element={<SubscriptionPage />} />
         <Route path="/create-ticket" element={<CreateTicketPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Route>
       <Route path="/ticket-detail/:id" element={<TicketDetailPage />} />
       <Route path="*" element={<PageNotFound />} />

@@ -47,14 +47,12 @@ export default function TicketDetailPage() {
       </div>
 
       {/* Brand banner */}
-      <div className="flex items-center gap-3 px-5 py-3" style={{ backgroundColor: "#003057" }}>
-        <div className="relative w-8 h-8 flex items-center justify-center">
-          <svg className="w-full h-full" viewBox="0 0 24 24">
-            <path d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-11.5 8.5 4.3-11.4-6.2-4.5h7.6z" fill="white" />
-          </svg>
-          <span className="absolute text-[13px] font-black" style={{ color: "#003057", top: "55%", left: "50%", transform: "translate(-50%,-50%)" }}>T</span>
-        </div>
-        <div className="text-white font-black text-2xl tracking-tight uppercase">TICKETEK</div>
+      <div style={{ backgroundColor: "#003057" }}>
+        <img
+          src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/66789a9ba_IMG_7114.jpeg"
+          alt="Ticketek"
+          className="w-full h-12 object-cover object-left"
+        />
       </div>
 
       {/* Event details */}
