@@ -1,0 +1,102 @@
+{
+  "name": "Ticket",
+  "type": "object",
+  "properties": {
+    "venue_name": {
+      "type": "string",
+      "title": "Venue Name"
+    },
+    "presenter": {
+      "type": "string",
+      "title": "Presenter/Promoter"
+    },
+    "event_name": {
+      "type": "string",
+      "title": "Event/Artist Name"
+    },
+    "event_date": {
+      "type": "string",
+      "title": "Event Date and Time"
+    },
+    "entry_gate": {
+      "type": "string",
+      "title": "Entry Gate"
+    },
+    "level_stand": {
+      "type": "string",
+      "title": "Level/Stand"
+    },
+    "door_area": {
+      "type": "string",
+      "title": "Door/Area"
+    },
+    "section_bay": {
+      "type": "string",
+      "title": "Section/Bay"
+    },
+    "row": {
+      "type": "string",
+      "title": "Row"
+    },
+    "seat_number": {
+      "type": "string",
+      "title": "Seat Number"
+    },
+    "holder_name": {
+      "type": "string",
+      "title": "Ticket Holder Name"
+    },
+    "ticket_type": {
+      "type": "string",
+      "title": "Ticket Type"
+    },
+    "price": {
+      "type": "string",
+      "title": "Price"
+    },
+    "event_image": {
+      "type": "string",
+      "title": "Event Image URL"
+    },
+    "serial_number": {
+      "type": "string",
+      "title": "14-Digit Serial Number"
+    },
+    "pax_number": {
+      "type": "string",
+      "title": "Pax Number"
+    },
+    "purchase_date": {
+      "type": "string",
+      "title": "Purchase Date"
+    },
+    "seller_id": {
+      "type": "string",
+      "title": "Seller ID"
+    },
+    "transaction_number": {
+      "type": "string",
+      "title": "Transaction Number"
+    },
+    "event_code": {
+      "type": "string",
+      "title": "Event Code"
+    },
+    "order_number": {
+      "type": "string",
+      "title": "Order Number"
+    },
+    "owner_email": {
+      "type": "string",
+      "title": "Owner Email"
+    }
+  },
+  "required": [
+    "venue_name",
+    "event_name",
+    "event_date",
+    "holder_name",
+    "seat_number",
+    "owner_email"
+  ]
+}

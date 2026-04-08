@@ -5,7 +5,13 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-// Add page imports here
+import Layout from './components/Layout';
+import EventsPage from './pages/EventsPage';
+import AccountPage from './pages/AccountPage';
+import TicketsPage from './pages/TicketsPage';
+import TicketDetailPage from './pages/TicketDetailPage';
+import CreateTicketPage from './pages/CreateTicketPage';
+import SubscriptionPage from './pages/SubscriptionPage';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -33,7 +39,14 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <Routes>
-      {/* Add your page Route elements here */}
+      <Route element={<Layout />}>
+        <Route path="/" element={<EventsPage />} />
+        <Route path="/account" element={<AccountPage />} />
+        <Route path="/tickets" element={<TicketsPage />} />
+        <Route path="/subscriptions" element={<SubscriptionPage />} />
+        <Route path="/create-ticket" element={<CreateTicketPage />} />
+      </Route>
+      <Route path="/ticket-detail/:id" element={<TicketDetailPage />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
