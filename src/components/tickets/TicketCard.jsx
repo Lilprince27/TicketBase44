@@ -77,6 +77,27 @@ export default function TicketCard({ ticket }) {
       )}
 
       {/* Buttons */}
+      <div className="flex gap-3 px-4 py-4">
+        <button
+          onClick={() => navigate(`/ticket-detail/${ticket.id}`)}
+          className="flex-1 py-3 rounded-lg text-white font-semibold text-sm border-none cursor-pointer"
+          style={{ backgroundColor: "#3a7d2c" }}
+        >
+          View
+        </button>
+        <button
+          onClick={() => setShareModalSeat(ticket.seat_number)}
+          className="flex-1 py-3 rounded-lg text-white font-semibold text-sm border-none cursor-pointer"
+          style={{ backgroundColor: "#1d4e89" }}
+        >
+          Share
+        </button>
+      </div>
+
+      {/* Dotted bottom separator */}
+      <div className="mx-4 border-t-2 border-dashed border-gray-300 mb-2" />
+
+      {shareModalSeat && (
         <ShareModal seatNumber={shareModalSeat} onClose={() => setShareModalSeat(null)} />
       )}
     </div>
