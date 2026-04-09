@@ -22,6 +22,7 @@ export default function CreateTicketPage() {
 
   const [seats, setSeats] = useState([{ row: "", seat_number: "" }]);
   const [barcodeLocked, setBarcodeLocked] = useState(false);
+  const [marketplaceNotice, setMarketplaceNotice] = useState(false);
 
   const [form, setForm] = useState({
     venue_name: "",
@@ -89,6 +90,7 @@ export default function CreateTicketPage() {
         order_number: generateOrderNumber(),
         owner_email: user.email,
         barcode_locked: barcodeLocked,
+        marketplace_notice: marketplaceNotice,
       };
       await base44.entities.Ticket.create(ticketData);
     }
@@ -205,6 +207,20 @@ export default function CreateTicketPage() {
             className={`relative w-12 h-6 rounded-full transition-colors duration-200 border-none cursor-pointer ${barcodeLocked ? 'bg-blue-600' : 'bg-gray-300'}`}
           >
             <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${barcodeLocked ? 'translate-x-6' : 'translate-x-0'}`} />
+          </button>
+        </div>
+
+        {/* Marketplace notice toggle */}
+        <div className="flex items-center justify-between border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50">
+          <div>
+            <div className="text-sm font-semibold text-gray-700">Purchased on Marketplace</div>
+            <div className="text-xs text-gray-400 mt-0.5">Show marketplace notice on ticket</div>
+          </div>
+          <button
+            onClick={() => setMarketplaceNotice(!marketplaceNotice)}
+            className={`relative w-12 h-6 rounded-full transition-colors duration-200 border-none cursor-pointer ${marketplaceNotice ? 'bg-blue-600' : 'bg-gray-300'}`}
+          >
+            <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${marketplaceNotice ? 'translate-x-6' : 'translate-x-0'}`} />
           </button>
         </div>
 

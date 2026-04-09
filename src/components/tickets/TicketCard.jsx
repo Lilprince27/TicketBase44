@@ -63,25 +63,20 @@ export default function TicketCard({ ticket }) {
         </div>
       </div>
 
-      {/* Buttons */}
-      <div className="flex p-4 gap-2.5 bg-white">
-        <button
-          onClick={() => navigate(`/ticket-detail/${ticket.id}`)}
-          className="flex-1 py-3.5 rounded-md text-white font-bold text-sm border-none cursor-pointer"
-          style={{ backgroundColor: "#418029" }}
-        >
-          View
-        </button>
-        <button
-          onClick={() => setShareModalSeat(ticket.seat_number)}
-          className="flex-1 py-3.5 rounded-md text-white font-bold text-sm border-none cursor-pointer"
-          style={{ backgroundColor: "#004b8d" }}
-        >
-          Share
-        </button>
-      </div>
+      {/* Dotted separator */}
+      <div className="mx-4 border-t-2 border-dashed border-gray-300 my-0" />
 
-      {shareModalSeat && (
+      {/* Marketplace banner */}
+      {ticket.marketplace_notice && (
+        <div className="flex items-center gap-3 mx-4 my-3 px-3 py-3 rounded" style={{ backgroundColor: "#fef3c7" }}>
+          <div className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0" style={{ backgroundColor: "#f59e0b" }}>
+            <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="white"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          </div>
+          <span className="text-sm text-gray-800">This ticket was purchased on Ticketek Marketplace.</span>
+        </div>
+      )}
+
+      {/* Buttons */}
         <ShareModal seatNumber={shareModalSeat} onClose={() => setShareModalSeat(null)} />
       )}
     </div>

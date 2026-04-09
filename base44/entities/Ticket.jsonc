@@ -94,6 +94,11 @@
       "type": "boolean",
       "title": "Barcode Locked",
       "default": false
+    },
+    "marketplace_notice": {
+      "type": "boolean",
+      "title": "Marketplace Notice",
+      "default": false
     }
   },
   "required": [

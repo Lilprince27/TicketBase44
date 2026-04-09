@@ -30,10 +30,10 @@ export default function EventHeader() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 text-center py-3 text-sm font-semibold cursor-pointer transition-all duration-200 border-b-[5px] ${
+            className={`flex-1 text-center py-3 cursor-pointer transition-all duration-200 border-b-[5px] ${
               activeTab === tab
-                ? "text-white border-white"
-                : "text-gray-400 border-transparent"
+                ? "text-white border-white font-extrabold text-xl"
+                : "text-gray-400 border-transparent font-extrabold text-xl"
             }`}
           >
             {tab}
