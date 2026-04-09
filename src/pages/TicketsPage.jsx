@@ -28,7 +28,7 @@ export default function TicketsPage() {
 
   return (
     <div className="bg-white min-h-screen">
-      <header className="sticky top-0 bg-white text-center py-4 border-b border-gray-200 z-50">
+      <header className="bg-white text-center border-b border-gray-200 z-50" style={{ paddingTop: "calc(env(safe-area-inset-top) + 16px)", paddingBottom: 16 }}>
         <h1 className="text-lg font-bold text-gray-900">Ticket wallet</h1>
         <div className="text-sm text-gray-500 mt-1">
           Customer ID: {user?.id ? String(user.id).slice(0, 7) : "..."}

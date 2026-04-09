@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import LockedBarcode from "../components/tickets/LockedBarcode";
 import { useParams, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 
@@ -35,6 +36,14 @@ export default function TicketDetailPage() {
 
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${ticket.serial_number}`;
 
+  const handleAppleWallet = () => {
+    // Deep link to Apple Wallet - falls back gracefully on non-iOS
+    window.location.href = `shoebox://`;
+    setTimeout(() => {
+      window.location.href = `https://wallet.apple.com`;
+    }, 500);
+  };
+
   return (
     <div className="bg-white min-h-screen max-w-[400px] mx-auto">
       {/* Nav header */}
@@ -63,16 +72,23 @@ export default function TicketDetailPage() {
       </div>
 
       {/* Barcode section */}
-      <div className="flex justify-between items-center px-6">
-        <div className="text-xs text-gray-500 w-24 text-left leading-tight">
-          {ticket.ticket_type || "Admit"}<br />
-          <b>{ticket.price}</b>
+      {ticket.barcode_locked ? (
+        <div className="px-4 py-4">
+          <LockedBarcode holderName={ticket.holder_name} ticketType={ticket.ticket_type} />
+          <div className="text-center text-xs text-gray-500 italic mt-2">This ticket will be unlocked prior to the event</div>
         </div>
-        <img src={qrUrl} alt="QR Code" className="w-[140px] h-[140px]" />
-        <div className="text-xs text-gray-800 w-24 text-right leading-tight">
-          Held by {ticket.holder_name}
+      ) : (
+        <div className="flex justify-between items-center px-6">
+          <div className="text-xs text-gray-500 w-24 text-left leading-tight">
+            {ticket.ticket_type || "Admit"}<br />
+            <b>{ticket.price}</b>
+          </div>
+          <img src={qrUrl} alt="QR Code" className="w-[140px] h-[140px]" />
+          <div className="text-xs text-gray-800 w-24 text-right leading-tight">
+            Held by {ticket.holder_name}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="text-center text-sm font-bold mt-1 text-gray-800">{ticket.serial_number}</div>
       <div className="text-center text-sm mt-1 mb-5 text-gray-800 uppercase">{ticket.event_date}</div>
@@ -116,10 +132,10 @@ export default function TicketDetailPage() {
 
       {/* Action area */}
       <div className="px-5 py-5 flex flex-col gap-4">
-        <a href="#" className="flex items-center justify-center bg-black text-white rounded-lg py-3.5 no-underline font-medium">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Apple_Wallet_Icon.svg/1024px-Apple_Wallet_Icon.svg.png" alt="Wallet" className="h-5 mr-2.5" />
+        <button onClick={handleAppleWallet} className="flex items-center justify-center bg-black text-white rounded-lg py-3.5 font-medium w-full border-none cursor-pointer">
+          <img src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/f6963ff4b_IMG_7127.jpeg" alt="Wallet" className="h-7 mr-2.5 object-contain" />
           Add to Apple Wallet
-        </a>
+        </button>
         <button className="py-4 rounded-full text-white text-base font-bold uppercase border-none cursor-pointer leading-snug" style={{ backgroundColor: "#f1a340" }}>
           Click Here To<br />Check-in To The Arena
         </button>

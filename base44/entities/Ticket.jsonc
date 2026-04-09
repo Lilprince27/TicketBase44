@@ -89,6 +89,11 @@
     "owner_email": {
       "type": "string",
       "title": "Owner Email"
+    },
+    "barcode_locked": {
+      "type": "boolean",
+      "title": "Barcode Locked",
+      "default": false
     }
   },
   "required": [

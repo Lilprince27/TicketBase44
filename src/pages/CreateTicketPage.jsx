@@ -21,6 +21,7 @@ export default function CreateTicketPage() {
   const [imageFile, setImageFile] = useState(null);
 
   const [seats, setSeats] = useState([{ row: "", seat_number: "" }]);
+  const [barcodeLocked, setBarcodeLocked] = useState(false);
 
   const [form, setForm] = useState({
     venue_name: "",
@@ -87,6 +88,7 @@ export default function CreateTicketPage() {
         event_code: generateEventCode(form.venue_name, form.event_date, form.event_name),
         order_number: generateOrderNumber(),
         owner_email: user.email,
+        barcode_locked: barcodeLocked,
       };
       await base44.entities.Ticket.create(ticketData);
     }
@@ -192,42 +194,21 @@ export default function CreateTicketPage() {
           </div>
         ))}
 
-        {/* Dynamic Row & Seat entries */}
-        {seats.map((seat, idx) => (
-          <div key={idx} className="border border-gray-200 rounded-lg p-4 mb-3 bg-gray-50">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-semibold text-gray-600">Seat {idx + 1}</span>
-              {seats.length > 1 && (
-                <button
-                  onClick={() => setSeats(seats.filter((_, i) => i !== idx))}
-                  className="text-red-400 text-xs font-medium"
-                >
-                  Remove
-                </button>
-              )}
-            </div>
-            <div className="mb-3">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Row</label>
-              <input
-                type="text"
-                value={seat.row}
-                onChange={(e) => setSeats(seats.map((s, i) => i === idx ? { ...s, row: e.target.value } : s))}
-                placeholder="e.g., B"
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Seat Number</label>
-              <input
-                type="text"
-                value={seat.seat_number}
-                onChange={(e) => setSeats(seats.map((s, i) => i === idx ? { ...s, seat_number: e.target.value } : s))}
-                placeholder="e.g., 289"
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400"
-              />
-            </div>
+        {/* Barcode lock toggle */}
+        <div className="flex items-center justify-between border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50">
+          <div>
+            <div className="text-sm font-semibold text-gray-700">Lock Barcode</div>
+            <div className="text-xs text-gray-400 mt-0.5">Barcode hidden until event day</div>
           </div>
-        ))}
+          <button
+            onClick={() => setBarcodeLocked(!barcodeLocked)}
+            className={`relative w-12 h-6 rounded-full transition-colors duration-200 border-none cursor-pointer ${barcodeLocked ? 'bg-blue-600' : 'bg-gray-300'}`}
+          >
+            <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${barcodeLocked ? 'translate-x-6' : 'translate-x-0'}`} />
+          </button>
+        </div>
+
+        {/* Dynamic Row & Seat entries */}
         <button
           onClick={() => setSeats([...seats, { row: "", seat_number: "" }])}
           className="w-full py-3 rounded-lg border-2 border-dashed border-gray-300 text-gray-500 text-sm font-medium mb-4 bg-white cursor-pointer"

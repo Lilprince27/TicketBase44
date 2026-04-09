@@ -63,7 +63,7 @@ export default function SubscriptionPage() {
           <div className="rounded-xl p-6 mb-6 text-center" style={{ backgroundColor: "#003057" }}>
             <div className="text-blue-200 text-xs uppercase tracking-wide mb-2">Active Subscription</div>
             <div className="text-white text-xl font-bold mb-1">{durationLabel} Subscription</div>
-            <div className="text-blue-200 text-sm">Remaining {daysRemaining} days to expire</div>
+            <div className="text-blue-200 text-sm">{durationLabel} Subscription: remaining {daysRemaining} days to expire</div>
           </div>
         ) : (
           <div className="rounded-xl p-6 mb-6 text-center bg-gray-100">
