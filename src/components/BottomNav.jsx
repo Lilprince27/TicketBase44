@@ -42,7 +42,7 @@ export default function BottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 w-full bg-white flex justify-around items-center z-50 shadow-[0_-1px_5px_rgba(0,0,0,0.1)]" style={{ paddingTop: 6, paddingBottom: "calc(16px + env(safe-area-inset-bottom))" }}> style={{ paddingTop: 12, paddingBottom: "calc(12px + env(safe-area-inset-bottom))" }}>
+    <nav className="fixed bottom-0 left-0 w-full bg-white flex justify-around items-center z-50 shadow-[0_-1px_5px_rgba(0,0,0,0.1)]" style={{ paddingTop: 6, paddingBottom: "calc(16px + env(safe-area-inset-bottom))" }}>
       {navItems.map((item) => (
         <Link
           key={item.id}
