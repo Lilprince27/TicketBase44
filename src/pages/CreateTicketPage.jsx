@@ -225,7 +225,47 @@ export default function CreateTicketPage() {
         </div>
 
         {/* Dynamic Row & Seat entries */}
+        {seats.map((seat, idx) => (
+          <div key={idx} className="flex gap-3 mb-3">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Row {seats.length > 1 ? `(Seat ${idx + 1})` : ""}</label>
+              <input
+                type="text"
+                value={seat.row}
+                onChange={(e) => {
+                  const updated = [...seats];
+                  updated[idx].row = e.target.value;
+                  setSeats(updated);
+                }}
+                placeholder="e.g. D"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400"
+              />
+            </div>
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Seat Number {seats.length > 1 ? `(${idx + 1})` : ""}</label>
+              <input
+                type="text"
+                value={seat.seat_number}
+                onChange={(e) => {
+                  const updated = [...seats];
+                  updated[idx].seat_number = e.target.value;
+                  setSeats(updated);
+                }}
+                placeholder="e.g. 14"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400"
+              />
+            </div>
+            {seats.length > 1 && (
+              <button
+                type="button"
+                onClick={() => setSeats(seats.filter((_, i) => i !== idx))}
+                className="self-end mb-0.5 px-3 py-3 text-red-400 text-lg font-bold border-none bg-transparent cursor-pointer"
+              >✕</button>
+            )}
+          </div>
+        ))}
         <button
+          type="button"
           onClick={() => setSeats([...seats, { row: "", seat_number: "" }])}
           className="w-full py-3 rounded-lg border-2 border-dashed border-gray-300 text-gray-500 text-sm font-medium mb-4 bg-white cursor-pointer"
         >

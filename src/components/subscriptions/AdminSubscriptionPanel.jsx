@@ -17,10 +17,12 @@ export default function AdminSubscriptionPanel() {
 
   useEffect(() => {
     async function load() {
-      const allUsers = await base44.entities.User.list();
-      setUsers(allUsers);
-      const allSubs = await base44.entities.Subscription.list("-created_date", 100);
-      setSubscriptions(allSubs);
+      const [usersRes, subsRes] = await Promise.allSettled([
+        base44.entities.User.list(),
+        base44.entities.Subscription.list("-created_date", 100),
+      ]);
+      setUsers(usersRes.status === "fulfilled" ? usersRes.value : []);
+      setSubscriptions(subsRes.status === "fulfilled" ? subsRes.value : []);
       setLoading(false);
     }
     load();

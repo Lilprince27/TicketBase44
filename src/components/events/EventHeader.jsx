@@ -21,6 +21,7 @@ export default function EventHeader() {
           <input
             type="text"
             placeholder="What are you looking for?"
+            style={{ color: 'white' }}
             className="flex-1 bg-transparent border-none text-white text-sm outline-none placeholder-gray-400"
           />
         </div>

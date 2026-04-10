@@ -63,8 +63,7 @@ export default function TicketCard({ ticket }) {
         </div>
       </div>
 
-      {/* Dotted separator */}
-      <div className="mx-4 border-t-2 border-dashed border-gray-300 my-0" />
+
 
       {/* Marketplace banner */}
       {ticket.marketplace_notice && (
