@@ -22,6 +22,7 @@ export default function CreateTicketPage() {
 
   const [seats, setSeats] = useState([{ row: "", seat_number: "" }]);
   const [barcodeLocked, setBarcodeLocked] = useState(false);
+  const [authMessage, setAuthMessage] = useState("");
   const [marketplaceNotice, setMarketplaceNotice] = useState(false);
 
   const [form, setForm] = useState({
@@ -90,6 +91,7 @@ export default function CreateTicketPage() {
         order_number: generateOrderNumber(),
         owner_email: user.email,
         barcode_locked: barcodeLocked,
+        auth_message: barcodeLocked ? authMessage : "",
         marketplace_notice: marketplaceNotice,
       };
       await base44.entities.Ticket.create(ticketData);
@@ -197,17 +199,31 @@ export default function CreateTicketPage() {
         ))}
 
         {/* Barcode lock toggle */}
-        <div className="flex items-center justify-between border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50">
-          <div>
-            <div className="text-sm font-semibold text-gray-700">Lock Barcode</div>
-            <div className="text-xs text-gray-400 mt-0.5">Barcode hidden until event day</div>
+        <div className="border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <div className="text-sm font-semibold text-gray-700">Lock Barcode</div>
+              <div className="text-xs text-gray-400 mt-0.5">Barcode hidden until event day</div>
+            </div>
+            <button
+              onClick={() => setBarcodeLocked(!barcodeLocked)}
+              className={`relative w-12 h-6 rounded-full transition-colors duration-200 border-none cursor-pointer ${barcodeLocked ? 'bg-blue-600' : 'bg-gray-300'}`}
+            >
+              <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${barcodeLocked ? 'translate-x-6' : 'translate-x-0'}`} />
+            </button>
           </div>
-          <button
-            onClick={() => setBarcodeLocked(!barcodeLocked)}
-            className={`relative w-12 h-6 rounded-full transition-colors duration-200 border-none cursor-pointer ${barcodeLocked ? 'bg-blue-600' : 'bg-gray-300'}`}
-          >
-            <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${barcodeLocked ? 'translate-x-6' : 'translate-x-0'}`} />
-          </button>
+          {barcodeLocked && (
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Authentication Message</label>
+              <input
+                type="text"
+                value={authMessage}
+                onChange={e => setAuthMessage(e.target.value)}
+                placeholder="e.g. The barcode will be updated at least 48hrs prior to the event."
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400"
+              />
+            </div>
+          )}
         </div>
 
         {/* Marketplace notice toggle */}

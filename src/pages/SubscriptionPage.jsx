@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import AdminSubscriptionPanel from "../components/subscriptions/AdminSubscriptionPanel";
+import UserApprovalPanel from "../components/subscriptions/UserApprovalPanel";
+import DeviceCodePanel from "../components/subscriptions/DeviceCodePanel";
 
 export default function SubscriptionPage() {
   const navigate = useNavigate();
@@ -101,6 +103,8 @@ export default function SubscriptionPage() {
 
         {/* Admin panel */}
         {isAdmin && <AdminSubscriptionPanel />}
+        {isAdmin && <UserApprovalPanel />}
+        {isAdmin && <DeviceCodePanel />}
       </div>
     </div>
   );

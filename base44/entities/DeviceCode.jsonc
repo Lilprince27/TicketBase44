@@ -1,0 +1,22 @@
+{
+  "name": "DeviceCode",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "title": "User Email"
+    },
+    "user_name": {
+      "type": "string",
+      "title": "User Name"
+    },
+    "code": {
+      "type": "string",
+      "title": "Device Code"
+    }
+  },
+  "required": [
+    "user_email",
+    "code"
+  ]
+}

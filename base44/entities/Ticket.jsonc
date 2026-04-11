@@ -95,6 +95,10 @@
       "title": "Barcode Locked",
       "default": false
     },
+    "auth_message": {
+      "type": "string",
+      "title": "Authentication Message"
+    },
     "marketplace_notice": {
       "type": "boolean",
       "title": "Marketplace Notice",

@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import LockedBarcode from "../components/tickets/LockedBarcode";
 import { useParams, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
+import AppleWalletModal from "../components/tickets/AppleWalletModal";
 
 export default function TicketDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showWallet, setShowWallet] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -37,17 +39,14 @@ export default function TicketDetailPage() {
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${ticket.serial_number}`;
 
   const handleAppleWallet = () => {
-    // Deep link to Apple Wallet - falls back gracefully on non-iOS
-    window.location.href = `shoebox://`;
-    setTimeout(() => {
-      window.location.href = `https://wallet.apple.com`;
-    }, 500);
+    setShowWallet(true);
   };
 
   return (
     <div className="bg-white min-h-screen max-w-[400px] mx-auto">
+      {showWallet && <AppleWalletModal ticket={ticket} onClose={() => setShowWallet(false)} />}
       {/* Nav header */}
-      <div className="flex items-center px-4 py-3 border-b border-gray-200">
+      <div className="flex items-center px-4 mt-8 py-3 border-b border-gray-200">
         <button onClick={() => navigate("/tickets")} className="text-2xl text-gray-800 mr-auto font-light">
           ‹
         </button>
@@ -73,9 +72,20 @@ export default function TicketDetailPage() {
 
       {/* Barcode section */}
       {ticket.barcode_locked ? (
-        <div className="px-4 py-4">
-          <LockedBarcode holderName={ticket.holder_name} ticketType={ticket.ticket_type} />
-          <div className="text-center text-xs text-gray-500 italic mt-2">This ticket will be unlocked prior to the event</div>
+        <div className="px-6 py-4">
+          <div className="flex justify-between items-center mb-3">
+            <div className="text-xs text-gray-500 w-24 text-left leading-tight">
+              {ticket.ticket_type || "Admit"}<br />
+              <b>{ticket.price}</b>
+            </div>
+            <LockedBarcode holderName={ticket.holder_name} ticketType={ticket.ticket_type} />
+            <div className="text-xs text-gray-800 w-24 text-right leading-tight">
+              Held by {ticket.holder_name}
+            </div>
+          </div>
+          {ticket.auth_message && (
+            <div className="text-center text-xs text-gray-500 italic mt-2 px-4">{ticket.auth_message}</div>
+          )}
         </div>
       ) : (
         <div className="flex justify-between items-center px-6">
@@ -90,7 +100,7 @@ export default function TicketDetailPage() {
         </div>
       )}
 
-      <div className="text-center text-sm font-bold mt-1 text-gray-800">{ticket.serial_number}</div>
+      {!ticket.barcode_locked && <div className="text-center text-sm font-bold mt-1 text-gray-800">{ticket.serial_number}</div>}
       <div className="text-center text-sm mt-1 mb-5 text-gray-800 uppercase">{ticket.event_date}</div>
 
       {/* Divider */}

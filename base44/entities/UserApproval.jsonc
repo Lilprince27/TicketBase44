@@ -1,0 +1,35 @@
+{
+  "name": "UserApproval",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "title": "User Email"
+    },
+    "full_name": {
+      "type": "string",
+      "title": "Full Name"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": [
+        "pending",
+        "approved"
+      ],
+      "default": "pending"
+    },
+    "approved_by": {
+      "type": "string",
+      "title": "Approved By"
+    },
+    "approved_date": {
+      "type": "string",
+      "title": "Approved Date"
+    }
+  },
+  "required": [
+    "user_email",
+    "status"
+  ]
+}
