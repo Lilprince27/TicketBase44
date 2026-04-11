@@ -9,83 +9,69 @@ function generateDeviceCode() {
 }
 
 export default function DeviceCodePanel() {
-  const [users, setUsers] = useState([]);
   const [codes, setCodes] = useState([]);
-  const [selectedEmail, setSelectedEmail] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [emailInput, setEmailInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
 
   const load = async () => {
-    const [usersRes, codesRes] = await Promise.all([
-      base44.entities.User.list(),
-      base44.entities.DeviceCode.list("-created_date", 200),
-    ]);
-    setUsers(usersRes);
-    setCodes(codesRes);
+    try {
+      const codesRes = await base44.entities.DeviceCode.list("-created_date", 200);
+      setCodes(codesRes);
+    } catch (e) {
+      setCodes([]);
+    }
     setLoading(false);
   };
 
   useEffect(() => { load(); }, []);
 
   const handleGenerate = async () => {
-    if (!selectedEmail) return;
+    if (!emailInput.trim()) return;
     setGenerating(true);
     const code = generateDeviceCode();
-    const user = users.find(u => u.email === selectedEmail);
-    const existing = codes.find(c => c.user_email === selectedEmail);
+    const existing = codes.find(c => c.user_email === emailInput.trim().toLowerCase());
     if (existing) {
       await base44.entities.DeviceCode.update(existing.id, { code });
     } else {
-      await base44.entities.DeviceCode.create({ user_email: selectedEmail, user_name: user?.full_name || selectedEmail, code });
+      await base44.entities.DeviceCode.create({
+        user_email: emailInput.trim().toLowerCase(),
+        user_name: emailInput.trim(),
+        code,
+      });
     }
     await load();
+    setEmailInput("");
     setGenerating(false);
   };
-
-  const filteredUsers = users.filter(u =>
-    !searchQuery ||
-    u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (u.full_name || "").toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  if (loading) return <div className="text-center py-4 text-gray-400">Loading...</div>;
 
   return (
     <div className="border border-gray-200 rounded-xl p-5 mt-6">
       <h3 className="text-base font-bold text-gray-800 mb-4">Device Codes</h3>
 
       <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-600 mb-1">User Email</label>
         <input
-          type="text"
-          placeholder="Search user by name or email..."
-          value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm outline-none mb-2"
+          type="email"
+          placeholder="Enter user email..."
+          value={emailInput}
+          onChange={e => setEmailInput(e.target.value)}
+          className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none mb-3"
         />
-        <select
-          value={selectedEmail}
-          onChange={e => setSelectedEmail(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none bg-white text-gray-800"
+        <button
+          onClick={handleGenerate}
+          disabled={!emailInput.trim() || generating}
+          className="w-full py-3 rounded-lg text-white font-bold text-sm border-none cursor-pointer disabled:opacity-50"
+          style={{ backgroundColor: "#003057" }}
         >
-          <option value="">Choose a user...</option>
-          {filteredUsers.map(u => (
-            <option key={u.id} value={u.email}>{u.full_name || u.email} ({u.email})</option>
-          ))}
-        </select>
+          {generating ? "Generating..." : "Generate Device Code"}
+        </button>
       </div>
 
-      <button
-        onClick={handleGenerate}
-        disabled={!selectedEmail || generating}
-        className="w-full py-3 rounded-lg text-white font-bold text-sm border-none cursor-pointer disabled:opacity-50 mb-6"
-        style={{ backgroundColor: "#003057" }}
-      >
-        {generating ? "Generating..." : "Generate Device Code"}
-      </button>
-
       <h4 className="text-sm font-bold text-gray-600 mb-3">Generated Codes</h4>
-      {codes.length === 0 ? (
+      {loading ? (
+        <div className="text-center py-4 text-gray-400 text-sm">Loading codes...</div>
+      ) : codes.length === 0 ? (
         <p className="text-sm text-gray-400">No codes generated yet.</p>
       ) : (
         <div className="space-y-2">
@@ -95,7 +81,7 @@ export default function DeviceCodePanel() {
                 <div className="font-medium text-gray-800">{c.user_name || c.user_email}</div>
                 <div className="text-xs text-gray-400">{c.user_email}</div>
               </div>
-              <div className="font-mono font-bold text-blue-700">{c.code}</div>
+              <div className="font-mono font-bold text-blue-700 text-base">{c.code}</div>
             </div>
           ))}
         </div>

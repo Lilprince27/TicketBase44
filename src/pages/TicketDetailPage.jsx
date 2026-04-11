@@ -78,7 +78,7 @@ export default function TicketDetailPage() {
               {ticket.ticket_type || "Admit"}<br />
               <b>{ticket.price}</b>
             </div>
-            <LockedBarcode holderName={ticket.holder_name} ticketType={ticket.ticket_type} />
+            <LockedBarcode holderName={ticket.holder_name} ticketType={ticket.ticket_type} authMessage={ticket.auth_message} />
             <div className="text-xs text-gray-800 w-24 text-right leading-tight">
               Held by {ticket.holder_name}
             </div>

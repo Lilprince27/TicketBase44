@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+// No user list needed - admin types email directly
 
 const durationOptions = [
   { value: "2_weeks", label: "2 Weeks", days: 14 },
@@ -8,7 +9,6 @@ const durationOptions = [
 ];
 
 export default function AdminSubscriptionPanel() {
-  const [users, setUsers] = useState([]);
   const [subscriptions, setSubscriptions] = useState([]);
   const [selectedEmail, setSelectedEmail] = useState("");
   const [selectedDuration, setSelectedDuration] = useState("2_weeks");
@@ -17,12 +17,8 @@ export default function AdminSubscriptionPanel() {
 
   useEffect(() => {
     async function load() {
-      const [usersRes, subsRes] = await Promise.allSettled([
-        base44.entities.User.list(),
-        base44.entities.Subscription.list("-created_date", 100),
-      ]);
-      setUsers(usersRes.status === "fulfilled" ? usersRes.value : []);
-      setSubscriptions(subsRes.status === "fulfilled" ? subsRes.value : []);
+      const subsRes = await base44.entities.Subscription.list("-created_date", 100).catch(() => []);
+      setSubscriptions(subsRes);
       setLoading(false);
     }
     load();
@@ -37,8 +33,8 @@ export default function AdminSubscriptionPanel() {
     const endDate = new Date(Date.now() + dur.days * 24 * 60 * 60 * 1000).toISOString();
 
     await base44.entities.Subscription.create({
-      user_email: selectedEmail,
-      user_name: users.find((u) => u.email === selectedEmail)?.full_name || selectedEmail,
+      user_email: selectedEmail.trim().toLowerCase(),
+      user_name: selectedEmail.trim(),
       duration: selectedDuration,
       start_date: startDate,
       end_date: endDate,
@@ -46,7 +42,6 @@ export default function AdminSubscriptionPanel() {
       granted_by: me.email,
     });
 
-    // Refresh
     const allSubs = await base44.entities.Subscription.list("-created_date", 100);
     setSubscriptions(allSubs);
     setSelectedEmail("");
@@ -61,21 +56,16 @@ export default function AdminSubscriptionPanel() {
     <div className="border border-gray-200 rounded-xl p-5">
       <h3 className="text-base font-bold text-gray-800 mb-4">Admin: Transfer Subscription</h3>
 
-      {/* User select */}
+      {/* Email input */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-600 mb-1">Select User</label>
-        <select
+        <label className="block text-sm font-medium text-gray-600 mb-1">User Email</label>
+        <input
+          type="email"
           value={selectedEmail}
           onChange={(e) => setSelectedEmail(e.target.value)}
+          placeholder="Enter user email address..."
           className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none bg-white text-gray-800"
-        >
-          <option value="">Choose a user...</option>
-          {users.map((u) => (
-            <option key={u.id} value={u.email}>
-              {u.full_name || u.email} ({u.email})
-            </option>
-          ))}
-        </select>
+        />
       </div>
 
       {/* Duration select */}

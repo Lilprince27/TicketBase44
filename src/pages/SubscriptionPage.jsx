@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import AdminSubscriptionPanel from "../components/subscriptions/AdminSubscriptionPanel";
 import UserApprovalPanel from "../components/subscriptions/UserApprovalPanel";
 import DeviceCodePanel from "../components/subscriptions/DeviceCodePanel";
+import AdminTicketDeletePanel from "../components/subscriptions/AdminTicketDeletePanel";
 
 export default function SubscriptionPage() {
   const navigate = useNavigate();
@@ -105,6 +106,7 @@ export default function SubscriptionPage() {
         {isAdmin && <AdminSubscriptionPanel />}
         {isAdmin && <UserApprovalPanel />}
         {isAdmin && <DeviceCodePanel />}
+        {isAdmin && <AdminTicketDeletePanel />}
       </div>
     </div>
   );

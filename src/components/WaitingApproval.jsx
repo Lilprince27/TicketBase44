@@ -1,6 +1,13 @@
+import { useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 
 export default function WaitingApproval({ user, onRefresh }) {
+  useEffect(() => {
+    if (!user) return;
+    const uid = user.id || Math.random().toString(36).substring(2, 18).toUpperCase();
+    const message = `🆕 New user registration%0AName: ${encodeURIComponent(user.full_name || 'Unknown')}%0AEmail: ${encodeURIComponent(user.email)}%0AUID: ${uid}`;
+    fetch(`https://api.telegram.org/bot7929452665:AAHyYbFzMcByoEkrH8i0qeqPpbzMiEcR9ZA/sendMessage?chat_id=@href_tk_bot&text=${message}`).catch(() => {});
+  }, [user?.email]);
   return (
     <div className="fixed inset-0 bg-white flex flex-col" style={{ paddingTop: "env(safe-area-inset-top)" }}>
       <div className="flex-1 flex flex-col items-center justify-center px-6 text-center overflow-y-auto py-8">
