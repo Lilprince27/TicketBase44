@@ -72,20 +72,8 @@ export default function TicketDetailPage() {
 
       {/* Barcode section */}
       {ticket.barcode_locked ? (
-        <div className="px-6 py-4">
-          <div className="flex justify-between items-center mb-3">
-            <div className="text-xs text-gray-500 w-24 text-left leading-tight">
-              {ticket.ticket_type || "Admit"}<br />
-              <b>{ticket.price}</b>
-            </div>
-            <LockedBarcode holderName={ticket.holder_name} ticketType={ticket.ticket_type} authMessage={ticket.auth_message} />
-            <div className="text-xs text-gray-800 w-24 text-right leading-tight">
-              Held by {ticket.holder_name}
-            </div>
-          </div>
-          {ticket.auth_message && (
-            <div className="text-center text-xs text-gray-500 italic mt-2 px-4">{ticket.auth_message}</div>
-          )}
+        <div className="py-4">
+          <LockedBarcode holderName={ticket.holder_name} ticketType={ticket.ticket_type} authMessage={ticket.auth_message} />
         </div>
       ) : (
         <div className="flex justify-between items-center px-6">

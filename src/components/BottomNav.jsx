@@ -26,9 +26,11 @@ const navItems = [
     label: "Tickets",
     path: "/tickets",
     icon: (
-      <svg viewBox="0 0 24 24" className="w-7 h-7 fill-current" style={{ transform: "rotate(-45deg)" }}>
-        <path d="M22 10V6c0-1.11-.9-2-2-2H4c-1.1 0-1.99.89-1.99 2v4c1.1 0 1.99.9 1.99 2s-.89 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
-      </svg>
+      <div style={{ transform: "rotate(-45deg)" }}>
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+          <path d="M22 10V6H2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4h20v-4c-1.1 0-2-.9-2-2s.9-2 2-2z"/>
+        </svg>
+      </div>
     ),
   },
 ];
