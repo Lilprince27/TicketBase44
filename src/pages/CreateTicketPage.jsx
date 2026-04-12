@@ -20,12 +20,14 @@ export default function CreateTicketPage() {
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
 
+  const [recipientEmail, setRecipientEmail] = useState("");
   const [seats, setSeats] = useState([{ row: "", seat_number: "" }]);
   const [barcodeLocked, setBarcodeLocked] = useState(false);
   const [authMessage, setAuthMessage] = useState("");
   const [marketplaceNotice, setMarketplaceNotice] = useState(false);
 
   // Email pricing fields
+
   const [emailPricing, setEmailPricing] = useState({
     ticket_item_price: "",
     sub_total: "",
@@ -152,7 +154,7 @@ export default function CreateTicketPage() {
 </body></html>`;
 
     await base44.integrations.Core.SendEmail({
-      to: me.email,
+      to: recipientEmail.trim() || me.email,
       subject: "Ticketek Purchases Confirmation",
       body: emailHtml,
     });
@@ -363,8 +365,18 @@ export default function CreateTicketPage() {
           </div>
         ))}
 
-        {/* Section 4: Email pricing */}
-        <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4 mt-8">4. Email Confirmation Pricing</h3>
+        {/* Section 4: Recipient Email */}
+        <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4 mt-8">4. Confirmation Email</h3>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Send Confirmation Email To</label>
+          <input type="email" value={recipientEmail} onChange={e => setRecipientEmail(e.target.value)}
+            placeholder="Enter recipient email address"
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400" />
+          <p className="text-xs text-gray-400 mt-1">Leave blank to send to your own account email.</p>
+        </div>
+
+        {/* Section 5: Email pricing */}
+        <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4 mt-6">5. Email Pricing Details</h3>
         <p className="text-xs text-gray-400 mb-4">These values appear in the confirmation email sent to the customer.</p>
         {[
           { key: "ticket_item_price", label: "Ticket/Item Price", placeholder: "e.g. £550.00" },

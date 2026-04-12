@@ -24,7 +24,7 @@ export default function SplashScreen({ onFinish }) {
       >
         <div style={{ width: "70%", maxWidth: 280, marginBottom: 80 }}>
           <img
-            src="https://image2url.com/r2/default/images/1775680602688-74d1916c-f13e-492b-aaaf-20e00c0a9469.jpeg"
+            src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/4f3732a50_IMG_7107.jpeg"
             alt="Ticketek"
             style={{ width: "100%", height: "auto", display: "block" }}
           />

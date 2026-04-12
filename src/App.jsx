@@ -25,6 +25,8 @@ const AuthenticatedApp = () => {
   const [approvalStatus, setApprovalStatus] = useState(null);
   const [deviceVerified, setDeviceVerified] = useState(false);
   const [checkingApproval, setCheckingApproval] = useState(false);
+  const [subscriptionExpired, setSubscriptionExpired] = useState(false);
+  const [daysRemaining, setDaysRemaining] = useState(null);
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
   useEffect(() => {
@@ -40,8 +42,21 @@ const AuthenticatedApp = () => {
           setCheckingApproval(false);
           return;
         }
-        const verified = localStorage.getItem(`tk_device_${me.email}`) === 'verified';
-        setDeviceVerified(verified);
+        // Check subscription expiry
+        const subs = await base44.entities.Subscription.filter({ user_email: me.email, status: 'active' });
+        const activeSub = subs.find(s => new Date(s.end_date) > new Date());
+        if (!activeSub) {
+          // Check if they ever had a subscription (expired)
+          const allSubs = await base44.entities.Subscription.filter({ user_email: me.email });
+          if (allSubs.length > 0) {
+            setSubscriptionExpired(true);
+            setCheckingApproval(false);
+            return;
+          }
+        } else {
+          const days = Math.max(0, Math.ceil((new Date(activeSub.end_date) - new Date()) / (1000 * 60 * 60 * 24)));
+          setDaysRemaining(days);
+        }
         const records = await base44.entities.UserApproval.filter({ user_email: me.email });
         if (records.length === 0) {
           await base44.entities.UserApproval.create({ user_email: me.email, full_name: me.full_name || me.email, status: 'pending' });
@@ -93,6 +108,30 @@ const AuthenticatedApp = () => {
 
   if (approvalStatus === 'pending') {
     return <WaitingApproval user={authUser} onRefresh={refreshApproval} />;
+  }
+
+  if (subscriptionExpired) {
+    return (
+      <div className="fixed inset-0 bg-white flex flex-col items-center justify-center px-6 text-center">
+        <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-5">
+          <svg className="w-8 h-8 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Subscription Expired</h2>
+        <p className="text-gray-500 mb-6">Your subscription has expired. Please contact admin to renew your access.</p>
+        <a href="https://t.me/ApfMF9J1DiM2OWQ0" target="_blank" rel="noopener noreferrer"
+          className="w-full max-w-xs py-4 rounded-xl text-white font-bold mb-3 flex items-center justify-center gap-2 no-underline"
+          style={{ backgroundColor: "#0088cc" }}>
+          Contact Admin on Telegram
+        </a>
+        <button onClick={() => base44.auth.logout()}
+          className="w-full max-w-xs py-4 rounded-xl font-bold border-2 bg-white cursor-pointer"
+          style={{ color: "#003057", borderColor: "#003057" }}>
+          Log Out
+        </button>
+      </div>
+    );
   }
 
   if (authUser && !deviceVerified) {
