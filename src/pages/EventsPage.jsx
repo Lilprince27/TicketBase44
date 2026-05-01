@@ -8,9 +8,7 @@ const BASE_URL = "https://api.predicthq.com/v1/events/";
 
 const CATEGORIES = [
   { label: "Featured", value: "" },
-  { label: "Concerts", value: "concerts" },
-  { label: "Sports", value: "sports" },
-  { label: "Festivals", value: "festivals" },
+  { label: "Nearby", value: "" },
   { label: "Upcoming", value: "" },
 ];
 
