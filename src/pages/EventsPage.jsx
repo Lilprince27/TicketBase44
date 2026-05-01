@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import EventDetailModal from "../components/events/EventDetailModal";
 
-const API_TOKEN = "qrcZ8xPnq5iTeL-EKdxjKQt6njL0tdNh3Slqsm4G";
+const API_TOKEN = "D6akDmpY5sb17Flq3g3fCrbM7sFGrQODkbcwY-ky";
 const BASE_URL = "https://api.predicthq.com/v1/events/";
 
 const CATEGORIES = [

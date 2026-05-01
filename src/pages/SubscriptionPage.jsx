@@ -5,12 +5,14 @@ import AdminSubscriptionPanel from "../components/subscriptions/AdminSubscriptio
 import UserApprovalPanel from "../components/subscriptions/UserApprovalPanel";
 import DeviceCodePanel from "../components/subscriptions/DeviceCodePanel";
 import AdminTicketDeletePanel from "../components/subscriptions/AdminTicketDeletePanel";
+import UserTicketManager from "../components/tickets/UserTicketManager";
 
 export default function SubscriptionPage() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showMyTickets, setShowMyTickets] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -90,6 +92,24 @@ export default function SubscriptionPage() {
             Join Telegram Group
           </a>
         </div>
+
+        {/* My Tickets button */}
+        {(subscription || isAdmin) && (
+          <button
+            onClick={() => setShowMyTickets(!showMyTickets)}
+            className="w-full py-4 rounded-lg font-bold text-base border-2 cursor-pointer mb-3"
+            style={{ color: "#003057", borderColor: "#003057", background: "white" }}
+          >
+            {showMyTickets ? "Hide My Tickets" : "My Tickets"}
+          </button>
+        )}
+
+        {showMyTickets && user && (
+          <div className="mb-6 border border-gray-200 rounded-xl p-4">
+            <h3 className="text-base font-bold text-gray-800 mb-3">My Tickets</h3>
+            <UserTicketManager userEmail={user.email} />
+          </div>
+        )}
 
         {/* Create ticket button (only if has subscription or is admin) */}
         {(subscription || isAdmin) && (
