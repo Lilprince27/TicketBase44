@@ -10,6 +10,9 @@ export default function TicketDetailPage() {
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showWallet, setShowWallet] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareContact, setShareContact] = useState("");
+  const [shareName, setShareName] = useState("");
 
   useEffect(() => {
     async function load() {
@@ -135,16 +138,101 @@ export default function TicketDetailPage() {
           Add to Apple Wallet
         </button>
         <button
-          onClick={() => {
-            if (navigator.share) {
-              navigator.share({ title: ticket.event_name, text: `${ticket.event_name} - ${ticket.event_date} at ${ticket.venue_name}. Seat: ${ticket.seat_number}` });
-            }
-          }}
+          onClick={() => setShowShareModal(true)}
           className="flex items-center justify-center text-white rounded-lg py-3.5 font-medium w-full border-none cursor-pointer"
           style={{ backgroundColor: "#001a2c" }}
         >
           Share
         </button>
+
+        {/* Share Modal */}
+        {showShareModal && (
+          <div
+            className="fixed inset-0 z-[9999] flex items-end justify-center"
+            style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
+            onClick={() => setShowShareModal(false)}
+          >
+            <div
+              className="w-full max-w-[400px] bg-white rounded-t-2xl pb-8"
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center gap-3 px-5 pt-6 pb-4 border-b border-gray-200">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                  <rect width="40" height="40" rx="8" fill="#f0f0f0"/>
+                  <path d="M27 13H13a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V15a2 2 0 00-2-2z" stroke="#999" strokeWidth="1.5" fill="none"/>
+                  <line x1="20" y1="13" x2="20" y2="27" stroke="#999" strokeWidth="1.5" strokeDasharray="2 2"/>
+                  <circle cx="20" cy="13" r="2" fill="#999"/>
+                </svg>
+                <div>
+                  <div className="font-bold text-gray-800 text-base">Share ticket for Seat - {ticket.seat_number}</div>
+                  <div className="text-sm text-gray-400 mt-0.5">
+                    Securely share tickets.{" "}
+                    <span className="text-blue-600 font-medium">How it works</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Form */}
+              <div className="px-5 pt-5 pb-4">
+                {/* Mobile/Email input */}
+                <div className="flex items-center border border-gray-300 rounded-xl px-4 py-3.5 mb-3 bg-white">
+                  <input
+                    type="text"
+                    placeholder="Enter mobile or email"
+                    value={shareContact}
+                    onChange={e => setShareContact(e.target.value)}
+                    className="flex-1 text-base text-gray-700 outline-none bg-transparent placeholder-gray-400"
+                  />
+                  <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+                    <circle cx="17" cy="17" r="17" fill="#e8f0fa"/>
+                    <circle cx="17" cy="12" r="5" fill="#1d4e89"/>
+                    <path d="M7 28c0-5.523 4.477-10 10-10s10 4.477 10 10" fill="#1d4e89"/>
+                    <circle cx="24" cy="10" r="5" fill="#1d4e89" stroke="white" strokeWidth="1.5"/>
+                    <line x1="24" y1="7.5" x2="24" y2="12.5" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                    <line x1="21.5" y1="10" x2="26.5" y2="10" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                </div>
+
+                {/* Name input */}
+                <div className="border border-gray-300 rounded-xl px-4 py-3.5 mb-4 bg-white">
+                  <input
+                    type="text"
+                    placeholder="Enter name"
+                    value={shareName}
+                    onChange={e => setShareName(e.target.value)}
+                    className="w-full text-base text-gray-700 outline-none bg-transparent placeholder-gray-400"
+                  />
+                </div>
+
+                {/* Consent text */}
+                <p className="text-sm text-gray-400 text-center px-2 mb-4 leading-relaxed">
+                  By entering this information you agree that you have the receiver's consent to do so.
+                </p>
+
+                {/* Divider */}
+                <div className="border-t border-gray-200 mb-4" />
+
+                {/* Buttons */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => { setShowShareModal(false); setShareContact(""); setShareName(""); }}
+                    className="flex-1 py-3.5 rounded-xl border border-gray-200 bg-white text-blue-700 font-semibold text-base cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    disabled={!shareContact.trim() || !shareName.trim()}
+                    className="flex-1 py-3.5 rounded-xl text-white font-semibold text-base border-none cursor-pointer transition-colors"
+                    style={{ backgroundColor: shareContact.trim() && shareName.trim() ? "#001a2c" : "#d1d5db" }}
+                  >
+                    Share ticket
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         <button className="py-4 rounded-full text-white text-base font-bold uppercase border-none cursor-pointer leading-snug" style={{ backgroundColor: "#f1a340" }}>
           Click Here To<br />Check-in To The Arena
         </button>
