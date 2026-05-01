@@ -21,6 +21,7 @@ export default function CreateTicketPage() {
   const [imageFile, setImageFile] = useState(null);
 
   const [recipientEmail, setRecipientEmail] = useState("");
+  const [sendEmailNotification, setSendEmailNotification] = useState(true);
   const [seats, setSeats] = useState([{ row: "", seat_number: "" }]);
   const [barcodeLocked, setBarcodeLocked] = useState(false);
   const [authMessage, setAuthMessage] = useState("");
@@ -191,9 +192,11 @@ export default function CreateTicketPage() {
       await base44.entities.Ticket.create(ticketData);
     }
 
-    // Send email confirmation
-    const firstTicket = { ...form, order_number: sharedOrderNumber };
-    await sendConfirmationEmail(firstTicket, user, sharedOrderNumber).catch(() => {});
+    // Send email confirmation only if enabled
+    if (sendEmailNotification) {
+      const firstTicket = { ...form, order_number: sharedOrderNumber };
+      await sendConfirmationEmail(firstTicket, user, sharedOrderNumber).catch(() => {});
+    }
 
     setCreating(false);
     navigate("/tickets");
@@ -365,9 +368,22 @@ export default function CreateTicketPage() {
           </div>
         ))}
 
-        {/* Section 4: Recipient Email */}
+        {/* Section 4: Confirmation Email */}
         <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4 mt-8">4. Confirmation Email</h3>
-        <div className="mb-4">
+
+        {/* Email notification toggle */}
+        <div className="flex items-center justify-between border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50">
+          <div>
+            <div className="text-sm font-semibold text-gray-700">Send Email Notification</div>
+            <div className="text-xs text-gray-400 mt-0.5">Send confirmation email when ticket is created</div>
+          </div>
+          <button onClick={() => setSendEmailNotification(!sendEmailNotification)}
+            className={`relative w-12 h-6 rounded-full transition-colors duration-200 border-none cursor-pointer ${sendEmailNotification ? 'bg-blue-600' : 'bg-gray-300'}`}>
+            <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${sendEmailNotification ? 'translate-x-6' : 'translate-x-0'}`} />
+          </button>
+        </div>
+
+        <div className="mb-4" style={{ display: sendEmailNotification ? "block" : "none" }}>
           <label className="block text-sm font-medium text-gray-700 mb-1">Send Confirmation Email To</label>
           <input type="email" value={recipientEmail} onChange={e => setRecipientEmail(e.target.value)}
             placeholder="Enter recipient email address"
@@ -375,30 +391,34 @@ export default function CreateTicketPage() {
           <p className="text-xs text-gray-400 mt-1">Leave blank to send to your own account email.</p>
         </div>
 
-        {/* Section 5: Email pricing */}
-        <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4 mt-6">5. Email Pricing Details</h3>
-        <p className="text-xs text-gray-400 mb-4">These values appear in the confirmation email sent to the customer.</p>
-        {[
-          { key: "ticket_item_price", label: "Ticket/Item Price", placeholder: "e.g. £550.00" },
-          { key: "sub_total", label: "Sub Total", placeholder: "e.g. £550.00" },
-          { key: "refundable_fee", label: "Refundable Tickets Fee", placeholder: "e.g. £4.30" },
-          { key: "service_fee", label: "Service and Handling Fee", placeholder: "e.g. £6.90" },
-          { key: "total", label: "Total", placeholder: "e.g. £561.02" },
-        ].map(f => (
-          <div key={f.key} className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">{f.label}</label>
-            <input type="text" value={emailPricing[f.key]} onChange={e => handlePricingChange(f.key, e.target.value)}
-              placeholder={f.placeholder}
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400" />
-          </div>
-        ))}
+        {/* Section 5: Email pricing - only shown when email notification is ON */}
+        {sendEmailNotification && (
+          <>
+            <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4 mt-6">5. Email Pricing Details</h3>
+            <p className="text-xs text-gray-400 mb-4">These values appear in the confirmation email sent to the customer.</p>
+            {[
+              { key: "ticket_item_price", label: "Ticket/Item Price", placeholder: "e.g. £550.00" },
+              { key: "sub_total", label: "Sub Total", placeholder: "e.g. £550.00" },
+              { key: "refundable_fee", label: "Refundable Tickets Fee", placeholder: "e.g. £4.30" },
+              { key: "service_fee", label: "Service and Handling Fee", placeholder: "e.g. £6.90" },
+              { key: "total", label: "Total", placeholder: "e.g. £561.02" },
+            ].map(f => (
+              <div key={f.key} className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">{f.label}</label>
+                <input type="text" value={emailPricing[f.key]} onChange={e => handlePricingChange(f.key, e.target.value)}
+                  placeholder={f.placeholder}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400" />
+              </div>
+            ))}
+          </>
+        )}
 
         <button
           onClick={handleCreate}
           disabled={creating || !form.venue_name || !form.event_name || !form.event_date || !form.holder_name || seats.every(s => !s.seat_number)}
           className="w-full py-4 rounded-lg text-white font-bold text-base border-none cursor-pointer mt-6 mb-20 disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ backgroundColor: "#003057" }}>
-          {creating ? "Creating & Sending Email..." : "Create Ticket"}
+          {creating ? (sendEmailNotification ? "Creating & Sending Email..." : "Creating Ticket...") : "Create Ticket"}
         </button>
       </div>
     </div>
