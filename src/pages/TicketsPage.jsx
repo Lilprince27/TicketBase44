@@ -10,12 +10,15 @@ export default function TicketsPage() {
   const [walletTicket, setWalletTicket] = useState(null);
   const navigate = useNavigate();
 
+  const hiddenIds = JSON.parse(localStorage.getItem("hidden_tickets") || "[]");
+
   useEffect(() => {
     async function load() {
       const me = await base44.auth.me();
       setUser(me);
       const allTickets = await base44.entities.Ticket.filter({ owner_email: me.email });
-      setTickets(allTickets);
+      const hidden = JSON.parse(localStorage.getItem("hidden_tickets") || "[]");
+      setTickets(allTickets.filter(t => !hidden.includes(t.id)));
       setLoading(false);
     }
     load();

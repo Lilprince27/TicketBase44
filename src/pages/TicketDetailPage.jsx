@@ -134,6 +134,17 @@ export default function TicketDetailPage() {
           <img src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/f6963ff4b_IMG_7127.jpeg" alt="Wallet" className="h-7 mr-2.5 object-contain" />
           Add to Apple Wallet
         </button>
+        <button
+          onClick={() => {
+            if (navigator.share) {
+              navigator.share({ title: ticket.event_name, text: `${ticket.event_name} - ${ticket.event_date} at ${ticket.venue_name}. Seat: ${ticket.seat_number}` });
+            }
+          }}
+          className="flex items-center justify-center text-white rounded-lg py-3.5 font-medium w-full border-none cursor-pointer"
+          style={{ backgroundColor: "#001a2c" }}
+        >
+          Share
+        </button>
         <button className="py-4 rounded-full text-white text-base font-bold uppercase border-none cursor-pointer leading-snug" style={{ backgroundColor: "#f1a340" }}>
           Click Here To<br />Check-in To The Arena
         </button>
