@@ -11,10 +11,11 @@ import DeviceCodeVerification from './components/DeviceCodeVerification';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Layout from './components/Layout';
+import InstallPrompt from './components/InstallPrompt';
 import EventsPage from './pages/EventsPage';
 import AccountPage from './pages/AccountPage';
 import TicketsPage from './pages/TicketsPage';
-import TicketDetailPage from './pages/TicketDetailPage';
+import TicketDetailPage from './pages/TicketDetailPage.jsx';
 import CreateTicketPage from './pages/CreateTicketPage';
 import SubscriptionPage from './pages/SubscriptionPage';
 import ProfilePage from './pages/ProfilePage';
@@ -139,6 +140,8 @@ const AuthenticatedApp = () => {
   }
 
   return (
+    <>
+    <InstallPrompt />
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<EventsPage />} />
@@ -149,8 +152,10 @@ const AuthenticatedApp = () => {
         <Route path="/profile" element={<ProfilePage />} />
       </Route>
       <Route path="/ticket-detail/:id" element={<TicketDetailPage />} />
+      
       <Route path="*" element={<PageNotFound />} />
     </Routes>
+    </>
   );
 };
 
