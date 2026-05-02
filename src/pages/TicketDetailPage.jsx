@@ -49,7 +49,7 @@ export default function TicketDetailPage() {
     const adminEmailConfig = (() => {
       try { return JSON.parse(localStorage.getItem("share_email_config") || "null"); } catch { return null; }
     })();
-    const fromName = adminEmailConfig?.email || "Ticketek";
+    const fromName = "Ticketek Support";
 
     const emailHtml = `<!DOCTYPE html>
 <html>
