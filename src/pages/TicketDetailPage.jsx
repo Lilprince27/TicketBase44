@@ -46,6 +46,10 @@ export default function TicketDetailPage() {
     setSharing(true);
     const me = await base44.auth.me().catch(() => null);
     const senderName = me?.full_name || me?.email || "Someone";
+    const adminEmailConfig = (() => {
+      try { return JSON.parse(localStorage.getItem("share_email_config") || "null"); } catch { return null; }
+    })();
+    const fromName = adminEmailConfig?.email || "Ticketek";
 
     const emailHtml = `<!DOCTYPE html>
 <html>
@@ -100,7 +104,8 @@ export default function TicketDetailPage() {
     if (isEmail) {
       await base44.integrations.Core.SendEmail({
         to: shareContact.trim(),
-        subject: `${senderName} has shared a ticket with you – ${ticket.event_name}`,
+        from_name: fromName,
+        subject: `Action Required: ${senderName} shared 1 ticket(s) with you for ${ticket.event_name}`,
         body: emailHtml,
       }).catch(() => {});
     }
