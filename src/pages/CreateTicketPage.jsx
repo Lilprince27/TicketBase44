@@ -415,7 +415,7 @@ export default function CreateTicketPage() {
 
         <button
           onClick={handleCreate}
-          disabled={creating || !form.venue_name || !form.event_name || !form.event_date || !form.holder_name || seats.every(s => !s.seat_number)}
+          disabled={creating}
           className="w-full py-4 rounded-lg text-white font-bold text-base border-none cursor-pointer mt-6 mb-20 disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ backgroundColor: "#003057" }}>
           {creating ? (sendEmailNotification ? "Creating & Sending Email..." : "Creating Ticket...") : "Create Ticket"}

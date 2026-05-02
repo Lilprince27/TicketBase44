@@ -5,14 +5,26 @@ import EventDetailModal from "../components/events/EventDetailModal";
 
 const API_TOKEN = "D6akDmpY5sb17Flq3g3fCrbM7sFGrQODkbcwY-ky";
 const BASE_URL = "https://api.predicthq.com/v1/events/";
+const EVENTBRITE_TOKEN = "WWCNJCDH6CZ5JTHLGXBY";
+
+async function fetchEventbriteImage(eventName) {
+  try {
+    const res = await fetch(
+      `https://www.eventbriteapi.com/v3/events/search/?q=${encodeURIComponent(eventName)}&expand=logo&token=${EVENTBRITE_TOKEN}`
+    );
+    const data = await res.json();
+    const event = data?.events?.[0];
+    return event?.logo?.original?.url || event?.logo?.url || null;
+  } catch {
+    return null;
+  }
+}
 
 const CATEGORIES = [
   { label: "Featured", value: "" },
   { label: "Nearby", value: "" },
   { label: "Upcoming", value: "" },
 ];
-
-const EVENTBRITE_TOKEN = "WWCNJCDH6CZ5JTHLGXBY";
 
 const PLACEHOLDER_IMGS = {
   concerts: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=300&fit=crop",
@@ -99,13 +111,18 @@ export default function EventsPage() {
     setLoading(false);
     setLoadingMore(false);
 
-    // Fetch entity images in background
+    // Fetch entity images in background (PredictHQ performer → fallback Eventbrite)
     mapped.forEach(async (ev) => {
       if (fetchingImages.current.has(ev.id)) return;
-      const perfEntity = ev.entities.find(en => en.type === "performer" || en.type === "artist");
-      if (!perfEntity) return;
       fetchingImages.current.add(ev.id);
-      const imgUrl = await fetchEntityImage(perfEntity.id);
+      const perfEntity = ev.entities.find(en => en.type === "performer" || en.type === "artist");
+      let imgUrl = null;
+      if (perfEntity) {
+        imgUrl = await fetchEntityImage(perfEntity.id);
+      }
+      if (!imgUrl) {
+        imgUrl = await fetchEventbriteImage(ev.title);
+      }
       if (imgUrl) {
         setEvents(prev => prev.map(e => e.id === ev.id ? { ...e, image: imgUrl } : e));
       }
