@@ -12,6 +12,8 @@ const CATEGORIES = [
   { label: "Upcoming", value: "" },
 ];
 
+const EVENTBRITE_TOKEN = "WWCNJCDH6CZ5JTHLGXBY";
+
 const PLACEHOLDER_IMGS = {
   concerts: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=300&fit=crop",
   sports: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
@@ -146,35 +148,49 @@ export default function EventsPage() {
             className="w-9 h-9 object-contain rounded flex-shrink-0"
           />
           <div
-            className="flex-1 flex items-center rounded px-3 py-2"
-            style={{ background: "rgba(255,255,255,0.1)", border: "1px solid #324751" }}
+            className="flex-1 flex items-center rounded-xl px-3 py-2.5"
+            style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}
           >
-            <Search className="w-4 h-4 flex-shrink-0" style={{ color: "#8e8e93" }} />
+            <Search className="w-5 h-5 flex-shrink-0" style={{ color: "#ffffff" }} />
             <input
               type="text"
               placeholder="What are you looking for?"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent border-none text-white text-sm outline-none placeholder-gray-400 ml-2"
+              className="flex-1 bg-transparent border-none text-white text-sm font-medium outline-none ml-2.5 search-input"
+              style={{ color: "white" }}
             />
           </div>
         </div>
 
-        {/* Scrollable category tabs */}
-        <div className="flex overflow-x-auto" style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}>
-          {CATEGORIES.map((tab, idx) => (
-            <button
-              key={tab.label}
-              onClick={() => setActiveTab(idx)}
-              className="flex-shrink-0 px-5 py-3 text-base font-semibold bg-transparent border-none cursor-pointer transition-all whitespace-nowrap"
-              style={{
-                color: activeTab === idx ? "#fff" : "rgba(255,255,255,0.55)",
-                borderBottom: activeTab === idx ? "3px solid white" : "3px solid transparent",
-              }}
-            >
-              {tab.label}
-            </button>
-          ))}
+        {/* Category tabs */}
+        <div className="flex px-2" style={{ scrollbarWidth: "none" }}>
+          {CATEGORIES.map((tab, idx) => {
+            const isActive = activeTab === idx;
+            return (
+              <button
+                key={tab.label}
+                onClick={() => setActiveTab(idx)}
+                className="flex-1 py-3 text-base font-semibold bg-transparent border-none cursor-pointer transition-all whitespace-nowrap relative"
+                style={{ color: "#ffffff", letterSpacing: "-0.01em" }}
+              >
+                {tab.label}
+                {isActive && (
+                  <span
+                    className="absolute bottom-0"
+                    style={{
+                      left: idx === 0 ? "16px" : "8px",
+                      right: idx === 0 ? "16px" : "8px",
+                      height: 3,
+                      borderRadius: "3px 3px 0 0",
+                      backgroundColor: "white",
+                      display: "block",
+                    }}
+                  />
+                )}
+              </button>
+            );
+          })}
         </div>
       </header>
 

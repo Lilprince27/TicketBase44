@@ -47,11 +47,13 @@ export default function BottomNav() {
       style={{
         transform: "translateX(-50%)",
         bottom: "calc(20px + env(safe-area-inset-bottom))",
-        background: "#ffffff",
+        background: "rgba(255,255,255,0.55)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
         borderRadius: "100px",
         padding: "8px",
-        boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
-        border: "1px solid #eeeeee",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.10)",
+        border: "1px solid rgba(255,255,255,0.35)",
         gap: "5px",
       }}
     >
