@@ -13,6 +13,7 @@ export default function TicketDetailPage() {
   const [shareContact, setShareContact] = useState("");
   const [shareName, setShareName] = useState("");
   const [sharing, setSharing] = useState(false);
+  const [shareResult, setShareResult] = useState(null);
 
   useEffect(() => {
     async function load() {
@@ -100,17 +101,25 @@ export default function TicketDetailPage() {
 </body>
 </html>`;
 
-    await base44.integrations.Core.SendEmail({
-      to: shareContact.trim(),
-      from_name: fromName,
-      subject: `Action Required: ${senderName} shared 1 ticket(s) with you for ${ticket.event_name}`,
-      body: emailHtml,
-    });
-
-    setSharing(false);
-    setShowShareModal(false);
-    setShareContact("");
-    setShareName("");
+    try {
+      await base44.integrations.Core.SendEmail({
+        to: shareContact.trim(),
+        from_name: fromName,
+        subject: `Action Required: ${senderName} shared 1 ticket(s) with you for ${ticket.event_name}`,
+        body: emailHtml,
+      });
+      setShareResult("success");
+      setTimeout(() => {
+        setShowShareModal(false);
+        setShareContact("");
+        setShareName("");
+        setShareResult(null);
+      }, 1500);
+    } catch (e) {
+      setShareResult("error");
+    } finally {
+      setSharing(false);
+    }
   };
 
   return (
@@ -272,9 +281,15 @@ export default function TicketDetailPage() {
                 By entering this information you agree that you have the receiver's consent to do so.
               </p>
               <div className="border-t border-gray-200 mb-4" />
+              {shareResult === "success" && (
+                <div className="text-center text-green-600 font-semibold py-2 mb-2">✓ Email sent successfully!</div>
+              )}
+              {shareResult === "error" && (
+                <div className="text-center text-red-500 text-sm py-2 mb-2">Failed to send email. Please try again.</div>
+              )}
               <div className="flex gap-3">
                 <button
-                  onClick={() => { setShowShareModal(false); setShareContact(""); setShareName(""); }}
+                  onClick={() => { setShowShareModal(false); setShareContact(""); setShareName(""); setShareResult(null); }}
                   className="flex-1 py-3.5 rounded-xl border border-gray-200 bg-white text-blue-700 font-semibold text-base cursor-pointer"
                 >
                   Cancel
