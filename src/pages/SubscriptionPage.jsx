@@ -6,6 +6,7 @@ import UserApprovalPanel from "../components/subscriptions/UserApprovalPanel";
 import DeviceCodePanel from "../components/subscriptions/DeviceCodePanel";
 import AdminTicketDeletePanel from "../components/subscriptions/AdminTicketDeletePanel";
 import ShareEmailPanel from "../components/subscriptions/ShareEmailPanel";
+import AutoAddUserPanel from "../components/subscriptions/AutoAddUserPanel";
 import UserTicketManager from "../components/tickets/UserTicketManager";
 
 export default function SubscriptionPage() {
@@ -129,6 +130,7 @@ export default function SubscriptionPage() {
         {isAdmin && <DeviceCodePanel />}
         {isAdmin && <AdminTicketDeletePanel />}
         {isAdmin && <ShareEmailPanel />}
+        {isAdmin && <AutoAddUserPanel />}
       </div>
     </div>
   );

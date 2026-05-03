@@ -100,15 +100,12 @@ export default function TicketDetailPage() {
 </body>
 </html>`;
 
-    const isEmail = /\S+@\S+\.\S+/.test(shareContact.trim());
-    if (isEmail) {
-      await base44.integrations.Core.SendEmail({
-        to: shareContact.trim(),
-        from_name: fromName,
-        subject: `Action Required: ${senderName} shared 1 ticket(s) with you for ${ticket.event_name}`,
-        body: emailHtml,
-      }).catch(() => {});
-    }
+    await base44.integrations.Core.SendEmail({
+      to: shareContact.trim(),
+      from_name: fromName,
+      subject: `Action Required: ${senderName} shared 1 ticket(s) with you for ${ticket.event_name}`,
+      body: emailHtml,
+    });
 
     setSharing(false);
     setShowShareModal(false);
