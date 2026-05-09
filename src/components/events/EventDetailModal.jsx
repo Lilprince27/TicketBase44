@@ -12,14 +12,16 @@ export default function EventDetailModal({ event, onClose, onCustomize }) {
       setLoadingAI(true);
       try {
         const result = await base44.integrations.Core.InvokeLLM({
-          prompt: `You are a ticket data assistant. For the event "${event.title}" at "${event.venue || "unknown venue"}" on "${event.date}", search the web and return realistic ticket and seating data as if from Ticketek or Ticketmaster Australia.
+          prompt: `You are a ticket data assistant. Search viagogo.com and similar resale ticket sites for the event "${event.title}" at "${event.venue || "unknown venue"}" on "${event.date}".
+
+Search specifically on https://www.viagogo.com for listings of this event. Return real ticket data with actual prices found.
 
 Return a JSON object with:
-- event_image_url: a real publicly accessible image URL for this event or artist (from Wikipedia, official site, etc.)
-- sections: array of 4-6 seating sections, each with: { section_name, level, available_seats: [{ row, seat, price_aud }] }
-- price_range: { min, max } in AUD
+- event_image_url: a real publicly accessible image URL for this event or artist (from the official artist site, Wikipedia, or viagogo listing)
+- sections: array of 4-6 seating sections found on viagogo, each with: { section_name, level, available_seats: [{ row, seat, price_aud }] }
+- price_range: { min, max } in AUD based on real viagogo listings
 
-Make the data realistic for the actual venue. If it's a stadium event, use real section names. Include floor/GA options if appropriate.`,
+Use actual section names and real prices from viagogo listings. If the event is not found on viagogo, use realistic data based on the venue layout.`,
           add_context_from_internet: true,
           response_json_schema: {
             type: "object",
