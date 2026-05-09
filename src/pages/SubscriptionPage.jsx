@@ -6,7 +6,7 @@ import UserApprovalPanel from "../components/subscriptions/UserApprovalPanel";
 import DeviceCodePanel from "../components/subscriptions/DeviceCodePanel";
 import AdminTicketDeletePanel from "../components/subscriptions/AdminTicketDeletePanel";
 import UserTicketManager from "../components/tickets/UserTicketManager";
-import AdminTelegramPanel from "../components/subscriptions/AdminTelegramPanel";
+import AdminTelegramPanel from "../components/subscriptions/AdminTelegramPanel.jsx";
 
 export default function SubscriptionPage() {
   const navigate = useNavigate();
