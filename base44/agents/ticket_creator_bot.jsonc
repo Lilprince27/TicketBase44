@@ -11,5 +11,17 @@
     }
   ],
   "telegram_greeting": "\ud83d\udc4b Welcome to the Ticketek Ticket Creator Bot!\n\nI can help you create tickets that will appear directly in the Ticketek app.\n\nWould you like to create a ticket? Just say *Yes* to get started! \ud83c\udf9f",
+  "context_files": [],
+  "app_user_connector_configs": [],
+  "selected_skill_names": [],
+  "selected_workspace_skill_ids": [],
+  "model": "automatic",
+  "whatsapp_greeting": "",
+  "line_greeting": "",
+  "memory_config": {
+    "enabled": true,
+    "scope": "both",
+    "instructions": null
+  },
   "name": "ticket_creator_bot"
 }
