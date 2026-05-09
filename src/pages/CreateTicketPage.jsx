@@ -19,6 +19,7 @@ export default function CreateTicketPage() {
   const [creating, setCreating] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+  const [prefilledImageUrl, setPrefilledImageUrl] = useState(null);
 
   const [recipientEmail, setRecipientEmail] = useState("");
   const [sendEmailNotification, setSendEmailNotification] = useState(true);
@@ -39,20 +40,28 @@ export default function CreateTicketPage() {
 
   const urlParams = new URLSearchParams(window.location.search);
 
+  useEffect(() => {
+    const imgUrl = urlParams.get("event_image_url");
+    if (imgUrl) {
+      setPrefilledImageUrl(imgUrl);
+      setImagePreview(imgUrl);
+    }
+  }, []);
+
   const [form, setForm] = useState({
     venue_name: urlParams.get("venue_name") || "",
     presenter: "",
     event_name: urlParams.get("event_name") || "",
     event_date: urlParams.get("event_date") || "",
-    entry_gate: "",
-    level_stand: "",
+    entry_gate: urlParams.get("entry_gate") || "",
+    level_stand: urlParams.get("level_stand") || "",
     door_area: "",
-    section_bay: "",
-    row: "",
-    seat_number: "",
+    section_bay: urlParams.get("section_bay") || "",
+    row: urlParams.get("row") || "",
+    seat_number: urlParams.get("seat_number") || "",
     holder_name: "",
     ticket_type: "",
-    price: "",
+    price: urlParams.get("price") || "",
   });
 
   useEffect(() => {
@@ -163,7 +172,7 @@ export default function CreateTicketPage() {
 
   const handleCreate = async () => {
     setCreating(true);
-    let imageUrl = "";
+    let imageUrl = prefilledImageUrl || "";
     if (imageFile) {
       const result = await base44.integrations.Core.UploadFile({ file: imageFile });
       imageUrl = result.file_url;

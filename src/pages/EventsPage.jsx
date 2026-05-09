@@ -58,6 +58,19 @@ async function fetchEntityImage(entityId) {
   }
 }
 
+async function fetchImageForEvent(title, labels = []) {
+  // Try Wikipedia thumbnail via REST API
+  try {
+    const searchTerm = encodeURIComponent(title.split(" ").slice(0, 4).join(" "));
+    const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${searchTerm}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.thumbnail?.source) return data.thumbnail.source;
+    }
+  } catch {}
+  return null;
+}
+
 export default function EventsPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(0);
@@ -111,17 +124,20 @@ export default function EventsPage() {
     setLoading(false);
     setLoadingMore(false);
 
-    // Fetch entity images in background (PredictHQ performer → fallback Eventbrite)
+    // Fetch better images in background - use Wikipedia (no CORS issues)
     mapped.forEach(async (ev) => {
       if (fetchingImages.current.has(ev.id)) return;
       fetchingImages.current.add(ev.id);
+      
+      // Try PredictHQ entity image first
       const perfEntity = ev.entities.find(en => en.type === "performer" || en.type === "artist");
       let imgUrl = null;
       if (perfEntity) {
         imgUrl = await fetchEntityImage(perfEntity.id);
       }
+      // Fallback: Wikipedia
       if (!imgUrl) {
-        imgUrl = await fetchEventbriteImage(ev.title);
+        imgUrl = await fetchImageForEvent(ev.title, ev.labels);
       }
       if (imgUrl) {
         setEvents(prev => prev.map(e => e.id === ev.id ? { ...e, image: imgUrl } : e));
@@ -228,9 +244,17 @@ export default function EventsPage() {
                 onClick={() => setSelectedEvent(event)}
               >
                 <div
-                  className="w-full h-[200px] bg-cover bg-center bg-gray-200"
-                  style={{ backgroundImage: `url(${event.image})` }}
-                />
+                  className="w-full h-[200px] bg-gray-200 overflow-hidden"
+                >
+                  <img
+                    src={event.image}
+                    alt={event.title}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                    onError={e => { e.target.src = PLACEHOLDER_IMGS.default; }}
+                  />
+                </div>
                 <div className="px-4 py-3 bg-white border-b border-gray-100">
                   <div className="text-[15px] font-semibold text-gray-800">{event.title}</div>
                   {event.date && (
@@ -254,13 +278,8 @@ export default function EventsPage() {
         <EventDetailModal
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
-          onCustomize={(event) => {
-            const params = new URLSearchParams({
-              event_name: event.title,
-              event_date: event.date,
-              venue_name: event.venue || "",
-            });
-            navigate(`/create-ticket?${params.toString()}`);
+          onCustomize={(event, extraParams) => {
+            navigate(`/create-ticket?${extraParams || new URLSearchParams({ event_name: event.title, event_date: event.date, venue_name: event.venue || "" }).toString()}`);
           }}
         />
       )}
