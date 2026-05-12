@@ -5,20 +5,6 @@ import EventDetailModal from "../components/events/EventDetailModal";
 
 const API_TOKEN = "D6akDmpY5sb17Flq3g3fCrbM7sFGrQODkbcwY-ky";
 const BASE_URL = "https://api.predicthq.com/v1/events/";
-const EVENTBRITE_TOKEN = "WWCNJCDH6CZ5JTHLGXBY";
-
-async function fetchEventbriteImage(eventName) {
-  try {
-    const res = await fetch(
-      `https://www.eventbriteapi.com/v3/events/search/?q=${encodeURIComponent(eventName)}&expand=logo&token=${EVENTBRITE_TOKEN}`
-    );
-    const data = await res.json();
-    const event = data?.events?.[0];
-    return event?.logo?.original?.url || event?.logo?.url || null;
-  } catch {
-    return null;
-  }
-}
 
 const CATEGORIES = [
   { label: "Featured", value: "" },
@@ -46,20 +32,30 @@ function formatDate(dateStr) {
   return d.toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
 }
 
-async function fetchEntityImage(entityId) {
+// Fetch from TheSportsDB (no API key needed)
+async function fetchSportsDBImage(eventTitle) {
   try {
-    const res = await fetch(`https://api.predicthq.com/v1/entities/${entityId}/`, {
-      headers: { Authorization: `Bearer ${API_TOKEN}`, Accept: "application/json" },
-    });
+    const query = encodeURIComponent(eventTitle.split(" ").slice(0, 3).join(" "));
+    const res = await fetch(`https://www.thesportsdb.com/api/v1/json/3/searchevents.php?e=${query}`);
     const data = await res.json();
-    return data.image_url || data.images?.[0]?.url || null;
+    const ev = data?.event?.[0];
+    if (ev?.strThumb) return ev.strThumb;
+    if (ev?.strBanner) return ev.strBanner;
+    // Try team/artist image
+    if (data?.event?.[0]?.strHomeTeam) {
+      const teamRes = await fetch(`https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(data.event[0].strHomeTeam)}`);
+      const teamData = await teamRes.json();
+      const team = teamData?.teams?.[0];
+      if (team?.strTeamBanner) return team.strTeamBanner;
+      if (team?.strTeamFanart1) return team.strTeamFanart1;
+    }
+    return null;
   } catch {
     return null;
   }
 }
 
-async function fetchImageForEvent(title, labels = []) {
-  // Try Wikipedia thumbnail via REST API
+async function fetchWikipediaImage(title) {
   try {
     const searchTerm = encodeURIComponent(title.split(" ").slice(0, 4).join(" "));
     const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${searchTerm}`);
@@ -81,9 +77,11 @@ export default function EventsPage() {
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [featuredIdx, setFeaturedIdx] = useState(0);
   const debounceTimer = useRef(null);
   const loaderRef = useRef(null);
   const fetchingImages = useRef(new Set());
+  const heroRotateTimer = useRef(null);
 
   const fetchEvents = useCallback(async (query, category, currentOffset, replace = false) => {
     if (replace) setLoading(true);
@@ -116,6 +114,7 @@ export default function EventsPage() {
 
     if (replace) {
       setEvents(mapped);
+      setFeaturedIdx(0);
     } else {
       setEvents(prev => [...prev, ...mapped]);
     }
@@ -124,26 +123,27 @@ export default function EventsPage() {
     setLoading(false);
     setLoadingMore(false);
 
-    // Fetch better images in background - use Wikipedia (no CORS issues)
+    // Fetch images from TheSportsDB + Wikipedia in background
     mapped.forEach(async (ev) => {
       if (fetchingImages.current.has(ev.id)) return;
       fetchingImages.current.add(ev.id);
-      
-      // Try PredictHQ entity image first
-      const perfEntity = ev.entities.find(en => en.type === "performer" || en.type === "artist");
-      let imgUrl = null;
-      if (perfEntity) {
-        imgUrl = await fetchEntityImage(perfEntity.id);
-      }
-      // Fallback: Wikipedia
-      if (!imgUrl) {
-        imgUrl = await fetchImageForEvent(ev.title, ev.labels);
-      }
+      let imgUrl = await fetchSportsDBImage(ev.title);
+      if (!imgUrl) imgUrl = await fetchWikipediaImage(ev.title);
       if (imgUrl) {
         setEvents(prev => prev.map(e => e.id === ev.id ? { ...e, image: imgUrl } : e));
       }
     });
   }, []);
+
+  // Hero rotation every 2 hours (or 7200000ms). Use 30s in dev for visibility.
+  useEffect(() => {
+    if (!events.length) return;
+    clearInterval(heroRotateTimer.current);
+    heroRotateTimer.current = setInterval(() => {
+      setFeaturedIdx(prev => (prev + 1) % Math.min(events.length, 10));
+    }, 7200000);
+    return () => clearInterval(heroRotateTimer.current);
+  }, [events.length]);
 
   useEffect(() => {
     setOffset(0);
@@ -169,6 +169,9 @@ export default function EventsPage() {
     obs.observe(loaderRef.current);
     return () => obs.disconnect();
   }, [hasMore, loadingMore, loading, offset, searchQuery, activeTab]);
+
+  const featuredEvent = events[featuredIdx];
+  const restEvents = events.filter((_, i) => i !== featuredIdx);
 
   return (
     <div className="min-h-screen bg-white">
@@ -197,7 +200,7 @@ export default function EventsPage() {
         </div>
 
         {/* Category tabs */}
-        <div className="flex px-2" style={{ scrollbarWidth: "none" }}>
+        <div className="flex px-2">
           {CATEGORIES.map((tab, idx) => {
             const isActive = activeTab === idx;
             return (
@@ -205,21 +208,11 @@ export default function EventsPage() {
                 key={tab.label}
                 onClick={() => setActiveTab(idx)}
                 className="flex-1 py-3 text-base font-semibold bg-transparent border-none cursor-pointer transition-all whitespace-nowrap relative"
-                style={{ color: "#ffffff", letterSpacing: "-0.01em" }}
+                style={{ color: "#ffffff" }}
               >
                 {tab.label}
                 {isActive && (
-                  <span
-                    className="absolute bottom-0"
-                    style={{
-                      left: idx === 0 ? "16px" : "8px",
-                      right: idx === 0 ? "16px" : "8px",
-                      height: 3,
-                      borderRadius: "3px 3px 0 0",
-                      backgroundColor: "white",
-                      display: "block",
-                    }}
-                  />
+                  <span className="absolute bottom-0" style={{ left: "16px", right: "16px", height: 3, borderRadius: "3px 3px 0 0", backgroundColor: "white", display: "block" }} />
                 )}
               </button>
             );
@@ -237,15 +230,32 @@ export default function EventsPage() {
           <div className="text-center py-20 text-gray-400">No events found</div>
         ) : (
           <>
-            {events.map(event => (
-              <div
-                key={event.id}
-                className="cursor-pointer"
-                onClick={() => setSelectedEvent(event)}
-              >
-                <div
-                  className="w-full h-[200px] bg-gray-200 overflow-hidden"
-                >
+            {/* Featured Hero Card */}
+            {featuredEvent && (
+              <div className="cursor-pointer" onClick={() => setSelectedEvent(featuredEvent)}>
+                <div className="relative w-full h-[280px] overflow-hidden">
+                  <img
+                    src={featuredEvent.image}
+                    alt={featuredEvent.title}
+                    className="w-full h-full object-cover"
+                    onError={e => { e.target.src = PLACEHOLDER_IMGS.default; }}
+                  />
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 50%)" }} />
+                  <div className="absolute top-3 left-3">
+                    <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full uppercase tracking-wide">⭐ Featured</span>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 px-4 pb-4">
+                    <div className="text-white text-xl font-bold leading-tight">{featuredEvent.title}</div>
+                    {featuredEvent.date && <div className="text-gray-300 text-sm mt-1">{featuredEvent.date}{featuredEvent.venue ? ` · ${featuredEvent.venue}` : ""}</div>}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Rest of events */}
+            {restEvents.map(event => (
+              <div key={event.id} className="cursor-pointer" onClick={() => setSelectedEvent(event)}>
+                <div className="w-full h-[200px] bg-gray-200 overflow-hidden">
                   <img
                     src={event.image}
                     alt={event.title}
@@ -257,11 +267,7 @@ export default function EventsPage() {
                 </div>
                 <div className="px-4 py-3 bg-white border-b border-gray-100">
                   <div className="text-[15px] font-semibold text-gray-800">{event.title}</div>
-                  {event.date && (
-                    <div className="text-xs text-gray-500 mt-0.5">
-                      {event.date}{event.venue ? ` · ${event.venue}` : ""}
-                    </div>
-                  )}
+                  {event.date && <div className="text-xs text-gray-500 mt-0.5">{event.date}{event.venue ? ` · ${event.venue}` : ""}</div>}
                 </div>
               </div>
             ))}
@@ -279,6 +285,7 @@ export default function EventsPage() {
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
           onCustomize={(event, extraParams) => {
+            setSelectedEvent(null);
             navigate(`/create-ticket?${extraParams || new URLSearchParams({ event_name: event.title, event_date: event.date, venue_name: event.venue || "" }).toString()}`);
           }}
         />

@@ -1,0 +1,70 @@
+{
+  "name": "UserProfile",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "title": "User Email"
+    },
+    "first_name": {
+      "type": "string",
+      "title": "First Name"
+    },
+    "last_name": {
+      "type": "string",
+      "title": "Last Name"
+    },
+    "uid": {
+      "type": "string",
+      "title": "UID (21-digit)"
+    },
+    "notifications_enabled": {
+      "type": "boolean",
+      "title": "Notifications Enabled",
+      "default": false
+    },
+    "dismissed_notification_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Dismissed Notification IDs"
+    }
+  },
+  "required": [
+    "user_email",
+    "uid"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "$or": [
+        {
+          "data.user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.user_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

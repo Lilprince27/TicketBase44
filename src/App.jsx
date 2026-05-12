@@ -12,6 +12,9 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Layout from './components/Layout';
 import InstallPrompt from './components/InstallPrompt';
+import NameSetupModal from './components/onboarding/NameSetupModal';
+import NotificationPermissionModal from './components/onboarding/NotificationPermissionModal';
+import AdminNotificationBanner from './components/notifications/AdminNotificationBanner';
 import EventsPage from './pages/EventsPage';
 import AccountPage from './pages/AccountPage';
 import TicketsPage from './pages/TicketsPage';
@@ -28,6 +31,8 @@ const AuthenticatedApp = () => {
   const [checkingApproval, setCheckingApproval] = useState(false);
   const [subscriptionExpired, setSubscriptionExpired] = useState(false);
   const [daysRemaining, setDaysRemaining] = useState(null);
+  const [showNameSetup, setShowNameSetup] = useState(false);
+  const [showNotifPrompt, setShowNotifPrompt] = useState(false);
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
   useEffect(() => {
@@ -42,6 +47,20 @@ const AuthenticatedApp = () => {
           setDeviceVerified(true);
           setCheckingApproval(false);
           return;
+        }
+        // Check if user needs name setup
+        const profiles = await base44.entities.UserProfile.filter({ user_email: me.email }).catch(() => []);
+        if (profiles.length === 0) {
+          // Generate 21-digit UID
+          const uid = "UID:" + Array.from({ length: 21 }, () => "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random() * 36)]).join("");
+          await base44.entities.UserProfile.create({ user_email: me.email, uid, notifications_enabled: false });
+          setShowNameSetup(true);
+        } else if (!profiles[0].first_name) {
+          setShowNameSetup(true);
+        } else {
+          // Check if notification prompt has been shown
+          const notifAsked = localStorage.getItem("notif_asked");
+          if (!notifAsked) setShowNotifPrompt(true);
         }
         // Check subscription expiry
         const subs = await base44.entities.Subscription.filter({ user_email: me.email, status: 'active' });
@@ -139,8 +158,42 @@ const AuthenticatedApp = () => {
     return <DeviceCodeVerification user={authUser} onVerified={() => setDeviceVerified(true)} />;
   }
 
+  const handleNameSetup = async (firstName, lastName) => {
+    if (!authUser) return;
+    const profiles = await base44.entities.UserProfile.filter({ user_email: authUser.email }).catch(() => []);
+    if (profiles.length > 0) {
+      await base44.entities.UserProfile.update(profiles[0].id, { first_name: firstName, last_name: lastName });
+    }
+    await base44.auth.updateMe({ display_name: `${firstName} ${lastName}` });
+    setShowNameSetup(false);
+    const notifAsked = localStorage.getItem("notif_asked");
+    if (!notifAsked) setShowNotifPrompt(true);
+  };
+
+  const handleNotifAllow = async () => {
+    localStorage.setItem("notif_asked", "1");
+    setShowNotifPrompt(false);
+    if ("Notification" in window) {
+      await Notification.requestPermission();
+    }
+    if (authUser) {
+      const profiles = await base44.entities.UserProfile.filter({ user_email: authUser.email }).catch(() => []);
+      if (profiles.length > 0) {
+        await base44.entities.UserProfile.update(profiles[0].id, { notifications_enabled: true });
+      }
+    }
+  };
+
+  const handleNotifSkip = () => {
+    localStorage.setItem("notif_asked", "1");
+    setShowNotifPrompt(false);
+  };
+
   return (
     <>
+    {showNameSetup && <NameSetupModal onComplete={handleNameSetup} />}
+    {showNotifPrompt && !showNameSetup && <NotificationPermissionModal onAllow={handleNotifAllow} onSkip={handleNotifSkip} />}
+    {authUser && <AdminNotificationBanner userEmail={authUser.email} />}
     <InstallPrompt />
     <Routes>
       <Route element={<Layout />}>

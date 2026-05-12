@@ -1,7 +1,7 @@
 {
   "name": "Ticketek",
   "short_name": "Ticketek",
-  "description": "Your mobile ticket wallet",
+  "description": "Your digital ticket wallet",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#001a35",

@@ -269,16 +269,26 @@ export default function CreateTicketPage() {
       <div className="px-5 py-6">
         {/* Image upload */}
         <div className="flex flex-col items-center mb-8">
-          <label className="cursor-pointer">
-            <div className="w-24 h-24 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
-              {imagePreview ? (
-                <img src={imagePreview} alt="Event" className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-gray-400 text-xs text-center px-2">Upload Event Image</span>
-              )}
-            </div>
-            <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
-          </label>
+          <div className="relative">
+            <label className="cursor-pointer">
+              <div className="w-24 h-24 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+                {imagePreview ? (
+                  <img src={imagePreview} alt="Event" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-gray-400 text-xs text-center px-2">Upload Event Image</span>
+                )}
+              </div>
+              <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+            </label>
+            {imagePreview && (
+              <button
+                type="button"
+                onClick={() => { setImagePreview(null); setImageFile(null); setPrefilledImageUrl(null); }}
+                className="absolute -top-1 -right-1 w-7 h-7 rounded-full bg-gray-800 text-white flex items-center justify-center text-xs font-bold border-2 border-white cursor-pointer"
+                style={{ lineHeight: 1 }}
+              >✕</button>
+            )}
+          </div>
           <p className="text-xs text-gray-400 mt-2">Tap to upload event image</p>
         </div>
 

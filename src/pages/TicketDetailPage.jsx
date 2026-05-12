@@ -139,37 +139,45 @@ export default function TicketDetailPage() {
             <p style={{ fontSize: 13, color: "#333", margin: 0 }}>{ticket.presenter}</p>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 25px" }}>
-            <div style={{ fontSize: 11, fontWeight: 500, width: 90, color: "#000" }}>
-              <strong>{ticket.ticket_type || "Adult"}</strong><br />{ticket.price}
-            </div>
-
-            {ticket.barcode_locked ? (
-              <div style={{ textAlign: "center" }}>
-                <div style={{ position: "relative", width: 100, height: 100, display: "flex", justifyContent: "center", alignItems: "center" }}>
-                  <img src={qrUrl} alt="QR" style={{ width: "100%", height: "100%" }} />
-                  <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(255,255,255,0.5)", backdropFilter: "blur(2px)" }} />
-                  <div style={{ position: "absolute", zIndex: 10 }}>
-                    <svg width="38" height="38" viewBox="0 0 24 24" fill="#000033">
-                      <path d="M12 2C9.24 2 7 4.24 7 7v3H6c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-1V7c0-2.76-2.24-5-5-5zm3 8H9V7c0-1.66 1.34-3 3-3s3 1.34 3 3v3z" />
-                    </svg>
-                  </div>
+          {ticket.barcode_locked ? (
+            /* Locked barcode — centered */
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "0 25px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", width: "100%", marginBottom: 16 }}>
+                <div style={{ fontSize: 11, fontWeight: 500, color: "#000" }}>
+                  <strong>{ticket.ticket_type || "Adult"}</strong><br />{ticket.price}
                 </div>
-                <span style={{ display: "block", fontSize: 11, marginTop: 10, color: "#000", textAlign: "center" }}>
-                  {ticket.auth_message || "This ticket will be unlocked prior to the event"}
-                </span>
+                <div style={{ fontSize: 11, fontWeight: 500, color: "#000", textAlign: "right" }}>
+                  <strong>Held by</strong><br />{ticket.holder_name}
+                </div>
               </div>
-            ) : (
+              <div style={{ position: "relative", width: 110, height: 110, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <img src={qrUrl} alt="QR" style={{ width: "100%", height: "100%" }} />
+                <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "rgba(255,255,255,0.5)", backdropFilter: "blur(2px)" }} />
+                <div style={{ position: "absolute", zIndex: 10 }}>
+                  <svg width="38" height="38" viewBox="0 0 24 24" fill="#000033">
+                    <path d="M12 2C9.24 2 7 4.24 7 7v3H6c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-1V7c0-2.76-2.24-5-5-5zm3 8H9V7c0-1.66 1.34-3 3-3s3 1.34 3 3v3z" />
+                  </svg>
+                </div>
+              </div>
+              <span style={{ fontSize: 11, marginTop: 10, color: "#000", textAlign: "center" }}>
+                {ticket.auth_message || "This ticket will be unlocked prior to the event"}
+              </span>
+            </div>
+          ) : (
+            /* Unlocked — normal layout */
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 25px" }}>
+              <div style={{ fontSize: 11, fontWeight: 500, width: 90, color: "#000" }}>
+                <strong>{ticket.ticket_type || "Adult"}</strong><br />{ticket.price}
+              </div>
               <div style={{ textAlign: "center" }}>
                 <img src={qrUrl} alt="QR Code" style={{ width: 95, height: 95 }} />
                 <span style={{ display: "block", fontSize: 11, marginTop: 10, color: "#000" }}>{ticket.serial_number}</span>
               </div>
-            )}
-
-            <div style={{ fontSize: 11, fontWeight: 500, width: 90, color: "#000", textAlign: "right" }}>
-              <strong>Held by</strong><br />{ticket.holder_name}
+              <div style={{ fontSize: 11, fontWeight: 500, width: 90, color: "#000", textAlign: "right" }}>
+                <strong>Held by</strong><br />{ticket.holder_name}
+              </div>
             </div>
-          </div>
+          )}
 
           <div style={{ textAlign: "center", fontWeight: 700, fontSize: 18, marginTop: 25, color: "#000" }}>
             {ticket.event_date}

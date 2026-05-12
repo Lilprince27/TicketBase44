@@ -1,0 +1,44 @@
+{
+  "name": "AdminNotification",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Notification Title"
+    },
+    "body": {
+      "type": "string",
+      "title": "Notification Body"
+    },
+    "sent_at": {
+      "type": "string",
+      "title": "Sent At"
+    },
+    "sent_by": {
+      "type": "string",
+      "title": "Sent By"
+    }
+  },
+  "required": [
+    "title",
+    "body"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
