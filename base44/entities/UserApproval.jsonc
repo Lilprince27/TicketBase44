@@ -34,7 +34,7 @@
   ],
   "rls": {
     "create": {
-      "data.user_email": "{{user.email}}"
+      "data.user_email": "{{user.id}}"
     },
     "read": {
       "user_condition": {
