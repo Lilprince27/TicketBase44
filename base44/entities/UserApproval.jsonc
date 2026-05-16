@@ -34,9 +34,8 @@
   ],
   "rls": {
     "create": {
-      "user_condition": {
-        "email": "user"
-      }
+      "data.user_email": "{{user.email}}",
+      "data.status": "pending"
     },
     "read": {
       "user_condition": {
@@ -49,11 +48,6 @@
       }
     },
     "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
-    "write": {
       "user_condition": {
         "role": "admin"
       }
