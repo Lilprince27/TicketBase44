@@ -34,7 +34,7 @@
   ],
   "rls": {
     "create": {
-      "data.user_email": "{{user.email}}"
+      "data.user_email": "{{user.role}}"
     },
     "read": {
       "user_condition": {
@@ -47,6 +47,11 @@
       }
     },
     "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
       "user_condition": {
         "role": "admin"
       }
