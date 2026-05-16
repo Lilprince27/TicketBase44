@@ -16,6 +16,7 @@ export default function TicketDetailPage() {
   const [shareResult, setShareResult] = useState(null);
 
   useEffect(() => {
+    if (!id || id === ':id') { setLoading(false); return; }
     async function load() {
       const tickets = await base44.entities.Ticket.filter({ id });
       if (tickets.length > 0) setTicket(tickets[0]);
