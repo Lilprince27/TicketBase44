@@ -1,0 +1,40 @@
+{
+  "name": "ShareSettings",
+  "type": "object",
+  "properties": {
+    "mode": {
+      "type": "string",
+      "title": "Share Mode",
+      "enum": [
+        "normal",
+        "require_fee",
+        "service_unavailable",
+        "not_available"
+      ],
+      "default": "normal"
+    },
+    "share_fee": {
+      "type": "string",
+      "title": "Share Fee (e.g. \u00a3100.00)"
+    }
+  },
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "required": []
+}

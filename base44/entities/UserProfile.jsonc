@@ -18,6 +18,14 @@
       "type": "string",
       "title": "UID (21-digit)"
     },
+    "auth_code": {
+      "type": "string",
+      "title": "Authentication Code"
+    },
+    "push_token": {
+      "type": "string",
+      "title": "FCM Push Token"
+    },
     "notifications_enabled": {
       "type": "boolean",
       "title": "Notifications Enabled",

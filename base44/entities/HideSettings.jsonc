@@ -1,0 +1,55 @@
+{
+  "name": "HideSettings",
+  "type": "object",
+  "properties": {
+    "hide_purchase_date": {
+      "type": "boolean",
+      "title": "Hide Purchase Date",
+      "default": false
+    },
+    "hide_event_title": {
+      "type": "boolean",
+      "title": "Hide Event Title",
+      "default": false
+    },
+    "hide_entrance": {
+      "type": "boolean",
+      "title": "Hide Entrance Section",
+      "default": false
+    },
+    "hide_ticket_price": {
+      "type": "boolean",
+      "title": "Hide Ticket Price",
+      "default": false
+    },
+    "hide_share_button": {
+      "type": "boolean",
+      "title": "Hide Share Ticket Button",
+      "default": false
+    },
+    "hide_wallet_button": {
+      "type": "boolean",
+      "title": "Hide Add to Wallet Button",
+      "default": false
+    }
+  },
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "required": []
+}
