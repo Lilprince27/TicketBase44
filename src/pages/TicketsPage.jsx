@@ -1,23 +1,27 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import EventTicketGroup from "../components/tickets/EventTicketGroup";
+import EventTicketGroup from "../components/tickets/EventTicketGroup.jsx";
 
 export default function TicketsPage() {
   const navigate = useNavigate();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [uiPref, setUiPref] = useState("ui1");
 
   useEffect(() => {
     async function load() {
       const me = await base44.auth.me().catch(() => null);
       if (!me) return;
       setUser(me);
-      const all = await base44.entities.Ticket.filter({ owner_email: me.email }).catch(() => []);
-      // Sort by created_date descending
+      const [all, prefs] = await Promise.all([
+        base44.entities.Ticket.filter({ owner_email: me.email }).catch(() => []),
+        base44.entities.UIPreference.filter({ user_email: me.email }).catch(() => []),
+      ]);
       all.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
       setTickets(all);
+      if (prefs.length > 0) setUiPref(prefs[0].ticket_ui || "ui1");
       setLoading(false);
     }
     load();
@@ -81,7 +85,7 @@ export default function TicketsPage() {
           </div>
         ) : (
           groups.map((group, idx) => (
-            <EventTicketGroup key={idx} tickets={group} />
+            <EventTicketGroup key={idx} tickets={group} uiPreference={uiPref} />
           ))
         )}
       </div>

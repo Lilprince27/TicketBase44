@@ -11,6 +11,9 @@ import HideSettingsPanel from "../components/subscriptions/HideSettingsPanel";
 import TicketTransferSettingsPanel from "../components/subscriptions/TicketTransferSettingsPanel";
 import ProSubscriptionPanel from "../components/subscriptions/ProSubscriptionPanel";
 import LifetimeSubscriptionPanel from "../components/subscriptions/LifetimeSubscriptionPanel";
+import EliteSubscriptionPanel from "../components/subscriptions/EliteSubscriptionPanel";
+import SuspendUserPanel from "../components/subscriptions/SuspendUserPanel";
+import ChangeAppUIPanel from "../components/subscriptions/ChangeAppUIPanel";
 
 export default function SubscriptionPage() {
   const navigate = useNavigate();
@@ -61,7 +64,7 @@ export default function SubscriptionPage() {
           {subscription ? (
             <>
               <div className="text-2xl font-bold mb-1">
-                {isLifetime ? "♾️ Lifetime" : isPro ? "⭐ PRO" : "Active"}
+                {isLifetime ? "♾️ Lifetime" : isPro ? "⭐ PRO" : subscription?.duration === "elite" ? "Elite ✪" : "Active"}
               </div>
               <div className="text-sm opacity-80">
                 {isLifetime ? "Never expires" : `${daysLeft} days remaining`}
@@ -75,6 +78,11 @@ export default function SubscriptionPage() {
           )}
         </div>
 
+        {/* Change App UI - only for Lifetime/Elite users */}
+        {subscription && (subscription.duration === "lifetime" || subscription.duration === "elite") && user?.role !== "admin" && (
+          <ChangeAppUIPanel userEmail={user?.email} subscription={subscription} />
+        )}
+
         {/* Admin panel */}
         {user?.role === "admin" && (
           <>
@@ -83,6 +91,8 @@ export default function SubscriptionPage() {
             <AdminSubscriptionPanel />
             <ProSubscriptionPanel />
             <LifetimeSubscriptionPanel />
+            <EliteSubscriptionPanel />
+            <SuspendUserPanel />
             <UserApprovalPanel />
             <AdminTicketDeletePanel />
             <SendNotificationPanel />

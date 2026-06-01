@@ -1,0 +1,43 @@
+{
+  "name": "SuspendedUser",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "title": "User Email"
+    },
+    "suspended_by": {
+      "type": "string",
+      "title": "Suspended By"
+    },
+    "reason": {
+      "type": "string",
+      "title": "Reason"
+    },
+    "suspended_at": {
+      "type": "string",
+      "title": "Suspended At"
+    }
+  },
+  "required": [
+    "user_email"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

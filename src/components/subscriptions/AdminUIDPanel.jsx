@@ -29,7 +29,12 @@ export default function AdminUIDPanel() {
     setCodeResult(null);
     setApprovalResult(null);
 
-    const profiles = await base44.entities.UserProfile.filter({ uid: uid.trim() }).catch(() => []);
+    // Search by UID or auth_code
+    const trimmed = uid.trim();
+    let profiles = await base44.entities.UserProfile.filter({ uid: trimmed }).catch(() => []);
+    if (profiles.length === 0) {
+      profiles = await base44.entities.UserProfile.filter({ auth_code: trimmed }).catch(() => []);
+    }
     if (profiles.length > 0) {
       setFoundProfile(profiles[0]);
     } else {
@@ -47,6 +52,9 @@ export default function AdminUIDPanel() {
     if (subDuration === "2_weeks") end.setDate(end.getDate() + 14);
     else if (subDuration === "1_month") end.setDate(end.getDate() + 30);
     else if (subDuration === "3_months") end.setDate(end.getDate() + 90);
+    else if (subDuration === "pro_6months") end.setDate(end.getDate() + 180);
+    else if (subDuration === "elite") end.setDate(end.getDate() + 90);
+    else if (subDuration === "lifetime") end.setFullYear(end.getFullYear() + 99);
 
     await base44.entities.Subscription.create({
       user_email: foundProfile.user_email,
@@ -100,7 +108,7 @@ export default function AdminUIDPanel() {
           type="text"
           value={uid}
           onChange={e => setUid(e.target.value)}
-          placeholder="Enter UID (e.g. UID:ABC123...)"
+          placeholder="Enter UID or Auth Code..."
           className="flex-1 px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800"
         />
         <button
@@ -135,6 +143,9 @@ export default function AdminUIDPanel() {
                 <option value="2_weeks">2 Weeks</option>
                 <option value="1_month">1 Month</option>
                 <option value="3_months">3 Months</option>
+                <option value="lifetime">Lifetime</option>
+                <option value="pro_6months">PRO 6 Months</option>
+                <option value="elite">Elite (3 Months)</option>
               </select>
               <button
                 onClick={handleGrantSubscription}

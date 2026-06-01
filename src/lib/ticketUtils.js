@@ -40,8 +40,23 @@ export function generateEventCode(venueName, eventDate, eventName) {
 }
 
 export function generateOrderNumber() {
-  const year = new Date().getFullYear().toString().slice(-2);
-  const num = Math.floor(10000000 + Math.random() * 90000000).toString();
-  const suffix = Math.floor(10 + Math.random() * 90).toString();
-  return `${year}-${num}/${suffix}`;
+  // Randomly pick between two formats:
+  // Format 1: 20250923, 122930
+  // Format 2: 26-97457273/75
+  const useFormat1 = Math.random() > 0.5;
+  if (useFormat1) {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, "0");
+    const d = String(now.getDate()).padStart(2, "0");
+    const h = String(now.getHours()).padStart(2, "0");
+    const min = String(now.getMinutes()).padStart(2, "0");
+    const s = String(now.getSeconds()).padStart(2, "0");
+    return `${y}${m}${d}, ${h}${min}${s}`;
+  } else {
+    const year = new Date().getFullYear().toString().slice(-2);
+    const num = Math.floor(10000000 + Math.random() * 90000000).toString();
+    const suffix = Math.floor(10 + Math.random() * 90).toString();
+    return `${year}-${num}/${suffix}`;
+  }
 }

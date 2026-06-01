@@ -25,11 +25,13 @@ export default function AdminTicketDeletePanel() {
   const handleDelete = async () => {
     if (!selected.length) return;
     setDeleting(true);
-    for (const id of selected) {
+    // Optimistic update - remove instantly
+    setTickets(prev => prev.filter(t => !selected.includes(t.id)));
+    const toDelete = [...selected];
+    setSelected([]);
+    for (const id of toDelete) {
       await base44.entities.Ticket.delete(id);
     }
-    setSelected([]);
-    await load();
     setDeleting(false);
   };
 
