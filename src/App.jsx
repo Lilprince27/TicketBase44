@@ -16,7 +16,7 @@ import NameSetupModal from './components/onboarding/NameSetupModal';
 import NotificationPermissionModal from './components/onboarding/NotificationPermissionModal';
 import AdminNotificationBanner from './components/notifications/AdminNotificationBanner';
 import EventsPage from './pages/EventsPage';
-import AccountPage from './pages/AccountPage';
+import AccountPage from './pages/AccountPage.jsx';
 import TicketsPage from './pages/TicketsPage';
 import TicketDetailPage from './pages/TicketDetailPage.jsx';
 import CreateTicketPage from './pages/CreateTicketPage';
@@ -64,7 +64,7 @@ const AuthenticatedApp = () => {
         }
         // Check subscription expiry
         const subs = await base44.entities.Subscription.filter({ user_email: me.email, status: 'active' });
-        const activeSub = subs.find(s => new Date(s.end_date) > new Date());
+        const activeSub = subs.find(s => s.duration === 'lifetime' || new Date(s.end_date) > new Date());
         if (!activeSub) {
           // Check if they ever had a subscription (expired)
           const allSubs = await base44.entities.Subscription.filter({ user_email: me.email });

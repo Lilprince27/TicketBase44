@@ -252,6 +252,28 @@ export default function EventsPage() {
               </div>
             )}
 
+            {/* Static Featured Cards */}
+            {[
+              { title: "Sabrina Carpenter", img: "https://i.ibb.co/k6VJn1kT/IMG-9441.jpg", date: "2026", venue: "Australia" },
+              { title: "Coldplay", img: "https://i.ibb.co/7NNb9dgx/IMG-9442.png", date: "2026", venue: "Australia" },
+              { title: "Billie Eilish", img: "https://i.ibb.co/GQBkg3NN/IMG-9443.jpg", date: "2026", venue: "Australia" },
+              { title: "Taylor Swift", img: "https://i.ibb.co/twXCwCWq/IMG-9444.jpg", date: "2026", venue: "Australia" },
+              { title: "The Weeknd", img: "https://i.ibb.co/gbmzpbtw/IMG-9445.png", date: "2026", venue: "Australia" },
+              { title: "Ed Sheeran", img: "https://i.ibb.co/MDtFRQM7/IMG-9446.jpg", date: "2026", venue: "Australia" },
+              { title: "Post Malone", img: "https://i.ibb.co/rX6zkpr/IMG-9447.jpg", date: "2026", venue: "Australia" },
+              { title: "Drake", img: "https://i.ibb.co/vCDgT8XK/IMG-9448.jpg", date: "2026", venue: "Australia" },
+            ].map((ev, i) => (
+              <div key={`static-${i}`} className="cursor-pointer" onClick={() => setSelectedEvent({ id: `static-${i}`, title: ev.title, date: ev.date, venue: ev.venue, image: ev.img })}>
+                <div className="w-full h-[200px] bg-gray-200 overflow-hidden">
+                  <img src={ev.img} alt={ev.title} className="w-full h-full object-cover" loading="lazy" />
+                </div>
+                <div className="px-4 py-3 bg-white border-b border-gray-100">
+                  <div className="text-[15px] font-semibold text-gray-800">{ev.title}</div>
+                  <div className="text-xs text-gray-500 mt-0.5">{ev.date} · {ev.venue}</div>
+                </div>
+              </div>
+            ))}
+
             {/* Rest of events */}
             {restEvents.map(event => (
               <div key={event.id} className="cursor-pointer" onClick={() => setSelectedEvent(event)}>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 // UserProfile entity used for UID display
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
@@ -10,6 +10,10 @@ import AdminTicketDeletePanel from "../components/subscriptions/AdminTicketDelet
 import UserTicketManager from "../components/tickets/UserTicketManager";
 import AdminTelegramPanel from "../components/subscriptions/AdminTelegramPanel.jsx";
 import SendNotificationPanel from "../components/subscriptions/SendNotificationPanel";
+import LifetimeSubscriptionPanel from "../components/subscriptions/LifetimeSubscriptionPanel";
+import ProSubscriptionPanel from "../components/subscriptions/ProSubscriptionPanel";
+import TicketTransferSettingsPanel from "../components/subscriptions/TicketTransferSettingsPanel";
+import HideSettingsPanel from "../components/subscriptions/HideSettingsPanel";
 
 export default function SubscriptionPage() {
   const navigate = useNavigate();
@@ -18,13 +22,17 @@ export default function SubscriptionPage() {
   const [loading, setLoading] = useState(true);
   const [showMyTickets, setShowMyTickets] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
+  const [showAuthCode, setShowAuthCode] = useState(false);
+  const [authPassword, setAuthPassword] = useState("");
+  const [authCodeVisible, setAuthCodeVisible] = useState(false);
+  const [authError, setAuthError] = useState("");
 
   useEffect(() => {
     async function load() {
       const me = await base44.auth.me();
       setUser(me);
       const subs = await base44.entities.Subscription.filter({ user_email: me.email, status: "active" });
-      const activeSub = subs.find((s) => new Date(s.end_date) > new Date());
+      const activeSub = subs.find((s) => s.duration === "lifetime" || new Date(s.end_date) > new Date());
       setSubscription(activeSub || null);
       const profiles = await base44.entities.UserProfile.filter({ user_email: me.email }).catch(() => []);
       if (profiles.length > 0) setUserProfile(profiles[0]);
@@ -81,6 +89,18 @@ export default function SubscriptionPage() {
             <div className="text-white text-lg font-bold mb-1">Admin Account</div>
             <div className="text-blue-200 text-sm">Unlimited subscription access</div>
           </div>
+        ) : subscription?.duration === "lifetime" ? (
+          <div className="rounded-xl p-6 mb-6 text-center" style={{ background: "linear-gradient(135deg, #1a1a2e, #16213e)" }}>
+            <div className="text-yellow-300 text-xs uppercase tracking-widest mb-2">♾️ Lifetime Access</div>
+            <div className="text-white text-2xl font-bold mb-1">Life Time User</div>
+            <div className="text-blue-200 text-sm">Unlimited access — never expires</div>
+          </div>
+        ) : subscription?.duration === "pro_6months" ? (
+          <div className="rounded-xl p-6 mb-6 text-center" style={{ background: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)" }}>
+            <div className="text-yellow-300 text-xs uppercase tracking-widest mb-2">⭐ Pro Member</div>
+            <div className="text-white text-2xl font-bold mb-1">PRO USER</div>
+            <div className="text-blue-200 text-sm">{daysRemaining} day{daysRemaining !== 1 ? 's' : ''} remaining</div>
+          </div>
         ) : subscription ? (
           <div className="rounded-xl p-6 mb-6 text-center" style={{ backgroundColor: "#003057" }}>
             <div className="text-blue-200 text-xs uppercase tracking-wide mb-2">Active Subscription</div>
@@ -119,17 +139,7 @@ export default function SubscriptionPage() {
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="white"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
             Message Admin on Telegram
           </a>
-          <p className="text-xs text-gray-500 text-center">Join our Telegram group for updates</p>
-          <a
-            href="https://t.me/ApfMF9J1DiM2OWQ0"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-3 w-full py-3 rounded-xl font-semibold text-base no-underline border-2"
-            style={{ color: "#0088cc", borderColor: "#0088cc", backgroundColor: "white" }}
-          >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="#0088cc"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-            Join Telegram Group
-          </a>
+
         </div>
 
         {/* My Tickets button */}
@@ -168,6 +178,10 @@ export default function SubscriptionPage() {
         {isAdmin && <AdminTelegramPanel />}
         {isAdmin && <AdminUIDPanel />}
         {isAdmin && <SendNotificationPanel />}
+        {isAdmin && <LifetimeSubscriptionPanel />}
+        {isAdmin && <ProSubscriptionPanel />}
+        {isAdmin && <TicketTransferSettingsPanel />}
+        {isAdmin && <HideSettingsPanel />}
 
       </div>
     </div>
