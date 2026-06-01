@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import TicketTypeSheet from "../components/tickets/TicketTypeSheet";
-import LevelStandSheet from "../components/tickets/LevelStandSheet";
 import {
   generateSerialNumber,
   generatePaxNumber,
@@ -80,23 +78,7 @@ export default function CreateTicketPage() {
   }, []);
 
   const handleChange = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
-  const handlePricingChange = (field, value) => {
-    setEmailPricing(prev => {
-      const updated = { ...prev, [field]: value };
-      // Auto-calculate total from sub_total + refundable_fee + service_fee
-      const parseNum = (v) => parseFloat((v || "").replace(/[^0-9.]/g, "")) || 0;
-      if (field !== "total") {
-        const sub = parseNum(field === "sub_total" ? value : updated.sub_total);
-        const ref = parseNum(field === "refundable_fee" ? value : updated.refundable_fee);
-        const svc = parseNum(field === "service_fee" ? value : updated.service_fee);
-        if (sub > 0 || ref > 0 || svc > 0) {
-          const currency = ((field === "sub_total" ? value : updated.sub_total) || "").replace(/[0-9.,]/g, "").trim() || "£";
-          updated.total = `${currency}${(sub + ref + svc).toFixed(2)}`;
-        }
-      }
-      return updated;
-    });
-  };
+  const handlePricingChange = (field, value) => setEmailPricing(prev => ({ ...prev, [field]: value }));
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -264,11 +246,13 @@ export default function CreateTicketPage() {
   ];
   const seatingFields = [
     { key: "entry_gate", label: "Entry Gate", placeholder: "e.g., Entry A" },
+    { key: "level_stand", label: "Level/Stand", placeholder: "e.g., Level 3" },
     { key: "door_area", label: "Door/Area", placeholder: "e.g., 66" },
     { key: "section_bay", label: "Section/Bay", placeholder: "e.g., 65" },
   ];
   const financialFields = [
     { key: "holder_name", label: "Ticket Holder Name", placeholder: "e.g., Mr Luke Griffiths" },
+    { key: "ticket_type", label: "Ticket Type", placeholder: "e.g., Mastercard Presale Admit" },
     { key: "price", label: "Price", placeholder: "e.g., $178.39 Inc GST" },
   ];
 
@@ -329,10 +313,6 @@ export default function CreateTicketPage() {
               className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400" />
           </div>
         ))}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Level/Stand</label>
-          <LevelStandSheet value={form.level_stand} onChange={(v) => handleChange("level_stand", v)} />
-        </div>
 
         {/* Barcode lock toggle */}
         <div className="border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50">
@@ -398,22 +378,14 @@ export default function CreateTicketPage() {
 
         {/* Section 3: Financial */}
         <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4 mt-8">3. Ticket & Holder Details</h3>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Ticket Holder Name</label>
-          <input type="text" value={form.holder_name} onChange={(e) => handleChange("holder_name", e.target.value)}
-            placeholder="e.g., Mr Luke Griffiths"
-            className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400" />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Ticket Type</label>
-          <TicketTypeSheet value={form.ticket_type} onChange={(v) => handleChange("ticket_type", v)} />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
-          <input type="text" value={form.price} onChange={(e) => handleChange("price", e.target.value)}
-            placeholder="e.g., $178.39 Inc GST"
-            className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400" />
-        </div>
+        {financialFields.map((f) => (
+          <div key={f.key} className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">{f.label}</label>
+            <input type="text" value={form[f.key]} onChange={(e) => handleChange(f.key, e.target.value)}
+              placeholder={f.placeholder}
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400" />
+          </div>
+        ))}
 
         {/* Section 4: Confirmation Email */}
         <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4 mt-8">4. Confirmation Email</h3>

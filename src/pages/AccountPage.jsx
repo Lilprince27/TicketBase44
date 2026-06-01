@@ -1,102 +1,162 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 
+const menuItems = [
+  {
+    label: "Your Profile",
+    path: "/profile",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" strokeWidth="1.8">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+    ),
+  },
+  {
+    label: "Your Tickets",
+    path: "/tickets",
+    icon: (
+      <svg width="22" height="16" viewBox="0 0 24 16" fill="#8e8e93">
+        <rect x="0" y="0" width="24" height="16" rx="0"/>
+        <circle cx="0" cy="8" r="4" fill="white"/>
+        <circle cx="24" cy="8" r="4" fill="white"/>
+      </svg>
+    ),
+  },
+  {
+    label: "Your Subscriptions",
+    path: "/subscriptions",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" strokeWidth="1.8">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+    ),
+  },
+  {
+    label: "Terms & Conditions",
+    path: "#",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" strokeWidth="1.8">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+        <polyline points="10 9 9 9 8 9"/>
+      </svg>
+    ),
+  },
+  {
+    label: "Privacy Policy",
+    path: "#",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" strokeWidth="1.8">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+    ),
+  },
+  {
+    label: "Help",
+    path: "#",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" strokeWidth="1.8">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+    ),
+  },
+  {
+    label: "Delete account",
+    path: "#",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" strokeWidth="1.8">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+      </svg>
+    ),
+  },
+];
+
 export default function AccountPage() {
-  const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [subscription, setSubscription] = useState(null);
-  const [profile, setProfile] = useState(null);
-  const tapCount = useRef(0);
-  const tapTimer = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    async function load() {
-      const me = await base44.auth.me().catch(() => null);
-      if (!me) return;
-      setUser(me);
-      const subs = await base44.entities.Subscription.filter({ user_email: me.email, status: "active" }).catch(() => []);
-      const now = new Date();
-      const active = subs.find(s => new Date(s.end_date) > now);
-      setSubscription(active || null);
-      const profiles = await base44.entities.UserProfile.filter({ user_email: me.email }).catch(() => []);
-      if (profiles.length > 0) setProfile(profiles[0]);
-    }
-    load();
+    base44.auth.me().then(setUser);
   }, []);
 
-  const handleAccountTap = () => {
-    tapCount.current += 1;
-    clearTimeout(tapTimer.current);
-    tapTimer.current = setTimeout(() => { tapCount.current = 0; }, 600);
-    if (tapCount.current >= 2 && user?.role === "admin") {
-      navigate("/subscriptions");
-    }
-  };
-
-  const daysLeft = subscription
-    ? Math.max(0, Math.ceil((new Date(subscription.end_date) - new Date()) / (1000 * 60 * 60 * 24)))
-    : 0;
-
-  const isLifetime = subscription?.duration === "lifetime";
-  const isPro = subscription?.duration === "pro_6months";
-
-  const displayName = user?.full_name || user?.email || "User";
-  const initial = displayName.charAt(0).toUpperCase();
+  const displayName = user?.display_name || user?.full_name || "there";
+  const firstName = displayName.split(" ")[0];
 
   return (
-    <div className="min-h-screen bg-white max-w-[500px] mx-auto">
-      {/* Header */}
-      <div
-        className="px-5 pt-10 pb-6 text-white"
-        style={{ background: "linear-gradient(135deg, #001a35 0%, #003057 100%)" }}
-        onClick={handleAccountTap}
-      >
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-2xl font-bold text-white border-2 border-white/30">
-            {initial}
-          </div>
-          <div>
-            <div className="text-xl font-bold">{displayName}</div>
-            <div className="text-sm text-white/70">{user?.email}</div>
-            {subscription && (
-              <div className="mt-1 inline-flex items-center gap-1 bg-white/20 rounded-full px-2.5 py-0.5 text-xs font-semibold">
-                {isLifetime ? "♾️ Lifetime" : isPro ? "⭐ PRO USER" : `${daysLeft}d remaining`}
-              </div>
-            )}
-          </div>
+    <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', Helvetica, Arial, sans-serif", background: "#fff", minHeight: "100vh", maxWidth: 414, margin: "0 auto", display: "flex", flexDirection: "column" }}>
+      {/* Sticky header */}
+      <header style={{
+        background: "#ffffff",
+        position: "sticky",
+        top: 0,
+        zIndex: 1000,
+        paddingTop: "calc(env(safe-area-inset-top, 20px) + 8px)",
+        paddingBottom: 15,
+        textAlign: "center",
+        borderBottom: "none",
+      }}>
+        <div style={{ fontSize: 19, fontWeight: 800, letterSpacing: "-0.5px" }}>Your Account</div>
+        <div style={{ fontSize: 13.5, color: "#333", marginTop: 3 }}>
+          Customer ID: {user?.id ? String(user.id).slice(0, 7) : "..."}
         </div>
-      </div>
+      </header>
 
-      {/* Menu items */}
-      <div className="px-4 py-4 space-y-2">
-        <MenuItem icon="🎟" label="My Tickets" onTap={() => navigate("/tickets")} />
-        <MenuItem icon="💳" label="Subscription" onTap={() => navigate("/subscriptions")} />
-        <MenuItem icon="👤" label="Edit Profile" onTap={() => navigate("/profile")} />
-        <div className="pt-4 border-t border-gray-100">
+      {/* Content */}
+      <div style={{ flex: 1, overflowY: "auto", padding: "30px 20px 160px 20px" }}>
+        {/* Welcome */}
+        <div style={{ marginBottom: 35 }}>
+          <h1 style={{ fontSize: 28, fontWeight: 500, color: "#2c2c2e", margin: 0 }}>Hi {firstName}</h1>
+          <p style={{ fontSize: 18, color: "#3a3a3c", marginTop: 5, marginBottom: 0 }}>Welcome.</p>
+        </div>
+
+        {/* Menu */}
+        <div style={{ borderTop: "1px solid #f2f2f7" }}>
+          {menuItems.map((item, i) => (
+            <Link
+              key={i}
+              to={item.path}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "20px 0",
+                borderBottom: "1px solid #f2f2f7",
+                textDecoration: "none",
+                color: "#005689",
+              }}
+            >
+              <div style={{ width: 38, display: "flex", alignItems: "center", flexShrink: 0 }}>
+                {item.icon}
+              </div>
+              <div style={{ flex: 1, fontSize: 18, fontWeight: 400 }}>{item.label}</div>
+              <svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="#c7c7cc" strokeWidth="2">
+                <polyline points="1 1 7 7 1 13"/>
+              </svg>
+            </Link>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div style={{ marginTop: 30 }}>
           <button
             onClick={() => base44.auth.logout()}
-            className="w-full py-3 text-red-500 font-semibold text-sm bg-red-50 rounded-xl border-none cursor-pointer"
+            style={{ color: "#005689", fontSize: 17, fontWeight: 500, background: "none", border: "none", cursor: "pointer", padding: 0 }}
           >
-            Log Out
+            Sign out
           </button>
+          <div style={{ textAlign: "right", color: "#8e8e93", fontSize: 13, margin: "25px 0 15px" }}>Version 3.2.7</div>
+          <a href="#" style={{ display: "block", textAlign: "center", color: "#005689", fontSize: 15, fontWeight: 600, textDecoration: "none" }}>
+            Cookie &amp; Performance Monitoring Consent
+          </a>
         </div>
       </div>
     </div>
-  );
-}
-
-function MenuItem({ icon, label, onTap }) {
-  return (
-    <button
-      onClick={onTap}
-      className="w-full flex items-center gap-4 px-4 py-4 rounded-xl bg-gray-50 border-none cursor-pointer text-left"
-    >
-      <span className="text-xl">{icon}</span>
-      <span className="flex-1 text-sm font-semibold text-gray-800">{label}</span>
-      <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-        <polyline points="9 18 15 12 9 6" />
-      </svg>
-    </button>
   );
 }

@@ -1,41 +1,132 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import EventTicketGroup from "../components/tickets/EventTicketGroup.jsx";
+import AppleWalletModal from "../components/tickets/AppleWalletModal";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronUp, ChevronDown } from "lucide-react";
+
+function TicketGroup({ group, onWallet }) {
+  const [expanded, setExpanded] = useState(true);
+  const navigate = useNavigate();
+  const first = group[0];
+
+  return (
+    <div style={{ marginTop: 15, borderRadius: 8, overflow: "hidden", border: "1.5px solid #e0e0e0" }}>
+      {/* Navy order bar */}
+      <div style={{ background: "#001a2c", color: "white", display: "flex", padding: "16px 0", alignItems: "center" }}>
+        <div style={{ flex: 1, textAlign: "center" }}>
+          <div style={{ fontSize: 10, opacity: 0.7, marginBottom: 5, textTransform: "uppercase" }}>Order Date</div>
+          <div style={{ fontWeight: 700, fontSize: 14 }}>{first.purchase_date || "-"}</div>
+        </div>
+        <div style={{ width: 1, background: "rgba(255,255,255,0.2)", height: 28 }} />
+        <div style={{ flex: 1, textAlign: "center" }}>
+          <div style={{ fontSize: 10, opacity: 0.7, marginBottom: 5, textTransform: "uppercase" }}>Order Number</div>
+          <div style={{ fontWeight: 700, fontSize: 14 }}>{first.order_number || "-"}</div>
+        </div>
+        {/* Collapse toggle */}
+        <button
+          onClick={() => setExpanded(e => !e)}
+          style={{ background: "none", border: "none", cursor: "pointer", paddingRight: 16, paddingLeft: 8, color: "white" }}
+        >
+          {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+        </button>
+      </div>
+
+      {/* Always-visible event info row */}
+      <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", gap: 12, background: "white", borderBottom: expanded ? "1px solid #f0f0f0" : "none" }}>
+        <img
+          src={first.event_image || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=150&h=150&fit=crop"}
+          alt={first.event_name}
+          style={{ width: 60, height: 60, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
+        />
+        <div style={{ flex: 1 }}>
+          <h2 style={{ fontSize: 16, margin: 0, fontWeight: 700 }}>{first.event_name}</h2>
+          <p style={{ fontSize: 13, margin: "2px 0", fontWeight: 600 }}>{first.event_date}</p>
+          <p style={{ fontSize: 13, margin: 0, color: "#666" }}>{first.venue_name}</p>
+        </div>
+      </div>
+
+      {/* Expandable details */}
+      <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div
+            key="details"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            style={{ overflow: "hidden" }}
+          >
+            {/* Marketplace notice */}
+            {first.marketplace_notice && (
+              <div style={{ margin: "0 20px 10px", padding: "10px 12px", background: "#fef3c7", borderRadius: 8, fontSize: 13 }}>
+                ⚠️ This ticket was purchased on Ticketek Marketplace.
+              </div>
+            )}
+
+            {/* Individual seat cards */}
+            <div style={{ padding: "0 20px 16px", background: "white" }}>
+              {group.map((ticket, idx) => (
+                <div key={ticket.id} style={{ marginTop: idx === 0 ? 0 : 12, border: "1.5px solid #f2f2f2", borderRadius: 18, padding: 20, background: "#fafafa" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", textAlign: "center" }}>
+                    <div>
+                      <div style={{ fontSize: 10, color: "#666", fontWeight: 600, textTransform: "uppercase" }}>Section</div>
+                      <div style={{ fontWeight: 700, marginTop: 6, fontSize: 15 }}>{ticket.section_bay || "-"}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 10, color: "#666", fontWeight: 600, textTransform: "uppercase" }}>Row</div>
+                      <div style={{ fontWeight: 700, marginTop: 6, fontSize: 15 }}>{ticket.row || "-"}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 10, color: "#666", fontWeight: 600, textTransform: "uppercase" }}>Seat</div>
+                      <div style={{ fontWeight: 700, marginTop: 6, fontSize: 15 }}>{ticket.seat_number || "-"}</div>
+                    </div>
+                  </div>
+                  <div style={{ borderTop: "1.5px dotted #ddd", margin: "15px 0" }} />
+                  <p style={{ fontSize: 13, fontWeight: 500, color: "#222", margin: "0 0 15px" }}>
+                    {ticket.ticket_type || "General Admission"} · Admit 1
+                  </p>
+                  <div style={{ borderTop: "1.5px dotted #ddd", margin: "15px 0" }} />
+                  <button
+                    onClick={() => onWallet(ticket)}
+                    style={{ width: "100%", padding: "14px", borderRadius: 4, border: "none", fontWeight: 700, fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, background: "#000", color: "white", cursor: "pointer", marginBottom: 10 }}
+                  >
+                    <img src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/f6963ff4b_IMG_7127.jpeg" alt="Wallet" style={{ width: 30, height: "auto", objectFit: "contain" }} />
+                    Add to Apple Wallet
+                  </button>
+                  <button
+                    onClick={() => navigate(`/ticket-detail/${ticket.id}`)}
+                    style={{ width: "100%", padding: "14px", borderRadius: 4, border: "none", fontWeight: 700, fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", background: "#427926", color: "white", cursor: "pointer" }}
+                  >
+                    Manage ticket
+                  </button>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export default function TicketsPage() {
-  const navigate = useNavigate();
   const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-  const [uiPref, setUiPref] = useState("ui1");
+  const [loading, setLoading] = useState(true);
+  const [walletTicket, setWalletTicket] = useState(null);
 
   useEffect(() => {
     async function load() {
-      const me = await base44.auth.me().catch(() => null);
-      if (!me) return;
+      const me = await base44.auth.me();
       setUser(me);
-      const [all, prefs] = await Promise.all([
-        base44.entities.Ticket.filter({ owner_email: me.email }).catch(() => []),
-        base44.entities.UIPreference.filter({ user_email: me.email }).catch(() => []),
-      ]);
-      all.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
-      setTickets(all);
-      if (prefs.length > 0) setUiPref(prefs[0].ticket_ui || "ui1");
+      const allTickets = await base44.entities.Ticket.filter({ owner_email: me.email });
+      const hidden = JSON.parse(localStorage.getItem("hidden_tickets") || "[]");
+      setTickets(allTickets.filter(t => !hidden.includes(t.id)));
       setLoading(false);
     }
     load();
   }, []);
-
-  // Group tickets by order_number
-  const grouped = tickets.reduce((acc, ticket) => {
-    const key = ticket.order_number || ticket.id;
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(ticket);
-    return acc;
-  }, {});
-
-  const groups = Object.values(grouped);
 
   if (loading) {
     return (
@@ -45,47 +136,40 @@ export default function TicketsPage() {
     );
   }
 
-  return (
-    <div className="min-h-screen max-w-[500px] mx-auto" style={{ backgroundColor: "#f2f2f2" }}>
-      {/* Header */}
-      <div
-        className="sticky top-0 z-50 px-4 py-4 text-white flex items-center justify-between"
-        style={{ backgroundColor: "#051c2c" }}
-      >
-        <div className="flex items-center gap-3">
-          <img
-            src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/4f3732a50_IMG_7107.jpeg"
-            alt="Ticketek"
-            className="w-8 h-8 object-contain rounded"
-          />
-          <span className="text-lg font-bold tracking-tight">My Tickets</span>
-        </div>
-        <button
-          onClick={() => navigate("/create-ticket")}
-          className="px-4 py-2 rounded-lg text-white text-sm font-semibold border-none cursor-pointer"
-          style={{ backgroundColor: "#3a7d2c" }}
-        >
-          + New
-        </button>
-      </div>
+  const grouped = tickets.reduce((acc, t) => {
+    const key = t.order_number || t.id;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(t);
+    return acc;
+  }, {});
+  const groups = Object.values(grouped);
 
-      <div className="p-4 pb-28">
+  return (
+    <div className="bg-white min-h-screen" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
+      {walletTicket && <AppleWalletModal ticket={walletTicket} onClose={() => setWalletTicket(null)} />}
+
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-100 text-center" style={{ paddingTop: "calc(env(safe-area-inset-top) + 16px)", paddingBottom: 12 }}>
+        <h1 style={{ fontSize: 19, margin: 0, fontWeight: 700 }}>Ticket wallet</h1>
+        <p style={{ fontSize: 12, color: "#666", margin: "4px 0 0 0" }}>
+          Customer ID: {user?.id ? String(user.id).slice(0, 8) : "..."}
+        </p>
+      </header>
+
+      <div style={{ padding: "0 15px", paddingBottom: 140 }}>
         {groups.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="text-5xl mb-4">🎟</div>
-            <h3 className="text-lg font-bold text-gray-700 mb-2">No Tickets Yet</h3>
-            <p className="text-sm text-gray-400 mb-6">Create your first ticket to get started.</p>
-            <button
-              onClick={() => navigate("/create-ticket")}
-              className="px-6 py-3 rounded-xl text-white font-bold text-sm border-none cursor-pointer"
-              style={{ backgroundColor: "#003057" }}
-            >
-              Create Ticket
-            </button>
+          <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
+            <div className="w-20 h-20 rounded-full border-2 border-green-600 flex items-center justify-center mb-6">
+              <svg viewBox="0 0 24 24" className="w-10 h-10" fill="none" stroke="#16a34a" strokeWidth="1.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a3 3 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-bold text-gray-800 mb-2">No upcoming events</h2>
+            <p className="text-gray-500 text-base mb-8">Browse events to find tickets</p>
           </div>
         ) : (
-          groups.map((group, idx) => (
-            <EventTicketGroup key={idx} tickets={group} uiPreference={uiPref} />
+          groups.map((group) => (
+            <TicketGroup key={group[0].order_number || group[0].id} group={group} onWallet={setWalletTicket} />
           ))
         )}
       </div>

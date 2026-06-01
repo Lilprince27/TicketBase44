@@ -3,7 +3,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
-import SplashScreen from './components/SplashScreen.jsx';
+import SplashScreen from './components/SplashScreen';
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import WaitingApproval from './components/WaitingApproval';
@@ -12,18 +12,16 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Layout from './components/Layout';
 import InstallPrompt from './components/InstallPrompt';
-import MaintenanceFeeGate from './components/MaintenanceFeeGate';
-import SuspendedScreen from './components/SuspendedScreen';
 import NameSetupModal from './components/onboarding/NameSetupModal';
 import NotificationPermissionModal from './components/onboarding/NotificationPermissionModal';
 import AdminNotificationBanner from './components/notifications/AdminNotificationBanner';
 import EventsPage from './pages/EventsPage';
-import AccountPage from './pages/AccountPage.jsx';
-import TicketsPage from './pages/TicketsPage.jsx';
+import AccountPage from './pages/AccountPage';
+import TicketsPage from './pages/TicketsPage';
 import TicketDetailPage from './pages/TicketDetailPage.jsx';
 import CreateTicketPage from './pages/CreateTicketPage';
-import SubscriptionPage from './pages/SubscriptionPage.jsx';
-import ProfilePage from './pages/ProfilePage.jsx';
+import SubscriptionPage from './pages/SubscriptionPage';
+import ProfilePage from './pages/ProfilePage';
 
 const AuthenticatedApp = () => {
   const [splashDone, setSplashDone] = useState(false);
@@ -35,7 +33,6 @@ const AuthenticatedApp = () => {
   const [daysRemaining, setDaysRemaining] = useState(null);
   const [showNameSetup, setShowNameSetup] = useState(false);
   const [showNotifPrompt, setShowNotifPrompt] = useState(false);
-  const [isSuspended, setIsSuspended] = useState(false);
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
   useEffect(() => {
@@ -48,13 +45,6 @@ const AuthenticatedApp = () => {
         if (me.role === 'admin') {
           setApprovalStatus('approved');
           setDeviceVerified(true);
-          setCheckingApproval(false);
-          return;
-        }
-        // Check if suspended
-        const suspensions = await base44.entities.SuspendedUser.filter({ user_email: me.email }).catch(() => []);
-        if (suspensions.length > 0) {
-          setIsSuspended(true);
           setCheckingApproval(false);
           return;
         }
@@ -136,10 +126,6 @@ const AuthenticatedApp = () => {
     );
   }
 
-  if (isSuspended) {
-    return <SuspendedScreen />;
-  }
-
   if (approvalStatus === 'pending') {
     return <WaitingApproval user={authUser} onRefresh={refreshApproval} />;
   }
@@ -204,7 +190,6 @@ const AuthenticatedApp = () => {
   };
 
   return (
-    <MaintenanceFeeGate userEmail={authUser?.email}>
     <>
     {showNameSetup && <NameSetupModal onComplete={handleNameSetup} />}
     {showNotifPrompt && !showNameSetup && <NotificationPermissionModal onAllow={handleNotifAllow} onSkip={handleNotifSkip} />}
@@ -224,7 +209,6 @@ const AuthenticatedApp = () => {
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </>
-    </MaintenanceFeeGate>
   );
 };
 
