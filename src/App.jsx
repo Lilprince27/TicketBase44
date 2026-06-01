@@ -12,15 +12,16 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Layout from './components/Layout';
 import InstallPrompt from './components/InstallPrompt';
+import MaintenanceFeeGate from './components/MaintenanceFeeGate';
 import NameSetupModal from './components/onboarding/NameSetupModal';
 import NotificationPermissionModal from './components/onboarding/NotificationPermissionModal';
 import AdminNotificationBanner from './components/notifications/AdminNotificationBanner';
 import EventsPage from './pages/EventsPage';
 import AccountPage from './pages/AccountPage.jsx';
-import TicketsPage from './pages/TicketsPage';
+import TicketsPage from './pages/TicketsPage.jsx';
 import TicketDetailPage from './pages/TicketDetailPage.jsx';
 import CreateTicketPage from './pages/CreateTicketPage';
-import SubscriptionPage from './pages/SubscriptionPage';
+import SubscriptionPage from './pages/SubscriptionPage.jsx';
 import ProfilePage from './pages/ProfilePage';
 
 const AuthenticatedApp = () => {
@@ -64,7 +65,7 @@ const AuthenticatedApp = () => {
         }
         // Check subscription expiry
         const subs = await base44.entities.Subscription.filter({ user_email: me.email, status: 'active' });
-        const activeSub = subs.find(s => s.duration === 'lifetime' || new Date(s.end_date) > new Date());
+        const activeSub = subs.find(s => new Date(s.end_date) > new Date());
         if (!activeSub) {
           // Check if they ever had a subscription (expired)
           const allSubs = await base44.entities.Subscription.filter({ user_email: me.email });
@@ -190,6 +191,7 @@ const AuthenticatedApp = () => {
   };
 
   return (
+    <MaintenanceFeeGate userEmail={authUser?.email}>
     <>
     {showNameSetup && <NameSetupModal onComplete={handleNameSetup} />}
     {showNotifPrompt && !showNameSetup && <NotificationPermissionModal onAllow={handleNotifAllow} onSkip={handleNotifSkip} />}
@@ -209,6 +211,7 @@ const AuthenticatedApp = () => {
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </>
+    </MaintenanceFeeGate>
   );
 };
 
