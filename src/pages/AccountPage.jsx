@@ -1,162 +1,103 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-
-const menuItems = [
-  {
-    label: "Your Profile",
-    path: "/profile",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" strokeWidth="1.8">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-        <circle cx="12" cy="7" r="4"/>
-      </svg>
-    ),
-  },
-  {
-    label: "Your Tickets",
-    path: "/tickets",
-    icon: (
-      <svg width="22" height="16" viewBox="0 0 24 16" fill="#8e8e93">
-        <rect x="0" y="0" width="24" height="16" rx="0"/>
-        <circle cx="0" cy="8" r="4" fill="white"/>
-        <circle cx="24" cy="8" r="4" fill="white"/>
-      </svg>
-    ),
-  },
-  {
-    label: "Your Subscriptions",
-    path: "/subscriptions",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" strokeWidth="1.8">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-      </svg>
-    ),
-  },
-  {
-    label: "Terms & Conditions",
-    path: "#",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" strokeWidth="1.8">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-        <line x1="16" y1="13" x2="8" y2="13"/>
-        <line x1="16" y1="17" x2="8" y2="17"/>
-        <polyline points="10 9 9 9 8 9"/>
-      </svg>
-    ),
-  },
-  {
-    label: "Privacy Policy",
-    path: "#",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" strokeWidth="1.8">
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-      </svg>
-    ),
-  },
-  {
-    label: "Help",
-    path: "#",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" strokeWidth="1.8">
-        <circle cx="12" cy="12" r="10"/>
-        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-        <line x1="12" y1="17" x2="12.01" y2="17"/>
-      </svg>
-    ),
-  },
-  {
-    label: "Delete account",
-    path: "#",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8e8e93" strokeWidth="1.8">
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
-      </svg>
-    ),
-  },
-];
+import OrderHistorySheet from "../components/tickets/OrderHistorySheet";
 
 export default function AccountPage() {
   const [user, setUser] = useState(null);
+  const [showTickets, setShowTickets] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    base44.auth.me().then(setUser);
-  }, []);
+  useEffect(() => { base44.auth.me().then(setUser); }, []);
 
-  const displayName = user?.display_name || user?.full_name || "there";
-  const firstName = displayName.split(" ")[0];
+  const firstName = (user?.display_name || user?.full_name || "there").split(" ")[0];
+  const customerId = user?.id ? String(user.id).slice(0, 7) : "...";
+
+  const menuItems = [
+    {
+      label: "Your Profile",
+      onClick: () => navigate("/profile"),
+      icon: <svg viewBox="0 0 24 24" fill="none" width="26" height="26"><path d="M19.5 19.5C19.5 16.5 17 14 12 14C7 14 4.5 16.5 4.5 19.5C4.5 20.3 5.2 21 6 21H18C18.8 21 19.5 20.3 19.5 19.5Z" stroke="#8e8e8e" strokeWidth="1.2" strokeLinejoin="round"/><circle cx="12" cy="11.5" r="4" fill="#ffffff" stroke="#8e8e8e" strokeWidth="1.2"/></svg>,
+    },
+    {
+      label: "Your Tickets",
+      onClick: () => setShowTickets(true),
+      icon: <svg viewBox="0 0 24 24" fill="none" width="26" height="26"><g transform="rotate(-45 12 12)"><path d="M 2 7 H 22 V 10.5 C 20.6 10.5 19.5 11.2 19.5 12 C 19.5 12.8 20.6 13.5 22 13.5 V 17 H 2 V 13.5 C 3.4 13.5 4.5 12.8 4.5 12 C 4.5 11.2 3.4 10.5 2 10.5 Z" stroke="#8e8e8e" strokeWidth="1" strokeLinejoin="miter"/></g></svg>,
+    },
+    {
+      label: "Your Subscriptions",
+      onClick: () => navigate("/subscriptions"),
+      icon: <svg viewBox="0 0 24 24" fill="none" width="26" height="26"><path d="M20 3H3V17H15.5L20 20.5V3ZM19 4V18.3L15.9 16H4V4H19Z" fill="#8e8e8e"/><rect x="6.5" y="7.5" width="10" height="1" fill="#8e8e8e"/><rect x="6.5" y="11.5" width="10" height="1" fill="#8e8e8e"/></svg>,
+    },
+    {
+      label: "Terms & Conditions",
+      onClick: () => {},
+      icon: <svg viewBox="0 0 24 24" fill="none" width="26" height="26"><path d="M20 2H4V22H12.5V21H5V3H19V12.5H20V2Z" fill="#8e8e8e"/><rect x="6.5" y="6.5" width="7" height="1" fill="#8e8e8e"/><rect x="6.5" y="10.5" width="10" height="1" fill="#8e8e8e"/><rect x="6.5" y="14.5" width="5" height="1" fill="#8e8e8e"/><path d="M12.5 17.5L13.2 16.8L15.5 19.1L21.3 13.3L22 14L15.5 20.5L12.5 17.5Z" fill="#8e8e8e"/></svg>,
+    },
+    {
+      label: "Privacy Policy",
+      onClick: () => {},
+      icon: <svg viewBox="0 0 24 24" fill="none" width="26" height="26"><path d="M7 10V7C7 4.24 9.24 2 12 2C14.76 2 17 4.24 17 7V10" stroke="#b0b0b0" strokeWidth="0.8" strokeLinecap="round"/><rect x="4" y="10" width="16" height="12" rx="2" stroke="#b0b0b0" strokeWidth="0.8"/><path d="M12 13.5C12.55 13.5 13 13.05 13 12.5C13 11.95 12.55 11.5 12 11.5C11.45 11.5 11 11.95 11 12.5C11 13.05 11.45 13.5 12 13.5ZM12 13.5V16.5" stroke="#b0b0b0" strokeWidth="0.8" strokeLinecap="round"/></svg>,
+    },
+    {
+      label: "Help",
+      onClick: () => navigate("/profile"),
+      icon: <svg viewBox="0 0 24 24" fill="none" width="26" height="26"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" stroke="#b0b0b0" strokeWidth="1.5" strokeLinejoin="round"/></svg>,
+    },
+    {
+      label: "Delete account",
+      onClick: () => {},
+      icon: <svg viewBox="0 0 100 100" width="26" height="26"><circle cx="50" cy="50" r="40" stroke="#b0b0b0" strokeWidth="12" fill="none"/><line x1="21.7" y1="21.7" x2="78.3" y2="78.3" stroke="#b0b0b0" strokeWidth="12" strokeLinecap="butt"/></svg>,
+    },
+  ];
 
   return (
-    <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', Helvetica, Arial, sans-serif", background: "#fff", minHeight: "100vh", maxWidth: 414, margin: "0 auto", display: "flex", flexDirection: "column" }}>
+    <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif", background: "#fff", minHeight: "100vh", maxWidth: 600, margin: "0 auto" }}>
       {/* Sticky header */}
-      <header style={{
-        background: "#ffffff",
-        position: "sticky",
-        top: 0,
-        zIndex: 1000,
-        paddingTop: "calc(env(safe-area-inset-top, 20px) + 8px)",
-        paddingBottom: 15,
-        textAlign: "center",
-        borderBottom: "none",
-      }}>
-        <div style={{ fontSize: 19, fontWeight: 800, letterSpacing: "-0.5px" }}>Your Account</div>
-        <div style={{ fontSize: 13.5, color: "#333", marginTop: 3 }}>
-          Customer ID: {user?.id ? String(user.id).slice(0, 7) : "..."}
+      <div style={{ position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 100 }}>
+        <div style={{ height: 48 }} />
+        <div style={{ textAlign: "center", paddingBottom: 4 }}>
+          <h1 style={{ fontSize: 21, fontWeight: 500, color: "#000", letterSpacing: "-0.2px", margin: 0 }}>Your Account</h1>
+          <div style={{ fontSize: 13.5, color: "#555", marginTop: 5 }}>Customer ID: {customerId}</div>
         </div>
-      </header>
+      </div>
 
-      {/* Content */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "30px 20px 160px 20px" }}>
+      <div style={{ padding: "0 24px 160px 24px" }}>
         {/* Welcome */}
-        <div style={{ marginBottom: 35 }}>
-          <h1 style={{ fontSize: 28, fontWeight: 500, color: "#2c2c2e", margin: 0 }}>Hi {firstName}</h1>
-          <p style={{ fontSize: 18, color: "#3a3a3c", marginTop: 5, marginBottom: 0 }}>Welcome.</p>
+        <div style={{ padding: "36px 0 16px" }}>
+          <h2 style={{ fontSize: 26, fontWeight: 500, color: "#333", marginBottom: 12 }}>Hi {firstName}</h2>
+          <p style={{ fontSize: 17, color: "#555", fontWeight: 400 }}>Welcome.</p>
         </div>
 
         {/* Menu */}
-        <div style={{ borderTop: "1px solid #f2f2f7" }}>
+        <nav style={{ marginTop: 12 }}>
           {menuItems.map((item, i) => (
-            <Link
-              key={i}
-              to={item.path}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                padding: "20px 0",
-                borderBottom: "1px solid #f2f2f7",
-                textDecoration: "none",
-                color: "#005689",
-              }}
-            >
-              <div style={{ width: 38, display: "flex", alignItems: "center", flexShrink: 0 }}>
-                {item.icon}
+            <button key={i} onClick={item.onClick}
+              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 0", borderBottom: "1px solid #eef0f2", width: "100%", background: "none", border: "none", borderBottom: "1px solid #eef0f2", cursor: "pointer", textAlign: "left" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+                <div style={{ width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center" }}>{item.icon}</div>
+                <span style={{ fontSize: 17, color: "#2c5270", fontWeight: 400 }}>{item.label}</span>
               </div>
-              <div style={{ flex: 1, fontSize: 18, fontWeight: 400 }}>{item.label}</div>
-              <svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="#c7c7cc" strokeWidth="2">
-                <polyline points="1 1 7 7 1 13"/>
-              </svg>
-            </Link>
+              <span style={{ color: "#b3b3b3", fontSize: 15 }}>❯</span>
+            </button>
           ))}
-        </div>
+        </nav>
 
         {/* Footer */}
-        <div style={{ marginTop: 30 }}>
-          <button
-            onClick={() => base44.auth.logout()}
-            style={{ color: "#005689", fontSize: 17, fontWeight: 500, background: "none", border: "none", cursor: "pointer", padding: 0 }}
-          >
+        <div style={{ padding: "40px 0", position: "relative" }}>
+          <button onClick={() => base44.auth.logout()}
+            style={{ fontSize: 16, color: "#2c5270", fontWeight: 500, background: "none", border: "none", cursor: "pointer", padding: 0, marginBottom: 24 }}>
             Sign out
           </button>
-          <div style={{ textAlign: "right", color: "#8e8e93", fontSize: 13, margin: "25px 0 15px" }}>Version 3.2.7</div>
-          <a href="#" style={{ display: "block", textAlign: "center", color: "#005689", fontSize: 15, fontWeight: 600, textDecoration: "none" }}>
-            Cookie &amp; Performance Monitoring Consent
-          </a>
+          <div style={{ fontSize: 14, color: "#888", position: "absolute", right: 0, top: 40 }}>Version 3.2.7</div>
+          <div style={{ width: "100%", textAlign: "center", marginTop: 12 }}>
+            <a href="#" style={{ fontSize: 14, color: "#2c5270", textDecoration: "none", fontWeight: 500 }}>Cookie &amp; Performance Monitoring Consent</a>
+          </div>
         </div>
       </div>
+
+      {/* Order History Bottom Sheet */}
+      {showTickets && <OrderHistorySheet user={user} onClose={() => setShowTickets(false)} />}
     </div>
   );
 }

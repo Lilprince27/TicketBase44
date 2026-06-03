@@ -3,6 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import EventDetailModal from "../components/events/EventDetailModal";
 
+const isAndroid = () => /android/i.test(navigator.userAgent);
+
+const STATIC_EVENTS = [
+  { id: "s1", title: "Coldplay – Music Of The Spheres World Tour", image: "https://i.ibb.co/k6VJn1kT/IMG-9441.jpg", date: "Sat 7 Nov 2026 · ANZ Stadium", venue: "ANZ Stadium, Sydney" },
+  { id: "s2", title: "Taylor Swift – The Eras Tour", image: "https://i.ibb.co/7NNb9dgx/IMG-9442.png", date: "Fri 13 Feb 2026 · Accor Stadium", venue: "Accor Stadium, Sydney" },
+  { id: "s3", title: "Ed Sheeran – Mathematics Tour", image: "https://i.ibb.co/GQBkg3NN/IMG-9443.jpg", date: "Sat 21 Mar 2026 · Marvel Stadium", venue: "Marvel Stadium, Melbourne" },
+  { id: "s4", title: "Drake – It's All A Blur Tour", image: "https://i.ibb.co/twXCwCWq/IMG-9444.jpg", date: "Thu 5 Apr 2026 · Rod Laver Arena", venue: "Rod Laver Arena, Melbourne" },
+  { id: "s5", title: "Beyoncé – Renaissance World Tour", image: "https://i.ibb.co/gbmzpbtw/IMG-9445.png", date: "Sun 14 Jun 2026 · Suncorp Stadium", venue: "Suncorp Stadium, Brisbane" },
+  { id: "s6", title: "Harry Styles – Love On Tour", image: "https://i.ibb.co/MDtFRQM7/IMG-9446.jpg", date: "Tue 19 May 2026 · Qudos Bank Arena", venue: "Qudos Bank Arena, Sydney" },
+  { id: "s7", title: "The Weeknd – After Hours til Dawn", image: "https://i.ibb.co/rX6zkpr/IMG-9447.jpg", date: "Sat 28 Aug 2026 · RAC Arena", venue: "RAC Arena, Perth" },
+  { id: "s8", title: "Billie Eilish – Hit Me Hard and Soft Tour", image: "https://i.ibb.co/vCDgT8XK/IMG-9448.jpg", date: "Fri 9 Oct 2026 · Entertainment Centre", venue: "Brisbane Entertainment Centre" },
+];
+
 const API_TOKEN = "D6akDmpY5sb17Flq3g3fCrbM7sFGrQODkbcwY-ky";
 const BASE_URL = "https://api.predicthq.com/v1/events/";
 
@@ -219,6 +232,29 @@ export default function EventsPage() {
           })}
         </div>
       </header>
+
+      {/* Static Ticketek Featured Cards */}
+      <div className="pb-2">
+        <div className="px-4 pt-4 pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">Featured Events</div>
+        <div className="flex overflow-x-auto gap-3 px-4 pb-3 scrollbar-hide" style={{ scrollbarWidth: "none" }}>
+          {STATIC_EVENTS.map(ev => (
+            <div key={ev.id} className="flex-shrink-0 cursor-pointer rounded-xl overflow-hidden shadow-sm border border-gray-100"
+              style={{ width: 220 }}
+              onClick={() => navigate(`/create-ticket?event_name=${encodeURIComponent(ev.title)}&venue_name=${encodeURIComponent(ev.venue)}&event_date=${encodeURIComponent(ev.date)}&event_image_url=${encodeURIComponent(ev.image)}`)}>
+              <div style={{ width: "100%", height: 120, overflow: "hidden", position: "relative" }}>
+                <img src={ev.image} alt={ev.title} style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  onError={e => { e.target.src = PLACEHOLDER_IMGS.default; }} />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%)" }} />
+              </div>
+              <div style={{ padding: "10px 12px", backgroundColor: "white" }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: "#111", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ev.title}</div>
+                <div style={{ fontSize: 11, color: "#666", marginTop: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ev.date}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{ height: 1, backgroundColor: "#f0f0f0", margin: "0 0 4px" }} />
+      </div>
 
       {/* Events list */}
       <div className="pb-24">

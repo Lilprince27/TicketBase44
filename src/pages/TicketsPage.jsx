@@ -5,6 +5,8 @@ import AppleWalletModal from "../components/tickets/AppleWalletModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronUp, ChevronDown } from "lucide-react";
 
+const isAndroid = () => /android/i.test(navigator.userAgent);
+
 function TicketGroup({ group, onWallet }) {
   const [expanded, setExpanded] = useState(true);
   const navigate = useNavigate();
@@ -87,13 +89,21 @@ function TicketGroup({ group, onWallet }) {
                     {ticket.ticket_type || "General Admission"} · Admit 1
                   </p>
                   <div style={{ borderTop: "1.5px dotted #ddd", margin: "15px 0" }} />
-                  <button
-                    onClick={() => onWallet(ticket)}
-                    style={{ width: "100%", padding: "14px", borderRadius: 4, border: "none", fontWeight: 700, fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, background: "#000", color: "white", cursor: "pointer", marginBottom: 10 }}
-                  >
-                    <img src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/f6963ff4b_IMG_7127.jpeg" alt="Wallet" style={{ width: 30, height: "auto", objectFit: "contain" }} />
-                    Add to Apple Wallet
-                  </button>
+                  {isAndroid() ? (
+                    <button onClick={() => onWallet(ticket)}
+                      style={{ width: "100%", padding: "12px 24px", borderRadius: 8, border: "none", fontWeight: 700, fontSize: 18, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#000", color: "white", cursor: "pointer", marginBottom: 10, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
+                    >
+                      <img src="https://www.image2url.com/r2/default/images/1779671280742-1ae995e2-3a65-482a-9305-9de9fedcb5da.jpeg" alt="Google Wallet" style={{ width: 32, height: 32, marginRight: 14, objectFit: "contain" }} />
+                      Add to Google Wallet
+                    </button>
+                  ) : (
+                    <button onClick={() => onWallet(ticket)}
+                      style={{ width: "100%", padding: "14px", borderRadius: 4, border: "none", fontWeight: 700, fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, background: "#000", color: "white", cursor: "pointer", marginBottom: 10 }}
+                    >
+                      <img src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/f6963ff4b_IMG_7127.jpeg" alt="Wallet" style={{ width: 30, height: "auto", objectFit: "contain" }} />
+                      Add to Apple Wallet
+                    </button>
+                  )}
                   <button
                     onClick={() => navigate(`/ticket-detail/${ticket.id}`)}
                     style={{ width: "100%", padding: "14px", borderRadius: 4, border: "none", fontWeight: 700, fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", background: "#427926", color: "white", cursor: "pointer" }}

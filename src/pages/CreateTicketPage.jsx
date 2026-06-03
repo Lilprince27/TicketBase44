@@ -89,79 +89,8 @@ export default function CreateTicketPage() {
   };
 
   const sendConfirmationEmail = async (ticket, me, orderNumber) => {
-    const emailHtml = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ticketek Purchase Confirmation</title>
-</head>
-<body style="margin:0;padding:0;background-color:#ffffff;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
-<table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td align="center">
-<table border="0" cellpadding="0" cellspacing="0" width="600" style="max-width:600px;width:100%;">
-  <tr><td bgcolor="#333333" style="padding:8px 15px;">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-      <td align="left" style="color:#fff;font-size:11px;font-family:Arial,sans-serif;">Ticketek purchase confirmation<br/><a href="#" style="color:#fff;text-decoration:underline;">Add to safe list</a> | <a href="#" style="color:#fff;text-decoration:underline;">Order History</a></td>
-      <td align="right" style="color:#fff;font-size:11px;font-family:Arial,sans-serif;">Follow us on <img src="https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png" width="18" height="18" style="display:inline-block;vertical-align:middle;margin-left:4px;" /> <img src="https://img.icons8.com/ios-filled/50/ffffff/twitter.png" width="18" height="18" style="display:inline-block;vertical-align:middle;margin-left:4px;" /></td>
-    </tr></table>
-  </td></tr>
-  <tr><td bgcolor="#002142" style="padding:15px 20px;">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-      <td align="left" valign="middle"><table border="0" cellpadding="0" cellspacing="0"><tr>
-        <td style="padding-right:8px;"><img src="https://image2url.com/r2/default/images/1775950793367-1b297377-3a0d-4320-985a-ef09fa17d83a.jpeg" width="30" alt="Logo" /></td>
-        <td style="color:#fff;font-size:28px;font-weight:900;letter-spacing:-1px;font-family:Arial Black,sans-serif;">TICKETEK</td>
-      </tr></table></td>
-      <td align="right" valign="middle" style="color:#fff;font-size:18px;font-weight:bold;font-family:Arial,sans-serif;">Purchase Confirmation</td>
-    </tr></table>
-  </td></tr>
-  <tr><td bgcolor="#ffffff" style="padding:30px 20px;">
-    <h2 style="font-size:18px;font-weight:bold;margin:0 0 15px 0;color:#000;font-family:Arial,sans-serif;">THANK YOU FOR YOUR ORDER</h2>
-    <div style="font-size:13px;color:#333;margin-bottom:20px;">Customer ID: ${orderNumber}</div>
-    <p style="font-size:13px;line-height:1.6;color:#000;margin-bottom:25px;">Hi ${me.full_name || me.email},<br/><br/>Now you've bought your tickets please make sure you read this email as it contains <u>important information</u> about how to access your tickets and tips to ensure you have a great event day.</p>
-    <div style="border-bottom:2px solid #000;font-weight:bold;font-size:15px;padding-bottom:5px;margin-bottom:15px;color:#000;">YOUR TICKETS</div>
-    <div style="font-size:14px;margin-bottom:10px;line-height:1.4;">
-      <strong>${ticket.event_name}</strong><br/>
-      ${ticket.event_date}<br/>
-      ${ticket.venue_name}
-    </div>
-    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size:13px;font-family:Arial,sans-serif;border-top:1px solid #ddd;padding-top:10px;margin-top:15px;">
-      <tr><td style="padding:5px 0;color:#000;">Section:</td><td align="right" style="padding:5px 0;color:#000;">${ticket.section_bay || "-"}</td></tr>
-      <tr><td style="padding:5px 0;color:#000;">Seat:</td><td align="right" style="padding:5px 0;color:#000;">${ticket.seat_number} Admit: 1</td></tr>
-    </table>
-    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="font-size:13px;font-family:Arial,sans-serif;margin-top:15px;">
-      <tr><td style="padding:5px 0;border-top:1px solid #ddd;">Order No.</td><td align="right" style="padding:5px 0;border-top:1px solid #ddd;">${orderNumber}</td></tr>
-      <tr><td style="padding:5px 0;">Ticket/item price</td><td align="right" style="padding:5px 0;">${emailPricing.ticket_item_price}</td></tr>
-      <tr><td style="padding:5px 0;">Sub-total</td><td align="right" style="padding:5px 0;">${emailPricing.sub_total}</td></tr>
-      <tr><td style="padding:5px 0;">Refundable Ticket Fee</td><td align="right" style="padding:5px 0;">${emailPricing.refundable_fee}</td></tr>
-      <tr><td style="padding:5px 0;">Service and Handling Fee</td><td align="right" style="padding:5px 0;">${emailPricing.service_fee}</td></tr>
-      <tr><td style="padding:15px 0;font-size:16px;font-weight:bold;border-top:2px solid #000;">TOTAL</td><td align="right" style="padding:15px 0;font-size:16px;font-weight:bold;border-top:2px solid #000;">${emailPricing.total}</td></tr>
-    </table>
-    <div style="font-size:11px;color:#555;margin-top:5px;">*All ticket prices include GST and are quoted in $AUD.</div>
-    <div style="border-bottom:2px solid #000;font-weight:bold;font-size:15px;padding-bottom:5px;margin:35px 0 15px 0;color:#000;">IMPORTANT TICKET ACCESS INFORMATION</div>
-    <div style="font-size:13px;line-height:1.6;color:#000;">
-      <p>The following Mobile Ticket for ${ticket.event_name} has been delivered:</p>
-      <ul style="padding-left:15px;"><li>${me.full_name || me.email}: <a href="#" style="color:#007bff;text-decoration:none;">https://ticketek.mobi/?id=${orderNumber}</a></li></ul>
-      <p><strong>FOR EASY ENTRY TO THE VENUE:</strong></p>
-      <ul style="padding-left:15px;">
-        <li>OPEN THE SMS AND DOWNLOAD YOUR TICKET NOW</li>
-        <li>Have the ticket ready for scanning before you reach the entrance.</li>
-        <li>Turn the brightness up on your phone, this helps scanning.</li>
-      </ul>
-    </div>
-  </td></tr>
-  <tr><td bgcolor="#001226" style="padding:15px 20px;">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%"><tr>
-      <td align="left" style="color:#fff;font-size:13px;font-weight:bold;font-family:Arial,sans-serif;">FOLLOW US ON <img src="https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png" width="18" height="18" style="display:inline-block;vertical-align:middle;margin-left:4px;" /></td>
-      <td align="right" style="color:#fff;font-size:13px;font-weight:bold;font-family:Arial,sans-serif;">DOWNLOAD OUR APP <img src="https://img.icons8.com/ios-filled/50/ffffff/apple-logo.png" width="20" height="20" style="display:inline-block;vertical-align:middle;margin-left:6px;" /></td>
-    </tr></table>
-  </td></tr>
-  <tr><td bgcolor="#f8f8f8" style="padding:20px;text-align:left;">
-    <div style="font-size:12px;color:#007bff;margin-bottom:15px;"><a href="#" style="color:#007bff;text-decoration:none;">Update your details</a> | <a href="#" style="color:#007bff;text-decoration:none;">FAQs</a> | <a href="#" style="color:#007bff;text-decoration:none;">Privacy policy</a></div>
-    <div style="font-size:11px;color:#999;line-height:1.4;">You have received this email because our records show that you have opted in.</div>
-  </td></tr>
-</table>
-</td></tr></table>
-</body></html>`;
+    const firstName = (me.full_name || me.email || "").split(" ")[0].toUpperCase();
+    const emailHtml = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Ticketek Purchase Confirmation</title><style>body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background-color:#f4f4f4;margin:0;padding:0;color:#333}.email-container{max-width:600px;margin:0 auto;background:#fff;border-top:4px solid #001c3d}.pre-header{background:#333;color:#fff;padding:10px 20px;font-size:11px;display:flex;justify-content:space-between;align-items:center}.pre-header a{color:#fff;text-decoration:underline}.header{background:#001c3d;padding:15px 20px;display:flex;justify-content:space-between;align-items:center}.header-title{color:#fff;font-size:20px;font-weight:bold}.content{padding:30px 20px}h1{font-size:22px;font-weight:800;margin:0 0 5px;color:#000}.customer-id{font-size:14px;color:#333;margin-bottom:25px}.section-title{font-size:16px;font-weight:bold;text-transform:uppercase;border-bottom:2px solid #000;padding-bottom:5px;margin-bottom:15px;letter-spacing:.5px}.event-name{font-size:16px;font-weight:bold;margin-bottom:4px}.btn-sync{display:inline-flex;align-items:center;background:#72be44;color:#fff;text-decoration:none;padding:10px 16px;font-size:18px;font-weight:bold;border-radius:2px;margin-bottom:12px}.btn-accommodation{display:block;width:fit-content;border:1px solid #e0e0e0;background:#fff;color:#1a4768;text-decoration:none;padding:12px 16px;font-size:18px;font-weight:bold;border-radius:2px}.ticket-info-table{width:100%;border-collapse:collapse;margin-top:15px;font-size:14px}.ticket-info-table td{padding:6px 0}.text-right{text-align:right}.total-row{font-size:18px;font-weight:bold}.currency-note{font-size:11px;color:#666;margin-top:15px;margin-bottom:35px;font-style:italic}.ticket-link{color:#0066cc;text-decoration:none}.footer-banner{background:#001c3d;color:#fff;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:bold}.footer-links{padding:20px;font-size:12px}.footer-links a{color:#0066cc;text-decoration:none;margin-right:10px}.footer-opt-out{padding:0 20px 30px;font-size:11px;color:#777;line-height:1.4}</style></head><body><div class="email-container"><div class="pre-header"><div>Ticketek purchase confirmation | <a href="#">Add to safe list</a><br><a href="#" style="display:inline-block;margin-top:5px;">Order History</a></div></div><div class="header"><div><img src="https://www.image2url.com/r2/default/images/1779673478892-f839a7fa-bba5-43ed-af37-b6b897c99090.png" alt="Ticketek Logo" height="35"/></div><div class="header-title">Purchase Confirmation</div></div><div class="content"><h1>THANK YOU FOR YOUR ORDER</h1><div class="customer-id">Customer ID: ${orderNumber}</div><div style="font-size:15px;font-weight:bold;margin-bottom:15px;">Hi ${firstName},</div><div style="font-size:14px;line-height:1.5;margin-bottom:30px;">Now you've bought your tickets please make sure you read this email as it contains <a href="#" style="color:#333;text-decoration:underline;">important information</a> about how to access your tickets and tips to ensure you have a great event day.</div><div class="section-title">Your Tickets</div><div style="margin-bottom:20px;"><div class="event-name">${ticket.event_name}</div><div style="font-size:14px;margin-bottom:4px;">${ticket.event_date}</div><div style="font-size:14px;color:#333;">${ticket.venue_name}</div></div><div style="margin:20px 0 35px 0;"><a href="#" class="btn-sync"><svg viewBox="0 0 24 24" width="18" height="18" fill="#fff" style="margin-right:8px;"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"/></svg>Sync to Calendar</a><br><a href="#" class="btn-accommodation" style="margin-top:12px;">Find accommodation nearby</a></div><table class="ticket-info-table"><tr><td>Section:</td><td class="text-right">${ticket.section_bay || "-"}</td></tr><tr style="border-bottom:1px solid #e0e0e0;"><td style="padding-bottom:12px;">Seat:</td><td class="text-right" style="padding-bottom:12px;">${ticket.seat_number} Admit: 1</td></tr><tr style="height:10px;"><td></td><td></td></tr><tr><td>Order No.</td><td class="text-right">${orderNumber}</td></tr><tr><td>Ticket/item price</td><td class="text-right">${emailPricing.ticket_item_price}</td></tr><tr><td>Sub-total</td><td class="text-right">${emailPricing.sub_total}</td></tr><tr><td>Refundable Ticket Fee</td><td class="text-right">${emailPricing.refundable_fee}</td></tr><tr><td>Service and Handling Fee</td><td class="text-right">${emailPricing.service_fee}</td></tr><tr class="total-row" style="border-top:2px solid #000;"><td style="padding-top:12px;">TOTAL</td><td class="text-right" style="padding-top:12px;">${emailPricing.total}</td></tr></table><div class="currency-note">*All ticket prices include GST and are quoted in $AUD.</div><div class="section-title">Important Ticket Access Information</div><div style="font-size:14px;line-height:1.5;margin-bottom:15px;">The following Mobile Ticket for ${ticket.event_name} has been delivered:</div><ul style="padding-left:20px;margin-bottom:25px;"><li style="font-size:14px;margin-bottom:12px;">${me.full_name || me.email}: <a href="https://ticketek.mobi/?id=${orderNumber}" class="ticket-link">https://ticketek.mobi/?id=${orderNumber}</a></li></ul><div style="font-size:13px;font-weight:bold;color:#555;margin-bottom:15px;">FOR EASY ENTRY TO THE VENUE:</div><ul style="list-style:none;padding-left:0;margin-bottom:30px;"><li style="font-size:13px;color:#666;margin-bottom:10px;padding-left:15px;position:relative;">• OPEN THE SMS AND DOWNLOAD YOUR TICKET NOW</li><li style="font-size:13px;color:#666;margin-bottom:10px;padding-left:15px;position:relative;">• Have the ticket ready for scanning before you reach the entrance.</li><li style="font-size:13px;color:#666;margin-bottom:10px;padding-left:15px;position:relative;">• Turn the brightness up on your phone, this helps scanning.</li></ul></div><div class="footer-banner"><a href="#" style="color:#fff;text-decoration:none;">FOLLOW US ON <span style="margin-left:5px;background:#fff;color:#001c3d;padding:0 6px;border-radius:50%;font-size:11px;">f</span></a><a href="#" style="color:#fff;text-decoration:none;">DOWNLOAD OUR APP <span style="margin-left:5px;border:1px solid #fff;padding:0 4px;font-size:11px;">?</span></a></div><div class="footer-links"><a href="#">Update your details</a> | <a href="#">FAQs</a> | <a href="#">Privacy policy</a></div><div class="footer-opt-out">You have received this email because our records show that you have opted in.</div></div></body></html>`;
 
     await base44.integrations.Core.SendEmail({
       to: recipientEmail.trim() || me.email,

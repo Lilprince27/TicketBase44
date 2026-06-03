@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import AppleWalletModal from "../components/tickets/AppleWalletModal";
+import ShareModal from "../components/tickets/ShareModal";
+
+const isAndroid = () => /android/i.test(navigator.userAgent);
 
 export default function TicketDetailPage() {
   const { id } = useParams();
@@ -10,10 +13,13 @@ export default function TicketDetailPage() {
   const [loading, setLoading] = useState(true);
   const [showWallet, setShowWallet] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [shareContact, setShareContact] = useState("");
-  const [shareName, setShareName] = useState("");
-  const [sharing, setSharing] = useState(false);
-  const [shareResult, setShareResult] = useState(null);
+  const [hideSettings, setHideSettings] = useState({});
+
+  useEffect(() => {
+    base44.entities.HideSettings.list().then(list => {
+      if (list.length > 0) setHideSettings(list[0]);
+    }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!id || id === ':id') { setLoading(false); return; }
@@ -33,6 +39,8 @@ export default function TicketDetailPage() {
     );
   }
 
+  if (showShareModal) return <ShareModal ticket={ticket || {}} onClose={() => setShowShareModal(false)} />;
+
   if (!ticket) {
     return (
       <div className="flex items-center justify-center h-screen text-gray-500">
@@ -42,80 +50,6 @@ export default function TicketDetailPage() {
   }
 
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${ticket.serial_number}`;
-
-  const handleShareTicket = async () => {
-    if (!shareContact.trim() || !shareName.trim()) return;
-    setSharing(true);
-    const me = await base44.auth.me().catch(() => null);
-    const senderName = me?.full_name || me?.email || "Someone";
-    const emailHtml = `<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f7f9; margin: 0; padding: 0; }
-        .wrapper { max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #e1e8ed; }
-        .header img { width: 100%; height: auto; display: block; }
-        .content { padding: 35px; color: #1a1a1b; line-height: 1.6; }
-        .headline { font-size: 22px; font-weight: 800; color: #05162a; margin-bottom: 10px; }
-        .event-card { background-color: #f8fafc; border: 1px solid #edf2f7; border-left: 5px solid #00aced; padding: 20px; margin: 25px 0; border-radius: 4px; }
-        .event-name { font-size: 19px; font-weight: 800; color: #05162a; margin-bottom: 8px; text-transform: uppercase; }
-        .event-meta { font-size: 14px; color: #4a5568; }
-        .cta-container { text-align: center; margin: 35px 0; }
-        .accept-button { background-color: #00aced; color: #ffffff; padding: 18px 45px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 16px; display: inline-block; }
-        .expiry-alert { font-size: 13px; color: #c53030; background-color: #fff5f5; border: 1px solid #feb2b2; padding: 12px; border-radius: 6px; text-align: center; margin-top: 20px; }
-        .footer { background-color: #f4f7f9; padding: 25px; text-align: center; font-size: 12px; color: #718096; border-top: 1px solid #e2e8f0; }
-        .footer-links a { color: #00aced; text-decoration: none; margin: 0 5px; }
-    </style>
-</head>
-<body>
-    <div class="wrapper">
-        <div class="header"><img src="https://www.image2url.com/r2/default/images/1777756287942-dbc8bdd0-7c09-4eac-accf-60a99708c6e1.jpeg" alt="Ticketek Header" /></div>
-        <div class="content">
-            <div class="headline">Great news! You've got tickets.</div>
-            <p>Hi ${shareName},</p>
-            <p><strong>${senderName}</strong> has just transferred <strong>1</strong> mobile ticket(s) to you for your upcoming event.</p>
-            <div class="event-card">
-                <div class="event-name">${ticket.event_name}</div>
-                <div class="event-meta">
-                    <strong>Date:</strong> ${ticket.event_date}<br>
-                    <strong>Venue:</strong> ${ticket.venue_name}<br>
-                    <strong>Section:</strong> ${ticket.section_bay || "-"}, <strong>Row:</strong> ${ticket.row || "-"}
-                </div>
-            </div>
-            <p>To claim these tickets and add them to your digital wallet, please click the button below.</p>
-            <div class="cta-container"><a href="https://ticketek.mobi" class="accept-button">ACCEPT TICKETS</a></div>
-            <div class="expiry-alert"><strong>Hurry!</strong> This transfer offer expires in <strong>48 hours</strong>.</div>
-        </div>
-        <div class="footer">
-            Ticketek Pty Ltd | Level 3, 175 Liverpool St, Sydney NSW 2000<br>
-            This is an automated message. Please do not reply to this email.
-            <div class="footer-links"><a href="#">Help Centre</a> | <a href="#">Terms of Use</a> | <a href="#">Privacy Policy</a></div>
-        </div>
-    </div>
-</body>
-</html>`;
-
-    try {
-      await base44.integrations.Core.SendEmail({
-        to: shareContact.trim(),
-        subject: `Action Required: ${senderName} shared 1 ticket(s) with you for ${ticket.event_name}`,
-        body: emailHtml,
-      });
-      setShareResult("success");
-      setTimeout(() => {
-        setShowShareModal(false);
-        setShareContact("");
-        setShareName("");
-        setShareResult(null);
-      }, 1500);
-    } catch (e) {
-      setShareResult("error");
-    } finally {
-      setSharing(false);
-    }
-  };
 
   return (
     <div style={{ margin: "0 auto", backgroundColor: "#f2f2f2", minHeight: "100vh", fontFamily: "-apple-system, system-ui, sans-serif", color: "#000", maxWidth: 500 }}>
@@ -168,8 +102,8 @@ export default function TicketDetailPage() {
             /* Unlocked — normal layout */
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 25px" }}>
               <div style={{ fontSize: 11, fontWeight: 500, width: 90, color: "#000" }}>
-                <strong>{ticket.ticket_type || "Adult"}</strong><br />{ticket.price}
-              </div>
+                  <strong>{ticket.ticket_type || "Adult"}</strong><br />{hideSettings.hide_ticket_price ? "" : ticket.price}
+                </div>
               <div style={{ textAlign: "center" }}>
                 <img src={qrUrl} alt="QR Code" style={{ width: 95, height: 95 }} />
                 <span style={{ display: "block", fontSize: 11, marginTop: 10, color: "#000" }}>{ticket.serial_number}</span>
@@ -189,7 +123,7 @@ export default function TicketDetailPage() {
         <div style={{ background: "white", marginBottom: 8, padding: "20px 0" }}>
           <div style={{ display: "flex", justifyContent: "space-around", paddingBottom: 30 }}>
             {[
-              { label: "Enter Via Door", val: ticket.door_area || "-" },
+              { label: "Enter Via Door", val: hideSettings.hide_entrance ? "-" : (ticket.door_area || "-") },
               { label: "Section", val: ticket.section_bay || "-" },
               { label: "Row", val: ticket.row || "-" },
               { label: "Seat", val: ticket.seat_number || "-" },
@@ -204,7 +138,7 @@ export default function TicketDetailPage() {
             {[
               { label: "Event", val: ticket.event_code },
               { label: "Trans No.", val: ticket.transaction_number },
-              { label: "Purchased", val: ticket.purchase_date },
+              { label: "Purchased", val: hideSettings.hide_purchase_date ? "-" : ticket.purchase_date },
               { label: "Seller", val: ticket.seller_id },
               { label: "Pax No.", val: ticket.pax_number },
             ].map(item => (
@@ -217,27 +151,46 @@ export default function TicketDetailPage() {
         </div>
 
         {/* Share button */}
-        <button
-          onClick={() => setShowShareModal(true)}
-          style={{ backgroundColor: "#43822a", color: "white", width: "100%", border: "none", padding: "12px", fontSize: 17, borderRadius: 4, fontWeight: 600, marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, cursor: "pointer" }}
-        >
-          <svg style={{ width: 32, height: 32 }} viewBox="0 0 100 100">
-            <circle cx="42" cy="32" r="14" fill="white" />
-            <path d="M15 85 Q15 58 42 58 Q69 58 69 85" fill="white" />
-            <rect x="58" y="65" width="28" height="20" rx="3" fill="white" stroke="#43822a" strokeWidth="2" />
-            <line x1="64" y1="75" x2="80" y2="75" stroke="#43822a" strokeWidth="2.5" />
-          </svg>
-          Share ticket
-        </button>
+        {!hideSettings.hide_share_button && (
+          <button
+            onClick={() => setShowShareModal(true)}
+            style={{ backgroundColor: "#43822a", color: "white", width: "100%", border: "none", padding: "12px", fontSize: 17, borderRadius: 4, fontWeight: 600, marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, cursor: "pointer" }}
+          >
+            <svg style={{ width: 32, height: 32 }} viewBox="0 0 24 24" fill="none">
+              <g transform="translate(12, 12) scale(0.85) translate(-12, -12) rotate(-45 12 12)">
+                <path d="M 5 7 H 19 V 10 C 16.5 10 16.5 14 19 14 V 17 H 5 V 14 C 7.5 14 7.5 10 5 10 Z" fill="white"/>
+              </g>
+              <g transform="translate(3.5, 3.5)">
+                <circle cx="5" cy="5" r="5.5" fill="#43822a"/>
+                <circle cx="5" cy="5" r="4.5" fill="white"/>
+                <polygon points="4.2,3.2 7.0,3.2 7.0,6.0" fill="#43822a"/>
+                <path d="M 3.6 6.4 L 5.2 4.8" stroke="#43822a" strokeWidth="1" strokeLinecap="round"/>
+              </g>
+            </svg>
+            Share ticket
+          </button>
+        )}
 
-        {/* Apple Wallet button */}
-        <button
-          onClick={() => setShowWallet(true)}
-          style={{ backgroundColor: "black", color: "white", width: "100%", border: "none", padding: "8px", fontSize: 16, borderRadius: 6, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
-        >
-          <img src="https://www.image2url.com/r2/default/images/1777758037946-fd4ad460-0bfd-4c21-9c8f-3949e32a0c92.jpeg" alt="Wallet Icon" style={{ height: 32 }} />
-          Add to Apple Wallet
-        </button>
+        {/* Wallet button - switches between Apple/Google based on OS */}
+        {!hideSettings.hide_wallet_button && (
+          isAndroid() ? (
+            <button
+              onClick={() => setShowWallet(true)}
+              style={{ backgroundColor: "#000", color: "white", width: "100%", border: "none", padding: "12px 24px", fontSize: 20, borderRadius: 8, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 0, cursor: "pointer", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" }}
+            >
+              <img src="https://www.image2url.com/r2/default/images/1779671280742-1ae995e2-3a65-482a-9305-9de9fedcb5da.jpeg" alt="Google Wallet" style={{ width: 32, height: 32, marginRight: 14, objectFit: "contain", display: "block" }} />
+              Add to Google Wallet
+            </button>
+          ) : (
+            <button
+              onClick={() => setShowWallet(true)}
+              style={{ backgroundColor: "black", color: "white", width: "100%", border: "none", padding: "8px", fontSize: 16, borderRadius: 6, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
+            >
+              <img src="https://www.image2url.com/r2/default/images/1777758037946-fd4ad460-0bfd-4c21-9c8f-3949e32a0c92.jpeg" alt="Wallet Icon" style={{ height: 32 }} />
+              Add to Apple Wallet
+            </button>
+          )
+        )}
 
         {/* Fine print */}
         <div style={{ padding: "25px 8px", fontSize: "10.5px", color: "#777", lineHeight: 1.4 }}>
@@ -247,69 +200,7 @@ export default function TicketDetailPage() {
         </div>
       </div>
 
-      {/* Share Modal */}
-      {showShareModal && (
-        <div
-          className="fixed inset-0 z-[9999] flex items-end justify-center"
-          style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
-          onClick={() => setShowShareModal(false)}
-        >
-          <div className="w-full max-w-[500px] bg-white rounded-t-2xl pb-8" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center gap-3 px-5 pt-6 pb-4 border-b border-gray-200">
-              <div>
-                <div className="font-bold text-gray-800 text-base">Share ticket – Seat {ticket.seat_number}</div>
-                <div className="text-sm text-gray-400 mt-0.5">Recipient will receive an email invitation</div>
-              </div>
-            </div>
-            <div className="px-5 pt-5 pb-4">
-              <div className="flex items-center border border-gray-300 rounded-xl px-4 py-3.5 mb-3 bg-white">
-                <input
-                  type="text"
-                  placeholder="Enter recipient email"
-                  value={shareContact}
-                  onChange={e => setShareContact(e.target.value)}
-                  className="flex-1 text-base text-gray-700 outline-none bg-transparent placeholder-gray-400"
-                />
-              </div>
-              <div className="border border-gray-300 rounded-xl px-4 py-3.5 mb-4 bg-white">
-                <input
-                  type="text"
-                  placeholder="Recipient name"
-                  value={shareName}
-                  onChange={e => setShareName(e.target.value)}
-                  className="w-full text-base text-gray-700 outline-none bg-transparent placeholder-gray-400"
-                />
-              </div>
-              <p className="text-sm text-gray-400 text-center px-2 mb-4 leading-relaxed">
-                By entering this information you agree that you have the receiver's consent to do so.
-              </p>
-              <div className="border-t border-gray-200 mb-4" />
-              {shareResult === "success" && (
-                <div className="text-center text-green-600 font-semibold py-2 mb-2">✓ Email sent successfully!</div>
-              )}
-              {shareResult === "error" && (
-                <div className="text-center text-red-500 text-sm py-2 mb-2">Failed to send email. Please try again.</div>
-              )}
-              <div className="flex gap-3">
-                <button
-                  onClick={() => { setShowShareModal(false); setShareContact(""); setShareName(""); setShareResult(null); }}
-                  className="flex-1 py-3.5 rounded-xl border border-gray-200 bg-white text-blue-700 font-semibold text-base cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleShareTicket}
-                  disabled={!shareContact.trim() || !shareName.trim() || sharing}
-                  className="flex-1 py-3.5 rounded-xl text-white font-semibold text-base border-none cursor-pointer"
-                  style={{ backgroundColor: shareContact.trim() && shareName.trim() ? "#43822a" : "#d1d5db" }}
-                >
-                  {sharing ? "Sending..." : "Share ticket"}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }

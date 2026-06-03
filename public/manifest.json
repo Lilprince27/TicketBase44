@@ -1,24 +1,38 @@
 {
   "name": "Ticketek",
   "short_name": "Ticketek",
-  "description": "Your digital ticket wallet",
+  "description": "Your mobile ticket wallet",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#001a35",
-  "theme_color": "#001a35",
+  "background_color": "#ffffff",
+  "theme_color": "#001c3d",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/4f3732a50_IMG_7107.jpeg",
+      "src": "https://www.image2url.com/r2/default/images/1779717561201-1f37d553-3f21-45d3-bbc4-b3e27818ff02.png",
       "sizes": "192x192",
-      "type": "image/jpeg",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
-      "src": "https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/4f3732a50_IMG_7107.jpeg",
+      "src": "https://www.image2url.com/r2/default/images/1779717561201-1f37d553-3f21-45d3-bbc4-b3e27818ff02.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
-      "purpose": "any maskable"
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Discover",
+      "short_name": "Discover",
+      "description": "Browse upcoming events",
+      "url": "/",
+      "icons": [{ "src": "https://www.image2url.com/r2/default/images/1779717561201-1f37d553-3f21-45d3-bbc4-b3e27818ff02.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "My Tickets",
+      "short_name": "Tickets",
+      "description": "View your tickets",
+      "url": "/tickets",
+      "icons": [{ "src": "https://www.image2url.com/r2/default/images/1779717561201-1f37d553-3f21-45d3-bbc4-b3e27818ff02.png", "sizes": "96x96" }]
     }
   ]
 }
