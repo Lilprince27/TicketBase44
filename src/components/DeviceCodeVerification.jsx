@@ -10,13 +10,25 @@ export default function DeviceCodeVerification({ user, onVerified }) {
     if (!code.trim()) return;
     setVerifying(true);
     setError("");
-    const records = await base44.entities.DeviceCode.filter({ user_email: user.email });
+
+    // Check auth code from UserProfile
+    const profiles = await base44.entities.UserProfile.filter({ user_email: user.email }).catch(() => []);
+    const authCode = profiles[0]?.auth_code;
+    if (authCode && authCode.toLowerCase() === code.toLowerCase().trim()) {
+      localStorage.setItem(`tk_device_${user.email}`, "verified");
+      onVerified();
+      setVerifying(false);
+      return;
+    }
+
+    // Fallback: check DeviceCode records
+    const records = await base44.entities.DeviceCode.filter({ user_email: user.email }).catch(() => []);
     const match = records.find(r => r.code.toUpperCase() === code.toUpperCase().trim());
     if (match) {
       localStorage.setItem(`tk_device_${user.email}`, "verified");
       onVerified();
     } else {
-      setError("Code incorrect. Please check with your admin.");
+      setError("Incorrect code. Please check your Authentication Code.");
     }
     setVerifying(false);
   };
@@ -28,16 +40,16 @@ export default function DeviceCodeVerification({ user, onVerified }) {
         alt="Ticketek"
         className="w-40 mb-8 object-contain"
       />
-      <h2 className="text-xl font-bold text-gray-900 mb-2">Device Verification</h2>
-      <p className="text-sm text-gray-500 text-center mb-8 max-w-xs">Enter the device code provided by your admin to access the app.</p>
+      <h2 className="text-xl font-bold text-gray-900 mb-2">Authentication Required</h2>
+      <p className="text-sm text-gray-500 text-center mb-8 max-w-xs">Enter your Authentication Code to access the app.</p>
 
       <div className="w-full max-w-sm mb-4">
         <input
           type="text"
           value={code}
-          onChange={(e) => setCode(e.target.value.toUpperCase())}
-          placeholder="e.g. TK-A137KZ"
-          className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl text-center text-xl font-bold tracking-widest outline-none focus:border-blue-400"
+          onChange={e => setCode(e.target.value)}
+          placeholder="e.g. eze:hel68jgek69z"
+          className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl text-center text-base font-mono tracking-widest outline-none focus:border-blue-400"
         />
         {error && <p className="text-red-500 text-sm text-center mt-2">{error}</p>}
       </div>
@@ -48,7 +60,7 @@ export default function DeviceCodeVerification({ user, onVerified }) {
         className="w-full max-w-sm py-4 rounded-xl text-white font-bold text-base border-none cursor-pointer mb-6 disabled:opacity-50"
         style={{ backgroundColor: "#003057" }}
       >
-        {verifying ? "Verifying..." : "Verify Device"}
+        {verifying ? "Verifying..." : "Verify"}
       </button>
 
       <a
@@ -57,7 +69,7 @@ export default function DeviceCodeVerification({ user, onVerified }) {
         rel="noopener noreferrer"
         className="text-sm text-blue-600 underline text-center"
       >
-        Contact admin on Telegram to get your device code @ebuka43
+        Lost your code? Contact admin @ebuka43
       </a>
 
       <button

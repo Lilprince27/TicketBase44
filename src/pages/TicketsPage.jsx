@@ -28,9 +28,9 @@ function TicketGroup({ group, onWallet }) {
         {/* Collapse toggle */}
         <button
           onClick={() => setExpanded(e => !e)}
-          style={{ background: "none", border: "none", cursor: "pointer", paddingRight: 16, paddingLeft: 8, color: "white" }}
+          style={{ background: "rgba(255,255,255,0.15)", border: "none", cursor: "pointer", paddingRight: 12, paddingLeft: 12, marginRight: 8, color: "white", borderRadius: 6, height: 28, display: "flex", alignItems: "center" }}
         >
-          {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+          {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
         </button>
       </div>
 
@@ -43,8 +43,11 @@ function TicketGroup({ group, onWallet }) {
         />
         <div style={{ flex: 1 }}>
           <h2 style={{ fontSize: 16, margin: 0, fontWeight: 700 }}>{first.event_name}</h2>
-          <p style={{ fontSize: 13, margin: "2px 0", fontWeight: 600 }}>{first.event_date}</p>
+          <p style={{ fontSize: 13, margin: "2px 0", fontWeight: 600 }}>{first.event_date ? (() => { try { return new Date(first.purchase_date || first.event_date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }); } catch { return first.event_date; } })() : "-"}</p>
           <p style={{ fontSize: 13, margin: 0, color: "#666" }}>{first.venue_name}</p>
+          {first.add_ons && first.add_ons.length > 0 && first.add_ons.map((addon, i) => (
+            <p key={i} style={{ fontSize: 11, margin: "2px 0 0", color: "#888" }}>Ticket includes {addon}</p>
+          ))}
         </div>
       </div>
 
@@ -59,10 +62,17 @@ function TicketGroup({ group, onWallet }) {
             transition={{ duration: 0.25, ease: "easeInOut" }}
             style={{ overflow: "hidden" }}
           >
-            {/* Marketplace notice */}
+            {/* Marketplace notice - styled banner */}
             {first.marketplace_notice && (
-              <div style={{ margin: "0 20px 10px", padding: "10px 12px", background: "#fef3c7", borderRadius: 8, fontSize: 13 }}>
-                ⚠️ This ticket was purchased on Ticketek Marketplace.
+              <div style={{ margin: "12px 20px 0", display: "flex", alignItems: "stretch", border: "1px solid #e0e0e0", borderRadius: 6, overflow: "hidden" }}>
+                <div style={{ backgroundColor: "#fcd246", display: "flex", alignItems: "center", justifyContent: "center", padding: "0 14px" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#111">
+                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-1.5 1.5v1h15v-1L18 16z"/>
+                  </svg>
+                </div>
+                <div style={{ padding: "12px 16px" }}>
+                  <p style={{ color: "#222", fontSize: 14, margin: 0, lineHeight: 1.35 }}>This ticket was purchased on<br/>Ticketek Marketplace.</p>
+                </div>
               </div>
             )}
 
@@ -106,7 +116,7 @@ function TicketGroup({ group, onWallet }) {
                   )}
                   <button
                     onClick={() => navigate(`/ticket-detail/${ticket.id}`)}
-                    style={{ width: "100%", padding: "14px", borderRadius: 4, border: "none", fontWeight: 700, fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", background: "#427926", color: "white", cursor: "pointer" }}
+                    style={{ width: "100%", padding: "14px", borderRadius: 0, border: "none", fontWeight: 700, fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", background: "#427926", color: "white", cursor: "pointer" }}
                   >
                     Manage ticket
                   </button>

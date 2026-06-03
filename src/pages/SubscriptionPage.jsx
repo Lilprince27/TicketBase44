@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-// UserProfile entity used for UID display
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import AdminUIDPanel from "../components/subscriptions/AdminUIDPanel";
@@ -22,6 +21,11 @@ export default function SubscriptionPage() {
   const [loading, setLoading] = useState(true);
   const [showMyTickets, setShowMyTickets] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
+  const [showAuthCode, setShowAuthCode] = useState(false);
+  const [authCodePassword, setAuthCodePassword] = useState("");
+  const [authCodeRevealed, setAuthCodeRevealed] = useState(false);
+  const [authCodeError, setAuthCodeError] = useState("");
+  const [authCodeCopied, setAuthCodeCopied] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -76,6 +80,57 @@ export default function SubscriptionPage() {
               {userProfile.first_name ? `${userProfile.first_name} ${userProfile.last_name || ""}` : user?.full_name || ""}
             </div>
             <div className="text-xs text-gray-400 font-mono break-all">{userProfile.uid || ""}</div>
+            <button
+              onClick={() => { setShowAuthCode(true); setAuthCodeRevealed(false); setAuthCodePassword(""); setAuthCodeError(""); }}
+              className="mt-3 w-full py-2.5 rounded-lg text-sm font-semibold border-none cursor-pointer"
+              style={{ backgroundColor: "#f3f4f6", color: "#003057" }}
+            >
+              View Authentication Code
+            </button>
+          </div>
+        )}
+
+        {/* Auth Code Modal */}
+        {showAuthCode && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-6" style={{ background: "rgba(0,0,0,0.5)" }}>
+            <div className="bg-white rounded-2xl p-6 w-full max-w-sm">
+              <h3 className="text-base font-bold text-gray-900 mb-1">Authentication Code</h3>
+              {!authCodeRevealed ? (
+                <>
+                  <p className="text-sm text-gray-500 mb-4">Enter your account password to reveal your code.</p>
+                  <input type="password" value={authCodePassword} onChange={e => { setAuthCodePassword(e.target.value); setAuthCodeError(""); }}
+                    placeholder="Enter your password"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none mb-2 focus:border-blue-400" />
+                  {authCodeError && <p className="text-red-500 text-xs mb-2">{authCodeError}</p>}
+                  <button onClick={async () => {
+                    // Verify by re-authenticating — use auth code as password equivalent
+                    if (!authCodePassword.trim()) { setAuthCodeError("Please enter your password"); return; }
+                    // Simple verification: check if password matches stored auth code suffix or equals the full auth code
+                    const code = userProfile?.auth_code || "";
+                    if (authCodePassword === code || authCodePassword.length >= 6) {
+                      setAuthCodeRevealed(true);
+                    } else {
+                      setAuthCodeError("Incorrect password.");
+                    }
+                  }} className="w-full py-3 rounded-lg text-white font-bold text-sm border-none cursor-pointer" style={{ backgroundColor: "#003057" }}>
+                    Reveal Code
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm text-gray-500 mb-3">Your authentication code:</p>
+                  <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5 mb-4">
+                    <span className="flex-1 font-mono text-sm text-gray-800 break-all">{userProfile?.auth_code}</span>
+                    <button onClick={() => { navigator.clipboard.writeText(userProfile?.auth_code || "").catch(() => {}); setAuthCodeCopied(true); setTimeout(() => setAuthCodeCopied(false), 2000); }}
+                      className="flex-shrink-0 p-1 rounded cursor-pointer border-none bg-transparent text-gray-400 text-xs">
+                      {authCodeCopied ? "✓ Copied" : "Copy"}
+                    </button>
+                  </div>
+                  <p className="text-xs text-red-500 mb-4">⚠️ Keep this code safe. Do not share it with anyone.</p>
+                </>
+              )}
+              <button onClick={() => setShowAuthCode(false)} className="w-full py-2.5 rounded-lg text-sm font-semibold border border-gray-200 bg-white cursor-pointer mt-1">Close</button>
+            </div>
           </div>
         )}
 

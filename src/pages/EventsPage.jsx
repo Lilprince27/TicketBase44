@@ -5,6 +5,8 @@ import EventDetailModal from "../components/events/EventDetailModal";
 
 const isAndroid = () => /android/i.test(navigator.userAgent);
 
+const TM_API_KEY = "ysl6MCmD7CZKfSZtD9MGlKh8rGG4mNgO";
+
 const STATIC_EVENTS = [
   { id: "s1", title: "Coldplay – Music Of The Spheres World Tour", image: "https://i.ibb.co/k6VJn1kT/IMG-9441.jpg", date: "Sat 7 Nov 2026 · ANZ Stadium", venue: "ANZ Stadium, Sydney" },
   { id: "s2", title: "Taylor Swift – The Eras Tour", image: "https://i.ibb.co/7NNb9dgx/IMG-9442.png", date: "Fri 13 Feb 2026 · Accor Stadium", venue: "Accor Stadium, Sydney" },
@@ -15,9 +17,6 @@ const STATIC_EVENTS = [
   { id: "s7", title: "The Weeknd – After Hours til Dawn", image: "https://i.ibb.co/rX6zkpr/IMG-9447.jpg", date: "Sat 28 Aug 2026 · RAC Arena", venue: "RAC Arena, Perth" },
   { id: "s8", title: "Billie Eilish – Hit Me Hard and Soft Tour", image: "https://i.ibb.co/vCDgT8XK/IMG-9448.jpg", date: "Fri 9 Oct 2026 · Entertainment Centre", venue: "Brisbane Entertainment Centre" },
 ];
-
-const API_TOKEN = "D6akDmpY5sb17Flq3g3fCrbM7sFGrQODkbcwY-ky";
-const BASE_URL = "https://api.predicthq.com/v1/events/";
 
 const CATEGORIES = [
   { label: "Featured", value: "" },
@@ -45,40 +44,6 @@ function formatDate(dateStr) {
   return d.toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
 }
 
-// Fetch from TheSportsDB (no API key needed)
-async function fetchSportsDBImage(eventTitle) {
-  try {
-    const query = encodeURIComponent(eventTitle.split(" ").slice(0, 3).join(" "));
-    const res = await fetch(`https://www.thesportsdb.com/api/v1/json/3/searchevents.php?e=${query}`);
-    const data = await res.json();
-    const ev = data?.event?.[0];
-    if (ev?.strThumb) return ev.strThumb;
-    if (ev?.strBanner) return ev.strBanner;
-    // Try team/artist image
-    if (data?.event?.[0]?.strHomeTeam) {
-      const teamRes = await fetch(`https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(data.event[0].strHomeTeam)}`);
-      const teamData = await teamRes.json();
-      const team = teamData?.teams?.[0];
-      if (team?.strTeamBanner) return team.strTeamBanner;
-      if (team?.strTeamFanart1) return team.strTeamFanart1;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-async function fetchWikipediaImage(title) {
-  try {
-    const searchTerm = encodeURIComponent(title.split(" ").slice(0, 4).join(" "));
-    const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${searchTerm}`);
-    if (res.ok) {
-      const data = await res.json();
-      if (data?.thumbnail?.source) return data.thumbnail.source;
-    }
-  } catch {}
-  return null;
-}
 
 export default function EventsPage() {
   const navigate = useNavigate();
@@ -93,59 +58,58 @@ export default function EventsPage() {
   const [featuredIdx, setFeaturedIdx] = useState(0);
   const debounceTimer = useRef(null);
   const loaderRef = useRef(null);
-  const fetchingImages = useRef(new Set());
   const heroRotateTimer = useRef(null);
 
   const fetchEvents = useCallback(async (query, category, currentOffset, replace = false) => {
     if (replace) setLoading(true);
     else setLoadingMore(true);
 
-    const params = new URLSearchParams({ country: "AU", limit: "15", offset: String(currentOffset), sort: "rank" });
-    if (query) params.set("q", query);
-    if (category) params.set("category", category);
+    // Fetch from both Ticketmaster endpoints simultaneously
+    const baseParams = new URLSearchParams({ apikey: TM_API_KEY, size: "15", page: String(Math.floor(currentOffset / 15)), countryCode: "AU", sort: "relevance,desc" });
+    if (query) baseParams.set("keyword", query);
 
-    const res = await fetch(`${BASE_URL}?${params.toString()}`, {
-      headers: { Authorization: `Bearer ${API_TOKEN}`, Accept: "application/json" },
-    }).catch(() => null);
+    const [res1, res2] = await Promise.all([
+      fetch(`https://app.ticketmaster.com/discovery/v2/events.json?${baseParams.toString()}`).catch(() => null),
+      fetch(`https://app.ticketmaster.com/discovery-international/v2/events.json?${baseParams.toString()}`).catch(() => null),
+    ]);
 
-    const data = res ? await res.json().catch(() => null) : null;
-    const results = data?.results || [];
-    const mapped = results.map(e => ({
-      id: e.id,
-      title: e.title,
-      date: formatDate(e.start),
-      rawDate: e.start,
-      venue: e.entities?.find(en => en.type === "venue")?.name || "",
-      image: getPlaceholder(e.category ? [e.category] : e.labels || []),
-      rank: e.rank || 0,
-      category: e.category || "",
-      labels: e.labels || [],
-      entities: e.entities || [],
-      description: e.description || "",
-      raw: e,
-    }));
+    const [data1, data2] = await Promise.all([
+      res1 ? res1.json().catch(() => null) : null,
+      res2 ? res2.json().catch(() => null) : null,
+    ]);
 
-    if (replace) {
-      setEvents(mapped);
-      setFeaturedIdx(0);
-    } else {
-      setEvents(prev => [...prev, ...mapped]);
-    }
-    setHasMore(results.length === 15);
-    setOffset(currentOffset + results.length);
+    const list1 = data1?._embedded?.events || [];
+    const list2 = data2?._embedded?.events || [];
+
+    // Merge and deduplicate by id
+    const seen = new Set();
+    const merged = [...list1, ...list2].filter(e => { if (seen.has(e.id)) return false; seen.add(e.id); return true; });
+
+    const mapped = merged.map(e => {
+      const img = e.images?.find(i => i.ratio === "16_9" && i.width > 500)?.url || e.images?.[0]?.url || getPlaceholder([]);
+      const venue = e._embedded?.venues?.[0];
+      return {
+        id: e.id,
+        title: e.name,
+        date: formatDate(e.dates?.start?.dateTime || e.dates?.start?.localDate),
+        rawDate: e.dates?.start?.dateTime || e.dates?.start?.localDate,
+        venue: venue ? `${venue.name}${venue.city?.name ? `, ${venue.city.name}` : ""}` : "",
+        image: img,
+        rank: 0,
+        category: e.classifications?.[0]?.segment?.name || "",
+        labels: [],
+        entities: [],
+        description: e.info || "",
+        raw: e,
+      };
+    });
+
+    if (replace) { setEvents(mapped); setFeaturedIdx(0); }
+    else { setEvents(prev => [...prev, ...mapped]); }
+    setHasMore(merged.length >= 15);
+    setOffset(currentOffset + merged.length);
     setLoading(false);
     setLoadingMore(false);
-
-    // Fetch images from TheSportsDB + Wikipedia in background
-    mapped.forEach(async (ev) => {
-      if (fetchingImages.current.has(ev.id)) return;
-      fetchingImages.current.add(ev.id);
-      let imgUrl = await fetchSportsDBImage(ev.title);
-      if (!imgUrl) imgUrl = await fetchWikipediaImage(ev.title);
-      if (imgUrl) {
-        setEvents(prev => prev.map(e => e.id === ev.id ? { ...e, image: imgUrl } : e));
-      }
-    });
   }, []);
 
   // Hero rotation every 2 hours (or 7200000ms). Use 30s in dev for visibility.
@@ -192,7 +156,7 @@ export default function EventsPage() {
       <header className="sticky top-0 z-50" style={{ backgroundColor: "#051a24", paddingTop: "env(safe-area-inset-top)" }}>
         <div className="flex items-center px-4 py-3 gap-3">
           <img
-            src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/4f3732a50_IMG_7107.jpeg"
+            src="https://www.image2url.com/r2/default/images/1779845454260-b504dfba-e0cc-4742-a9ce-72da00920a7b.png"
             alt="Ticketek"
             className="w-9 h-9 object-contain rounded flex-shrink-0"
           />

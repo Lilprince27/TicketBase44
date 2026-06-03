@@ -6,8 +6,8 @@ import PageNotFound from './lib/PageNotFound';
 import SplashScreen from './components/SplashScreen';
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import WaitingApproval from './components/WaitingApproval';
-import DeviceCodeVerification from './components/DeviceCodeVerification';
+import WaitingApproval from './components/WaitingApproval.jsx';
+import DeviceCodeVerification from './components/DeviceCodeVerification.jsx';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Layout from './components/Layout';
@@ -21,7 +21,7 @@ import EventsPage from './pages/EventsPage';
 import AccountPage from './pages/AccountPage.jsx';
 import TicketsPage from './pages/TicketsPage';
 import TicketDetailPage from './pages/TicketDetailPage.jsx';
-import CreateTicketPage from './pages/CreateTicketPage';
+import CreateTicketPage from './pages/CreateTicketPage.jsx';
 import SubscriptionPage from './pages/SubscriptionPage';
 import ProfilePage from './pages/ProfilePage';
 
@@ -56,10 +56,27 @@ const AuthenticatedApp = () => {
         if (profiles.length === 0) {
           // Generate 21-digit UID
           const uid = "UID:" + Array.from({ length: 21 }, () => "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random() * 36)]).join("");
-          await base44.entities.UserProfile.create({ user_email: me.email, uid, notifications_enabled: false });
+          // Generate auth code for new user
+          const prefix = me.email.slice(0, 3).toLowerCase().replace(/[^a-z0-9]/g, "x");
+          const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+          let suffix = "";
+          for (let i = 0; i < 12; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
+          const authCode = `${prefix}:${suffix}`;
+          await base44.entities.UserProfile.create({ user_email: me.email, uid, notifications_enabled: false, auth_code: authCode });
           setShowNameSetup(true);
+          // New user - skip device verification (they're registering, not logging in)
+          setDeviceVerified(true);
         } else if (!profiles[0].first_name) {
           setShowNameSetup(true);
+          // Also generate auth code if missing
+          if (!profiles[0].auth_code) {
+            const prefix = me.email.slice(0, 3).toLowerCase().replace(/[^a-z0-9]/g, "x");
+            const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+            let suffix = "";
+            for (let i = 0; i < 12; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
+            const authCode = `${prefix}:${suffix}`;
+            await base44.entities.UserProfile.update(profiles[0].id, { auth_code: authCode }).catch(() => {});
+          }
         } else {
           // Check if notification prompt has been shown
           const notifAsked = localStorage.getItem("notif_asked");

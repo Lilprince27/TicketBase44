@@ -103,6 +103,13 @@
       "type": "boolean",
       "title": "Marketplace Notice",
       "default": false
+    },
+    "add_ons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "title": "Add Ons"
     }
   },
   "required": [
