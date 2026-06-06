@@ -29,7 +29,7 @@ export default function TicketTransferSettingsPanel() {
     setTimeout(() => setSuccess(false), 2000);
   };
 
-  if (!user || user.role !== "admin" || !settings) return null;
+  if (!user || !settings) return null;
 
   return (
     <div className="border border-gray-200 rounded-xl p-4 mb-4">

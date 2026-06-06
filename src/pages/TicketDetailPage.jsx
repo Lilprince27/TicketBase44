@@ -39,7 +39,7 @@ export default function TicketDetailPage() {
     );
   }
 
-  if (showShareModal) return <ShareModal ticket={ticket || {}} onClose={() => setShowShareModal(false)} />;
+  if (showShareModal) return <ShareModal ticket={ticket} onClose={() => setShowShareModal(false)} />;
 
   if (!ticket) {
     return (

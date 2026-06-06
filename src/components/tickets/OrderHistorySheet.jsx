@@ -96,7 +96,7 @@ export default function OrderHistorySheet({ user, onClose }) {
     <>
       {venueMapTicket && <VenueMapModal ticket={venueMapTicket} onClose={() => setVenueMapTicket(null)} />}
       <div className="fixed inset-0 z-[999]" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={onClose} />
-      <div className="fixed bottom-0 left-0 right-0 z-[1000] bg-white rounded-t-2xl overflow-hidden" style={{ maxHeight: "90vh", display: "flex", flexDirection: "column" }}>
+      <div className="fixed inset-0 z-[1000] bg-white overflow-hidden" style={{ display: "flex", flexDirection: "column", paddingTop: "env(safe-area-inset-top)" }}>
         {/* Header */}
         <div className="sticky top-0 bg-white z-10 flex items-center justify-center relative px-4 py-4 border-b border-gray-100 shadow-sm">
           <button onClick={onClose} className="absolute left-4 bg-none border-none cursor-pointer p-1">
