@@ -78,12 +78,12 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
     user-select: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    box-sizing: border-box;
   }
   input, textarea {
     user-select: text;

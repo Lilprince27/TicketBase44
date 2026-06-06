@@ -123,16 +123,20 @@ export default function EventsPage() {
     return () => clearTimeout(debounceTimer.current);
   }, [searchQuery]);
 
+  const stateRef = useRef({});
+  stateRef.current = { hasMore, loadingMore, loading, offset, searchQuery, activeTab };
+
   useEffect(() => {
     if (!loaderRef.current) return;
     const obs = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore && !loadingMore && !loading) {
-        fetchEvents(searchQuery, CATEGORIES[activeTab].value, offset, false);
+      const s = stateRef.current;
+      if (entries[0].isIntersecting && s.hasMore && !s.loadingMore && !s.loading) {
+        fetchEvents(s.searchQuery, CATEGORIES[s.activeTab].value, s.offset, false);
       }
     }, { threshold: 0.1 });
     obs.observe(loaderRef.current);
     return () => obs.disconnect();
-  }, [hasMore, loadingMore, loading, offset, searchQuery, activeTab]);
+  }, [fetchEvents]);
 
   const featuredEvent = searchQuery.trim() ? null : (events[featuredIdx] || events[0]);
   const restEvents = searchQuery.trim() ? events : events.filter((_, i) => i !== (events.indexOf(featuredEvent)));
