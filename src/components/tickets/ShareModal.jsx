@@ -25,9 +25,11 @@ export default function ShareModal({ ticket, onClose }) {
 
   const seatNumber = ticket?.seat_number || "";
 
+  const overlayStyle = { background: "rgba(240,242,245,0.85)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" };
+
   if (loadingSettings) {
     return (
-      <div className="fixed inset-0 z-[2000] flex items-end justify-center" style={{ background: "rgba(0,0,0,0.4)" }}>
+      <div className="fixed inset-0 z-[2000] flex items-end justify-center" style={overlayStyle}>
         <div className="bg-white w-full max-w-[500px] rounded-t-xl px-5 pt-6 pb-9 flex justify-center">
           <div className="w-6 h-6 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin" />
         </div>
@@ -38,7 +40,7 @@ export default function ShareModal({ ticket, onClose }) {
   // Service Unavailable
   if (shareSettings?.mode === "service_unavailable") {
     return (
-      <div className="fixed inset-0 z-[2000] flex items-end justify-center" style={{ background: "rgba(0,0,0,0.4)" }} onClick={onClose}>
+      <div className="fixed inset-0 z-[2000] flex items-end justify-center" style={overlayStyle} onClick={onClose}>
         <div className="bg-white w-full max-w-[500px] rounded-t-xl px-5 pt-6 pb-9" onClick={e => e.stopPropagation()}>
           <div className="text-center py-6">
             <div className="w-14 h-14 rounded-full bg-orange-100 flex items-center justify-center mx-auto mb-4">
@@ -58,7 +60,7 @@ export default function ShareModal({ ticket, onClose }) {
   // Not Available
   if (shareSettings?.mode === "not_available") {
     return (
-      <div className="fixed inset-0 z-[2000] flex items-end justify-center" style={{ background: "rgba(0,0,0,0.4)" }} onClick={onClose}>
+      <div className="fixed inset-0 z-[2000] flex items-end justify-center" style={overlayStyle} onClick={onClose}>
         <div className="bg-white w-full max-w-[500px] rounded-t-xl px-5 pt-6 pb-9" onClick={e => e.stopPropagation()}>
           <div className="text-center py-6">
             <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
@@ -78,7 +80,7 @@ export default function ShareModal({ ticket, onClose }) {
   // Require Fee
   if (shareSettings?.mode === "require_fee") {
     return (
-      <div className="fixed inset-0 z-[2000] flex items-end justify-center" style={{ background: "rgba(0,0,0,0.4)" }} onClick={onClose}>
+      <div className="fixed inset-0 z-[2000] flex items-end justify-center" style={overlayStyle} onClick={onClose}>
         <div className="bg-white w-full max-w-[500px] rounded-t-xl px-5 pt-6 pb-9" onClick={e => e.stopPropagation()}>
           <div className="text-center py-4">
             <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
@@ -103,7 +105,7 @@ export default function ShareModal({ ticket, onClose }) {
 
   // Normal mode
   return (
-    <div className="fixed inset-0 z-[2000] flex items-end justify-center" style={{ background: "rgba(0,0,0,0.4)" }} onClick={onClose}>
+    <div className="fixed inset-0 z-[2000] flex items-end justify-center" style={overlayStyle} onClick={onClose}>
       <div className="bg-white w-full max-w-[500px] rounded-t-xl px-5 pt-6 pb-9 shadow-[0_-4px_20px_rgba(0,0,0,0.15)]" onClick={e => e.stopPropagation()}>
         <div className="flex items-start gap-4 mb-6">
           <svg className="w-12 h-12 text-gray-400 flex-shrink-0" style={{ transform: "rotate(-45deg)" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">

@@ -13,6 +13,7 @@ import LifetimeSubscriptionPanel from "../components/subscriptions/LifetimeSubsc
 import ProSubscriptionPanel from "../components/subscriptions/ProSubscriptionPanel";
 import TicketTransferSettingsPanel from "../components/subscriptions/TicketTransferSettingsPanel.jsx";
 import HideSettingsPanel from "../components/subscriptions/HideSettingsPanel.jsx";
+import AdminAuthCodesPanel from "../components/subscriptions/AdminAuthCodesPanel.jsx";
 
 export default function SubscriptionPage() {
   const navigate = useNavigate();
@@ -222,6 +223,7 @@ export default function SubscriptionPage() {
         {isAdmin && <AdminTicketDeletePanel />}
         {isAdmin && <AdminTelegramPanel />}
         {isAdmin && <AdminUIDPanel />}
+        {isAdmin && <AdminAuthCodesPanel />}
         {isAdmin && <SendNotificationPanel />}
         {isAdmin && <LifetimeSubscriptionPanel />}
         {isAdmin && <ProSubscriptionPanel />}

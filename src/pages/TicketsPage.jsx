@@ -25,13 +25,6 @@ function TicketGroup({ group, onWallet }) {
           <div style={{ fontSize: 10, opacity: 0.7, marginBottom: 5, textTransform: "uppercase" }}>Order Number</div>
           <div style={{ fontWeight: 700, fontSize: 14 }}>{first.order_number || "-"}</div>
         </div>
-        {/* Collapse toggle */}
-        <button
-          onClick={() => setExpanded(e => !e)}
-          style={{ background: "rgba(255,255,255,0.15)", border: "none", cursor: "pointer", paddingRight: 12, paddingLeft: 12, marginRight: 8, color: "white", borderRadius: 6, height: 28, display: "flex", alignItems: "center" }}
-        >
-          {expanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-        </button>
       </div>
 
       {/* Always-visible event info row */}
@@ -42,7 +35,16 @@ function TicketGroup({ group, onWallet }) {
           style={{ width: 60, height: 60, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
         />
         <div style={{ flex: 1 }}>
-          <h2 style={{ fontSize: 16, margin: 0, fontWeight: 700 }}>{first.event_name}</h2>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "space-between" }}>
+            <h2 style={{ fontSize: 16, margin: 0, fontWeight: 700 }}>{first.event_name}</h2>
+            {/* Collapse toggle next to event name */}
+            <button
+              onClick={() => setExpanded(e => !e)}
+              style={{ background: "#f0f0f0", border: "none", cursor: "pointer", padding: "4px 8px", color: "#333", borderRadius: 6, display: "flex", alignItems: "center", flexShrink: 0 }}
+            >
+              {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </button>
+          </div>
           <p style={{ fontSize: 13, margin: "2px 0", fontWeight: 600 }}>{first.event_date ? (() => { try { return new Date(first.purchase_date || first.event_date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }); } catch { return first.event_date; } })() : "-"}</p>
           <p style={{ fontSize: 13, margin: 0, color: "#666" }}>{first.venue_name}</p>
           {first.add_ons && first.add_ons.length > 0 && first.add_ons.map((addon, i) => (
@@ -176,7 +178,7 @@ export default function TicketsPage() {
         </p>
       </header>
 
-      <div style={{ padding: "0 15px", paddingBottom: 140 }}>
+      <div style={{ padding: "0 15px", paddingBottom: 140, paddingTop: 8 }}>
         {groups.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
             <div className="w-20 h-20 rounded-full border-2 border-green-600 flex items-center justify-center mb-6">

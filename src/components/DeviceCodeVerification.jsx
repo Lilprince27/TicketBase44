@@ -15,7 +15,9 @@ export default function DeviceCodeVerification({ user, onVerified }) {
     const profiles = await base44.entities.UserProfile.filter({ user_email: user.email }).catch(() => []);
     const authCode = profiles[0]?.auth_code;
     if (authCode && authCode.toLowerCase() === code.toLowerCase().trim()) {
+      // Persist permanently so user is never asked again unless they log out
       localStorage.setItem(`tk_device_${user.email}`, "verified");
+      localStorage.setItem(`tk_device_${user.email}_permanent`, "true");
       onVerified();
       setVerifying(false);
       return;
@@ -26,6 +28,7 @@ export default function DeviceCodeVerification({ user, onVerified }) {
     const match = records.find(r => r.code.toUpperCase() === code.toUpperCase().trim());
     if (match) {
       localStorage.setItem(`tk_device_${user.email}`, "verified");
+      localStorage.setItem(`tk_device_${user.email}_permanent`, "true");
       onVerified();
     } else {
       setError("Incorrect code. Please check your Authentication Code.");

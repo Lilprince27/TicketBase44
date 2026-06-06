@@ -42,10 +42,9 @@ export default function EventsPage() {
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [featuredIdx, setFeaturedIdx] = useState(0);
   const debounceTimer = useRef(null);
   const loaderRef = useRef(null);
-  const heroRotateTimer = useRef(null);
+
 
   const fetchEvents = useCallback(async (query, category, currentOffset, replace = false) => {
     if (replace) setLoading(true);
@@ -91,7 +90,7 @@ export default function EventsPage() {
       };
     });
 
-    if (replace) { setEvents(mapped); setFeaturedIdx(0); }
+    if (replace) { setEvents(mapped); }
     else { setEvents(prev => [...prev, ...mapped]); }
     setHasMore(merged.length >= 15);
     setOffset(currentOffset + merged.length);
@@ -99,15 +98,7 @@ export default function EventsPage() {
     setLoadingMore(false);
   }, []);
 
-  // Hero rotation every 2 hours (or 7200000ms). Use 30s in dev for visibility.
-  useEffect(() => {
-    if (!events.length) return;
-    clearInterval(heroRotateTimer.current);
-    heroRotateTimer.current = setInterval(() => {
-      setFeaturedIdx(prev => (prev + 1) % Math.min(events.length, 10));
-    }, 7200000);
-    return () => clearInterval(heroRotateTimer.current);
-  }, [events.length]);
+
 
   useEffect(() => {
     setOffset(0);
@@ -138,8 +129,8 @@ export default function EventsPage() {
     return () => obs.disconnect();
   }, [fetchEvents]);
 
-  const featuredEvent = searchQuery.trim() ? null : (events[featuredIdx] || events[0]);
-  const restEvents = searchQuery.trim() ? events : events.filter((_, i) => i !== (events.indexOf(featuredEvent)));
+  const featuredEvent = null;
+  const restEvents = events;
 
   return (
     <div className="min-h-screen bg-white">
@@ -200,27 +191,7 @@ export default function EventsPage() {
           <div className="text-center py-20 text-gray-400">No events found</div>
         ) : (
           <>
-            {/* Featured Hero Card */}
-            {featuredEvent && (
-              <div className="cursor-pointer" onClick={() => setSelectedEvent(featuredEvent)}>
-                <div className="relative w-full h-[280px] overflow-hidden">
-                  <img
-                    src={featuredEvent.image}
-                    alt={featuredEvent.title}
-                    className="w-full h-full object-cover"
-                    onError={e => { e.target.src = PLACEHOLDER_IMGS.default; }}
-                  />
-                  <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 50%)" }} />
-
-                  <div className="absolute bottom-0 left-0 right-0 px-4 pb-4">
-                    <div className="text-white text-xl font-bold leading-tight">{featuredEvent.title}</div>
-                    {featuredEvent.date && <div className="text-gray-300 text-sm mt-1">{featuredEvent.date}{featuredEvent.venue ? ` · ${featuredEvent.venue}` : ""}</div>}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Rest of events */}
+            {/* Events list */}
             {restEvents.map(event => (
               <div key={event.id} className="cursor-pointer" onClick={() => setSelectedEvent(event)}>
                 <div className="w-full h-[200px] bg-gray-200 overflow-hidden">

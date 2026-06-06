@@ -190,6 +190,14 @@ const AuthenticatedApp = () => {
   }
 
   if (authUser && !deviceVerified) {
+    // Check permanent verification — only ask once ever, not on every login
+    const isPermanentlyVerified =
+      localStorage.getItem(`tk_device_${authUser.email}`) === "verified" ||
+      localStorage.getItem(`tk_device_${authUser.email}_permanent`) === "true";
+    if (isPermanentlyVerified) {
+      setTimeout(() => setDeviceVerified(true), 0);
+      return null;
+    }
     return <DeviceCodeVerification user={authUser} onVerified={() => setDeviceVerified(true)} />;
   }
 
