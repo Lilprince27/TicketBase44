@@ -137,11 +137,13 @@ export default function EventsPage() {
       {/* Header */}
       <header className="sticky top-0 z-50" style={{ backgroundColor: "#051a24", paddingTop: "env(safe-area-inset-top)" }}>
         <div className="flex items-center px-4 py-3 gap-3">
+          {/* Ticketek logo */}
           <img
             src="https://www.image2url.com/r2/default/images/1779845454260-b504dfba-e0cc-4742-a9ce-72da00920a7b.png"
             alt="Ticketek"
             className="w-9 h-9 object-contain rounded flex-shrink-0"
           />
+          {/* Search bar */}
           <div
             className="flex-1 flex items-center rounded-xl px-3 py-2.5"
             style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}
@@ -155,6 +157,36 @@ export default function EventsPage() {
               className="flex-1 bg-transparent border-none text-white text-sm font-medium outline-none ml-2.5 search-input"
               style={{ color: "white" }}
             />
+          </div>
+          {/* Alexis AI Avatar */}
+          <div
+            className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center relative"
+            style={{
+              background: "conic-gradient(from 180deg, #a855f7, #3b82f6, #06b6d4, #10b981, #a855f7)",
+              padding: 2,
+              boxShadow: "0 0 14px rgba(168,85,247,0.5)",
+            }}
+          >
+            <div
+              className="w-full h-full rounded-full flex items-center justify-center overflow-hidden"
+              style={{ background: "#1a1a2e" }}
+            >
+              {/* Alexis face */}
+              <svg viewBox="0 0 36 36" width="30" height="30" fill="none">
+                {/* Head */}
+                <circle cx="18" cy="18" r="14" fill="#2a2a3e"/>
+                {/* Eyes */}
+                <circle cx="13" cy="16" r="3" fill="white"/>
+                <circle cx="23" cy="16" r="3" fill="white"/>
+                <circle cx="14" cy="16.5" r="1.5" fill="#1a1a2e"/>
+                <circle cx="24" cy="16.5" r="1.5" fill="#1a1a2e"/>
+                {/* Shine dots */}
+                <circle cx="14.8" cy="15.5" r="0.6" fill="white"/>
+                <circle cx="24.8" cy="15.5" r="0.6" fill="white"/>
+                {/* Smile */}
+                <path d="M13 22 Q18 26 23 22" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+              </svg>
+            </div>
           </div>
         </div>
 
@@ -177,6 +209,10 @@ export default function EventsPage() {
             );
           })}
         </div>
+        <style>{`
+          .search-input::placeholder { color: rgba(255,255,255,0.52); }
+          .search-input:focus { outline: none; }
+        `}</style>
       </header>
 
 
