@@ -166,6 +166,8 @@ const AuthenticatedApp = () => {
   }
 
   if (subscriptionExpired) {
+    // Auto-logout on subscription expiry — data is preserved, user can log back in after renewal
+    base44.auth.logout();
     return (
       <div className="fixed inset-0 bg-white flex flex-col items-center justify-center px-6 text-center">
         <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-5">
@@ -175,16 +177,16 @@ const AuthenticatedApp = () => {
         </div>
         <h2 className="text-xl font-bold text-gray-900 mb-2">Subscription Expired</h2>
         <p className="text-gray-500 mb-6">Your subscription has expired. Please contact admin to renew your access.</p>
-        <a href="https://t.me/ApfMF9J1DiM2OWQ0" target="_blank" rel="noopener noreferrer"
+        <a href="https://wa.me/2347026855490" target="_blank" rel="noopener noreferrer"
+          className="w-full max-w-xs py-4 rounded-xl text-white font-bold mb-3 flex items-center justify-center gap-2 no-underline"
+          style={{ backgroundColor: "#25d366" }}>
+          Contact Admin on WhatsApp
+        </a>
+        <a href="https://t.me/+2347026855490" target="_blank" rel="noopener noreferrer"
           className="w-full max-w-xs py-4 rounded-xl text-white font-bold mb-3 flex items-center justify-center gap-2 no-underline"
           style={{ backgroundColor: "#0088cc" }}>
           Contact Admin on Telegram
         </a>
-        <button onClick={() => base44.auth.logout()}
-          className="w-full max-w-xs py-4 rounded-xl font-bold border-2 bg-white cursor-pointer"
-          style={{ color: "#003057", borderColor: "#003057" }}>
-          Log Out
-        </button>
       </div>
     );
   }

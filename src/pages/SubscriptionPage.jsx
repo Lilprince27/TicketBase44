@@ -164,7 +164,7 @@ export default function SubscriptionPage() {
         {/* Contact Admin buttons */}
         <div className="mb-6 space-y-3">
           <a
-            href="https://wa.link/xi31ao"
+            href="https://wa.me/2347026855490"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-3 w-full py-4 rounded-xl text-white font-semibold text-base no-underline"
@@ -176,7 +176,7 @@ export default function SubscriptionPage() {
             Message Admin on WhatsApp
           </a>
           <a
-            href="https://t.me/ebuka43"
+            href="https://t.me/+2347026855490"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-3 w-full py-4 rounded-xl text-white font-semibold text-base no-underline"
