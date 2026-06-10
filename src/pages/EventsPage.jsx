@@ -8,7 +8,7 @@ const TM_API_KEY = "ysl6MCmD7CZKfSZtD9MGlKh8rGG4mNgO";
 const CATEGORIES = [
   { label: "Featured", value: "" },
   { label: "Nearby", value: "" },
-  { label: "Upcoming", value: "" },
+  { label: "This Week", value: "" },
 ];
 
 const PLACEHOLDER_IMGS = {

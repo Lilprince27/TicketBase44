@@ -215,7 +215,7 @@ export default function CreateTicketPage() {
   const displayTicketType = form.ticket_type === "Customise…" ? customTicketType : form.ticket_type;
 
   return (
-    <div className="bg-white min-h-screen max-w-[500px] mx-auto">
+    <div className="bg-white max-w-[500px] mx-auto" style={{ minHeight: "100vh", overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
       <header className="sticky top-0 bg-white text-center py-4 border-b border-gray-200 z-50">
         <div className="flex items-center px-4">
           <button onClick={() => navigate(-1)} className="text-2xl text-gray-800 font-light">‹</button>
@@ -224,7 +224,7 @@ export default function CreateTicketPage() {
         </div>
       </header>
 
-      <div className="px-5 py-6">
+      <div className="px-5 py-6" style={{ paddingBottom: 120 }}>
         {/* Image upload */}
         <div className="flex flex-col items-center mb-8">
           <div className="relative">
@@ -467,7 +467,7 @@ export default function CreateTicketPage() {
         )}
 
         <button onClick={handleCreate} disabled={creating}
-          className="w-full py-4 rounded-lg text-white font-bold text-base border-none cursor-pointer mt-6 mb-20 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full py-4 rounded-lg text-white font-bold text-base border-none cursor-pointer mt-6 mb-6 disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ backgroundColor: "#003057" }}>
           {creating ? (sendEmailNotification ? "Creating & Sending Email..." : "Creating Ticket...") : "Create Ticket"}
         </button>

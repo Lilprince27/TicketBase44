@@ -11,7 +11,10 @@ export default function AccountPage() {
   useEffect(() => { base44.auth.me().then(setUser); }, []);
 
   const firstName = (user?.display_name || user?.full_name || "there").split(" ")[0];
-  const customerId = user?.id ? String(user.id).slice(0, 7) : "...";
+  // Generate numeric-only customer ID from user id
+  const customerId = user?.id
+    ? String(user.id).split("").reduce((acc, c) => acc + c.charCodeAt(0), 0).toString().padStart(8, "9").slice(-8)
+    : "...";
 
   const menuItems = [
     {
