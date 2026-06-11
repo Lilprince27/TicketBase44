@@ -216,7 +216,7 @@ export default function CreateTicketPage() {
   const displayTicketType = form.ticket_type === "Customise…" ? customTicketType : form.ticket_type;
 
   return (
-    <div className="bg-white max-w-[500px] mx-auto" style={{ minHeight: "100vh", overflowY: "auto", WebkitOverflowScrolling: "touch" }}>
+    <div className="bg-white max-w-[500px] mx-auto" style={{ minHeight: "100vh" }}>
       <header className="sticky top-0 bg-white text-center py-4 border-b border-gray-200 z-50">
         <div className="flex items-center px-4">
           <button onClick={() => navigate(-1)} className="text-2xl text-gray-800 font-light">‹</button>
@@ -225,7 +225,7 @@ export default function CreateTicketPage() {
         </div>
       </header>
 
-      <div className="px-5 py-6" style={{ paddingBottom: 120 }}>
+      <div className="px-5 py-6" style={{ paddingBottom: 40 }}>
         {/* Image upload */}
         <div className="flex flex-col items-center mb-8">
           <div className="relative">

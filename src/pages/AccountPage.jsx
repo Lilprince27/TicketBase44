@@ -3,6 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import OrderHistorySheet from "../components/tickets/OrderHistorySheet";
 
+const numericId = (id) => {
+  if (!id) return "...";
+  const digits = id.replace(/\D/g, "");
+  return digits.padStart(8, "4").slice(-8);
+};
+
 export default function AccountPage() {
   const [user, setUser] = useState(null);
   const [showTickets, setShowTickets] = useState(false);
@@ -11,96 +17,148 @@ export default function AccountPage() {
   useEffect(() => { base44.auth.me().then(setUser); }, []);
 
   const firstName = (user?.display_name || user?.full_name || "there").split(" ")[0];
-  // Generate consistent numeric-only customer ID
-  const customerId = user?.id
-    ? String(parseInt(user.id.replace(/\D/g, "").slice(0, 10) || "0", 10)).padStart(8, "4").slice(-8)
-    : "...";
-
-  const menuItems = [
-    {
-      label: "Your Profile",
-      onClick: () => navigate("/profile"),
-      icon: <svg viewBox="0 0 24 24" fill="none" width="26" height="26"><path d="M19.5 19.5C19.5 16.5 17 14 12 14C7 14 4.5 16.5 4.5 19.5C4.5 20.3 5.2 21 6 21H18C18.8 21 19.5 20.3 19.5 19.5Z" stroke="#8e8e8e" strokeWidth="1.2" strokeLinejoin="round"/><circle cx="12" cy="11.5" r="4" fill="#ffffff" stroke="#8e8e8e" strokeWidth="1.2"/></svg>,
-    },
-    {
-      label: "Your Tickets",
-      onClick: () => setShowTickets(true),
-      icon: <svg viewBox="0 0 24 24" fill="none" width="26" height="26"><g transform="rotate(-45 12 12)"><path d="M 2 7 H 22 V 10.5 C 20.6 10.5 19.5 11.2 19.5 12 C 19.5 12.8 20.6 13.5 22 13.5 V 17 H 2 V 13.5 C 3.4 13.5 4.5 12.8 4.5 12 C 4.5 11.2 3.4 10.5 2 10.5 Z" stroke="#8e8e8e" strokeWidth="1" strokeLinejoin="miter"/></g></svg>,
-    },
-    {
-      label: "Your Subscriptions",
-      onClick: () => navigate("/subscriptions"),
-      icon: <svg viewBox="0 0 24 24" fill="none" width="26" height="26"><path d="M20 3H3V17H15.5L20 20.5V3ZM19 4V18.3L15.9 16H4V4H19Z" fill="#8e8e8e"/><rect x="6.5" y="7.5" width="10" height="1" fill="#8e8e8e"/><rect x="6.5" y="11.5" width="10" height="1" fill="#8e8e8e"/></svg>,
-    },
-    {
-      label: "Terms & Conditions",
-      onClick: () => {},
-      icon: <svg viewBox="0 0 24 24" fill="none" width="26" height="26"><path d="M20 2H4V22H12.5V21H5V3H19V12.5H20V2Z" fill="#8e8e8e"/><rect x="6.5" y="6.5" width="7" height="1" fill="#8e8e8e"/><rect x="6.5" y="10.5" width="10" height="1" fill="#8e8e8e"/><rect x="6.5" y="14.5" width="5" height="1" fill="#8e8e8e"/><path d="M12.5 17.5L13.2 16.8L15.5 19.1L21.3 13.3L22 14L15.5 20.5L12.5 17.5Z" fill="#8e8e8e"/></svg>,
-    },
-    {
-      label: "Privacy Policy",
-      onClick: () => {},
-      icon: <svg viewBox="0 0 24 24" fill="none" width="26" height="26"><path d="M7 10V7C7 4.24 9.24 2 12 2C14.76 2 17 4.24 17 7V10" stroke="#b0b0b0" strokeWidth="0.8" strokeLinecap="round"/><rect x="4" y="10" width="16" height="12" rx="2" stroke="#b0b0b0" strokeWidth="0.8"/><path d="M12 13.5C12.55 13.5 13 13.05 13 12.5C13 11.95 12.55 11.5 12 11.5C11.45 11.5 11 11.95 11 12.5C11 13.05 11.45 13.5 12 13.5ZM12 13.5V16.5" stroke="#b0b0b0" strokeWidth="0.8" strokeLinecap="round"/></svg>,
-    },
-    {
-      label: "Help",
-      onClick: () => navigate("/profile"),
-      icon: <svg viewBox="0 0 24 24" fill="none" width="26" height="26"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" stroke="#b0b0b0" strokeWidth="1.5" strokeLinejoin="round"/></svg>,
-    },
-    {
-      label: "Delete account",
-      onClick: () => {},
-      icon: <svg viewBox="0 0 100 100" width="26" height="26"><circle cx="50" cy="50" r="40" stroke="#b0b0b0" strokeWidth="12" fill="none"/><line x1="21.7" y1="21.7" x2="78.3" y2="78.3" stroke="#b0b0b0" strokeWidth="12" strokeLinecap="butt"/></svg>,
-    },
-  ];
+  const customerId = numericId(user?.id || "");
 
   return (
     <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif", background: "#fff", minHeight: "100vh", maxWidth: 600, margin: "0 auto" }}>
-      {/* Sticky header */}
-      <div style={{ position: "sticky", top: 0, backgroundColor: "#fff", zIndex: 100 }}>
-        <div style={{ height: 48 }} />
-        <div style={{ textAlign: "center", paddingBottom: 4 }}>
-          <h1 style={{ fontSize: 21, fontWeight: 500, color: "#000", letterSpacing: "-0.2px", margin: 0 }}>Your Account</h1>
-          <div style={{ fontSize: 13.5, color: "#555", marginTop: 5 }}>Customer ID: {customerId}</div>
-        </div>
+
+      {/* Dark navy header — matches real Ticketek */}
+      <div style={{ background: "#001a2c", paddingTop: "calc(env(safe-area-inset-top) + 28px)", paddingBottom: 28, paddingLeft: 20, paddingRight: 20 }}>
+        <h1 style={{ fontSize: 28, fontWeight: 700, color: "#fff", margin: "0 0 4px" }}>Hello, {firstName}</h1>
+        <p style={{ fontSize: 14, color: "rgba(255,255,255,0.65)", margin: 0 }}>Customer ID: {customerId}</p>
       </div>
 
-      <div style={{ padding: "0 24px 160px 24px" }}>
-        {/* Welcome */}
-        <div style={{ padding: "36px 0 16px" }}>
-          <h2 style={{ fontSize: 26, fontWeight: 500, color: "#333", marginBottom: 12 }}>Hi {firstName}</h2>
-          <p style={{ fontSize: 17, color: "#555", fontWeight: 400 }}>Welcome.</p>
+      <div style={{ padding: "0 0 120px" }}>
+
+        {/* Account section */}
+        <div style={{ padding: "24px 20px 8px" }}>
+          <h2 style={{ fontSize: 18, fontWeight: 700, color: "#111", margin: "0 0 4px" }}>Account</h2>
         </div>
 
-        {/* Menu */}
-        <nav style={{ marginTop: 12 }}>
-          {menuItems.map((item, i) => (
-            <button key={i} onClick={item.onClick}
-              style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 0", borderBottom: "1px solid #eef0f2", width: "100%", background: "none", border: "none", borderBottom: "1px solid #eef0f2", cursor: "pointer", textAlign: "left" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-                <div style={{ width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center" }}>{item.icon}</div>
-                <span style={{ fontSize: 17, color: "#2c5270", fontWeight: 400 }}>{item.label}</span>
-              </div>
-              <span style={{ color: "#b3b3b3", fontSize: 15 }}>❯</span>
-            </button>
-          ))}
-        </nav>
+        <MenuItem
+          icon={<ProfileIcon />}
+          label="Profile"
+          onClick={() => navigate("/profile")}
+        />
+        <MenuItem
+          icon={<TicketIcon />}
+          label="Your tickets"
+          onClick={() => setShowTickets(true)}
+        />
+        <MenuItem
+          icon={<SettingsIcon />}
+          label="Settings"
+          onClick={() => navigate("/subscriptions")}
+          bottomDivider
+        />
 
-        {/* Footer */}
-        <div style={{ padding: "40px 0", position: "relative" }}>
-          <button onClick={() => base44.auth.logout()}
-            style={{ fontSize: 16, color: "#2c5270", fontWeight: 500, background: "none", border: "none", cursor: "pointer", padding: 0, marginBottom: 24 }}>
-            Sign out
-          </button>
-          <div style={{ fontSize: 14, color: "#888", position: "absolute", right: 0, top: 40 }}>Version 3.2.7</div>
-          <div style={{ width: "100%", textAlign: "center", marginTop: 12 }}>
-            <a href="#" style={{ fontSize: 14, color: "#2c5270", textDecoration: "none", fontWeight: 500 }}>Cookie &amp; Performance Monitoring Consent</a>
-          </div>
-        </div>
+        {/* Info section */}
+        <MenuItem
+          icon={<DocIcon />}
+          label="Privacy Policy"
+          onClick={() => {}}
+        />
+        <MenuItem
+          icon={<HelpIcon />}
+          label="Help"
+          onClick={() => {}}
+        />
+        <MenuItem
+          icon={<InfoIcon />}
+          label="Terms & conditions"
+          onClick={() => {}}
+          bottomDivider
+        />
+
+        {/* Sign out */}
+        <MenuItem
+          icon={<SignOutIcon />}
+          label="Sign out"
+          onClick={() => base44.auth.logout()}
+        />
       </div>
 
-      {/* Order History Bottom Sheet */}
       {showTickets && <OrderHistorySheet user={user} onClose={() => setShowTickets(false)} />}
     </div>
   );
 }
+
+function MenuItem({ icon, label, onClick, bottomDivider }) {
+  return (
+    <>
+      <button
+        onClick={onClick}
+        style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          width: "100%", padding: "16px 20px",
+          background: "none", border: "none", borderBottom: "1px solid #f0f0f2",
+          cursor: "pointer", textAlign: "left",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", color: "#555" }}>
+            {icon}
+          </div>
+          <span style={{ fontSize: 16, color: "#111", fontWeight: 400 }}>{label}</span>
+        </div>
+        <ChevronRight />
+      </button>
+      {bottomDivider && <div style={{ height: 8, background: "#f5f5f5" }} />}
+    </>
+  );
+}
+
+const ChevronRight = () => (
+  <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
+    <path d="M1 1L7 7L1 13" stroke="#bbb" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const ProfileIcon = () => (
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#555" strokeWidth="1.6">
+    <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" strokeLinecap="round"/>
+  </svg>
+);
+
+const TicketIcon = () => (
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#555" strokeWidth="1.6">
+    <path d="M3 7h18v3a2 2 0 000 4v3H3v-3a2 2 0 000-4V7z" strokeLinejoin="round"/>
+  </svg>
+);
+
+const SettingsIcon = () => (
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#555" strokeWidth="1.6">
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+  </svg>
+);
+
+const DocIcon = () => (
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#555" strokeWidth="1.6">
+    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" strokeLinejoin="round"/>
+    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" strokeLinecap="round"/>
+  </svg>
+);
+
+const HelpIcon = () => (
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#555" strokeWidth="1.6">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" strokeLinecap="round"/>
+    <circle cx="12" cy="17" r="0.5" fill="#555"/>
+  </svg>
+);
+
+const InfoIcon = () => (
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#555" strokeWidth="1.6">
+    <circle cx="12" cy="12" r="10"/>
+    <circle cx="12" cy="8" r="0.5" fill="#555"/>
+    <path d="M12 12v5" strokeLinecap="round"/>
+  </svg>
+);
+
+const SignOutIcon = () => (
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#555" strokeWidth="1.6">
+    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" strokeLinecap="round"/>
+    <path d="M16 17l5-5-5-5M21 12H9" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
