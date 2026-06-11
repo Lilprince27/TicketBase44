@@ -171,23 +171,31 @@ export default function TicketsPage() {
       {walletTicket && <AppleWalletModal ticket={walletTicket} onClose={() => setWalletTicket(null)} />}
 
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-100 text-center" style={{ paddingTop: "calc(env(safe-area-inset-top) + 16px)", paddingBottom: 12 }}>
-        <h1 style={{ fontSize: 19, margin: 0, fontWeight: 700 }}>Ticket wallet</h1>
-        <p style={{ fontSize: 12, color: "#666", margin: "4px 0 0 0" }}>
-          Customer ID: {user?.id ? String(user.id).slice(0, 8) : "..."}
+      <header className="sticky top-0 z-50" style={{ background: "#001a2c", paddingTop: "calc(env(safe-area-inset-top) + 20px)", paddingBottom: 20, paddingLeft: 20, paddingRight: 20 }}>
+        <h1 style={{ fontSize: 26, margin: 0, fontWeight: 700, color: "white" }}>Ticket Wallet</h1>
+        <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", margin: "4px 0 0 0" }}>
+          Customer ID: {user?.id ? String(user.id).split("").reduce((acc, c) => acc + c.charCodeAt(0), 0).toString().padStart(8, "9").slice(-8) : "..."}
         </p>
       </header>
 
-      <div style={{ padding: "0 15px", paddingBottom: 140, paddingTop: 8 }}>
+      <div style={{ padding: "0 15px", paddingBottom: 20, paddingTop: 8 }}>
         {groups.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
-            <div className="w-20 h-20 rounded-full border-2 border-green-600 flex items-center justify-center mb-6">
-              <svg viewBox="0 0 24 24" className="w-10 h-10" fill="none" stroke="#16a34a" strokeWidth="1.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a3 3 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z" />
-              </svg>
-            </div>
-            <h2 className="text-xl font-bold text-gray-800 mb-2">No upcoming events</h2>
-            <p className="text-gray-500 text-base mb-8">Browse events to find tickets</p>
+          <div style={{ padding: "40px 24px 32px" }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: "#111", marginBottom: 16 }}>Events</h2>
+            <p style={{ fontSize: 16, color: "#333", marginBottom: 8 }}>You don't have any upcoming events.</p>
+            <p style={{ fontSize: 16, color: "#333", marginBottom: 40 }}>Browse events to find tickets to hundreds of amazing experiences.</p>
+            <button
+              onClick={() => window.location.href = "/"}
+              style={{ width: "100%", padding: "18px", borderRadius: 100, border: "none", background: "#001a2c", color: "white", fontWeight: 700, fontSize: 16, cursor: "pointer", marginBottom: 14 }}
+            >
+              Order History
+            </button>
+            <button
+              onClick={() => window.location.href = "/"}
+              style={{ width: "100%", padding: "18px", borderRadius: 100, border: "1.5px solid #111", background: "#f5f5f5", color: "#111", fontWeight: 600, fontSize: 16, cursor: "pointer" }}
+            >
+              Browse events
+            </button>
           </div>
         ) : (
           groups.map((group) => (
