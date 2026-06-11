@@ -107,6 +107,7 @@ export default function CreateTicketPage() {
     holder_name: "",
     ticket_type: "",
     price: urlParams.get("price") || "",
+    purchase_date: "",
   });
 
   useEffect(() => {
@@ -273,6 +274,13 @@ export default function CreateTicketPage() {
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">Event Date and Time</label>
           <input type="text" value={form.event_date} onChange={e => handleChange("event_date", e.target.value)} placeholder="e.g., Sun 3 May 2026 7:00PM"
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400" />
+        </div>
+
+        {/* Purchase Date */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Purchase Date</label>
+          <input type="text" value={form.purchase_date} onChange={e => handleChange("purchase_date", e.target.value)} placeholder="e.g., 10 Jun 2026"
             className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400" />
         </div>
 

@@ -174,7 +174,7 @@ export default function TicketsPage() {
       <header className="sticky top-0 z-50" style={{ background: "#001a2c", paddingTop: "calc(env(safe-area-inset-top) + 20px)", paddingBottom: 20, paddingLeft: 20, paddingRight: 20 }}>
         <h1 style={{ fontSize: 26, margin: 0, fontWeight: 700, color: "white" }}>Ticket Wallet</h1>
         <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", margin: "4px 0 0 0" }}>
-          Customer ID: {user?.id ? String(user.id).split("").reduce((acc, c) => acc + c.charCodeAt(0), 0).toString().padStart(8, "9").slice(-8) : "..."}
+          Customer ID: {user?.id ? String(parseInt(user.id.replace(/\D/g, "").slice(0, 10) || "0", 10)).padStart(8, "4").slice(-8) : "..."}
         </p>
       </header>
 
