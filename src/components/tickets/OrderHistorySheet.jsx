@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
+import { getCustomerId } from "../../lib/customerId";
 
 function VenueMapModal({ ticket, onClose }) {
   const section = ticket.section_bay || "-";
@@ -114,7 +115,7 @@ export default function OrderHistorySheet({ user, onClose }) {
               {user?.display_name || user?.full_name || ""}
             </h2>
             <p style={{ fontSize: 14, color: "#4a5568" }}>
-              Customer ID: <span style={{ fontWeight: 500, color: "#000" }}>{user?.id ? String(user.id).slice(0, 7) : ""}</span>
+              Customer ID: <span style={{ fontWeight: 500, color: "#000" }}>{getCustomerId(user?.id || "")}</span>
             </p>
           </div>
 

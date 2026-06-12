@@ -133,7 +133,7 @@ export default function EventsPage() {
   const restEvents = events;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div style={{ background: "white" }}>
       {/* Header */}
       <header className="sticky top-0 z-50" style={{ backgroundColor: "#051a24", paddingTop: "env(safe-area-inset-top)" }}>
         <div className="flex items-center px-4 py-3 gap-3">

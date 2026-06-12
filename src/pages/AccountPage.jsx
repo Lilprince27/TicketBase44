@@ -2,12 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import OrderHistorySheet from "../components/tickets/OrderHistorySheet";
-
-const numericId = (id) => {
-  if (!id) return "...";
-  const digits = id.replace(/\D/g, "");
-  return digits.padStart(8, "4").slice(-8);
-};
+import { getCustomerId } from "../lib/customerId";
 
 export default function AccountPage() {
   const [user, setUser] = useState(null);
@@ -17,10 +12,10 @@ export default function AccountPage() {
   useEffect(() => { base44.auth.me().then(setUser); }, []);
 
   const firstName = (user?.display_name || user?.full_name || "there").split(" ")[0];
-  const customerId = numericId(user?.id || "");
+  const customerId = getCustomerId(user?.id || "");
 
   return (
-    <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif", background: "#fff", minHeight: "100vh", maxWidth: 600, margin: "0 auto" }}>
+    <div style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif", background: "#fff" }}>
 
       {/* Dark navy header — matches real Ticketek */}
       <div style={{ background: "#001a2c", paddingTop: "calc(env(safe-area-inset-top) + 28px)", paddingBottom: 28, paddingLeft: 20, paddingRight: 20 }}>
