@@ -94,21 +94,21 @@
   html {
     margin: 0;
     padding: 0;
-    width: 100%;
     background-color: #001a35;
+    /* NO height/overflow restrictions — let the document scroll naturally */
   }
   body {
     margin: 0;
     padding: 0;
-    width: 100%;
     @apply text-foreground;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     -webkit-overflow-scrolling: touch;
     background-color: #001a35;
+    /* NO overflow:hidden, NO fixed height — natural document scroll */
   }
   #root {
     background-color: #ffffff;
-    min-height: 100dvh;
+    /* NO height restrictions */
   }
 }
 

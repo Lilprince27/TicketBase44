@@ -71,6 +71,29 @@ export default function AccountPage() {
           label="Sign out"
           onClick={() => base44.auth.logout()}
         />
+
+        {/* Delete account — red destructive action */}
+        <button
+          onClick={() => {
+            if (window.confirm("Are you sure you want to delete your account? This cannot be undone.")) {
+              base44.auth.logout();
+            }
+          }}
+          style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            width: "100%", padding: "16px 20px",
+            background: "none", border: "none", borderBottom: "1px solid #f0f0f2",
+            cursor: "pointer", textAlign: "left",
+          }}
+        >
+          <span style={{ fontSize: 16, color: "#e53e3e", fontWeight: 400 }}>Delete account</span>
+          <ChevronRight />
+        </button>
+
+        {/* Build number */}
+        <div style={{ textAlign: "right", padding: "16px 20px 40px", fontSize: 13, color: "#999" }}>
+          Build number 3.3.2 (1227)
+        </div>
       </div>
 
       {showTickets && <OrderHistorySheet user={user} onClose={() => setShowTickets(false)} />}

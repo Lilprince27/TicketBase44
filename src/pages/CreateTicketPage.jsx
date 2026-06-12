@@ -208,7 +208,7 @@ export default function CreateTicketPage() {
   const displayTicketType = form.ticket_type === "Customise…" ? customTicketType : form.ticket_type;
 
   return (
-    <div className="bg-white max-w-[500px] mx-auto" style={{ minHeight: "100vh" }}>
+    <div style={{ background: "white" }}>
       <header className="sticky top-0 bg-white text-center py-4 border-b border-gray-200 z-50">
         <div className="flex items-center px-4">
           <button onClick={() => navigate(-1)} className="text-2xl text-gray-800 font-light">‹</button>
