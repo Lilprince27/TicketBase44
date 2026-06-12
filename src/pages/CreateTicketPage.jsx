@@ -180,7 +180,7 @@ export default function CreateTicketPage() {
         event_image: imageUrl,
         serial_number: generateSerialNumber(),
         pax_number: generatePaxNumber(),
-        purchase_date: generatePurchaseDate(),
+        purchase_date: form.purchase_date || generatePurchaseDate(),
         seller_id: generateSellerId(),
         transaction_number: generateTransactionNumber(),
         event_code: generateEventCode(form.venue_name, form.event_date, form.event_name),
@@ -203,15 +203,7 @@ export default function CreateTicketPage() {
 
   if (loading) return <div className="flex items-center justify-center h-screen"><div className="w-8 h-8 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin" /></div>;
 
-  if (!subscription) {
-    return (
-      <div className="bg-white min-h-screen flex flex-col items-center justify-center px-6 text-center">
-        <h2 className="text-lg font-bold text-gray-800 mb-2">Subscription Required</h2>
-        <p className="text-gray-500 mb-6">You need an active subscription to create tickets.</p>
-        <button onClick={() => navigate("/subscriptions")} className="px-6 py-3 rounded-lg text-white font-semibold border-none cursor-pointer" style={{ backgroundColor: "#003057" }}>View Subscriptions</button>
-      </div>
-    );
-  }
+  // All users can create tickets
 
   const displayTicketType = form.ticket_type === "Customise…" ? customTicketType : form.ticket_type;
 

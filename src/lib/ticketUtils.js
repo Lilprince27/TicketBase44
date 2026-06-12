@@ -45,3 +45,10 @@ export function generateOrderNumber() {
   const suffix = Math.floor(10 + Math.random() * 90).toString();
   return `${year}-${num}/${suffix}`;
 }
+
+// Derive a stable order number from a ticket's stored order_number
+// Ensures all views (Wallet, Order History, Ticket Detail) show the SAME number
+export function formatOrderNumber(orderNumber) {
+  if (!orderNumber) return "-";
+  return orderNumber;
+}
