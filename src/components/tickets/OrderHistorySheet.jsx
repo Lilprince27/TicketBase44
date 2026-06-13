@@ -108,7 +108,7 @@ export default function OrderHistorySheet({ user, onClose }) {
           <h1 style={{ fontSize: 17, fontWeight: 500, color: "#333", margin: 0 }}>Order History</h1>
         </div>
 
-        <div className="overflow-y-auto pb-8">
+        <div className="overflow-y-auto" style={{ paddingBottom: "calc(32px + env(safe-area-inset-bottom))" }}>
           {/* Profile */}
           <div className="px-5 py-5">
             <h2 style={{ fontSize: 19, fontWeight: 500, color: "#000", marginBottom: 4 }}>

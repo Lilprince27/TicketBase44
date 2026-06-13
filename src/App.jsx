@@ -25,7 +25,21 @@ import CreateTicketPage from './pages/CreateTicketPage.jsx';
 import SubscriptionPage from './pages/SubscriptionPage';
 import ProfilePage from './pages/ProfilePage';
 
+// Sync system dark mode to the <html> element
+function useDarkMode() {
+  useEffect(() => {
+    const apply = (dark) => {
+      document.documentElement.classList.toggle("dark", dark);
+    };
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    apply(mq.matches);
+    mq.addEventListener("change", (e) => apply(e.matches));
+    return () => mq.removeEventListener("change", (e) => apply(e.matches));
+  }, []);
+}
+
 const AuthenticatedApp = () => {
+  useDarkMode();
   const [splashDone, setSplashDone] = useState(false);
   const [authUser, setAuthUser] = useState(null);
   const [approvalStatus, setApprovalStatus] = useState(null);

@@ -34,7 +34,7 @@ export default function EventDetailModal({ event, onClose, onCustomize }) {
 
           <p className="text-base font-semibold text-gray-800 mb-4">Do you want to customize this ticket?</p>
 
-          <div className="flex gap-3 mb-6">
+          <div className="flex gap-3" style={{ marginBottom: "calc(24px + env(safe-area-inset-bottom))" }}>
             <button
               onClick={onClose}
               className="flex-1 py-3.5 rounded-xl border-2 border-gray-200 text-gray-700 font-bold text-sm cursor-pointer bg-white"

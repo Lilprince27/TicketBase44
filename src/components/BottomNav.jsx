@@ -64,9 +64,29 @@ export default function BottomNav() {
     accountTapTimer.current = setTimeout(() => {
       const dest = accountTapCount.current >= 2 ? "/subscriptions" : "/account";
       accountTapCount.current = 0;
-      navigate(dest);
-      restoreScroll(dest);
+      // If already on account, reset to root of account
+      if (location.pathname === dest || location.pathname.startsWith(dest)) {
+        navigate(dest, { replace: true });
+        window.scrollTo({ top: 0, behavior: "instant" });
+      } else {
+        navigate(dest);
+        restoreScroll(dest);
+      }
     }, 300);
+  };
+
+  const handleNavTap = (e, item) => {
+    // If tapping the already-active tab, scroll to top / reset to root
+    if (isActive(item.path)) {
+      e.preventDefault();
+      saveScroll();
+      scrollPositions[item.path] = 0;
+      navigate(item.path, { replace: true });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    saveScroll();
+    restoreScroll(item.path);
   };
 
   return (
@@ -128,15 +148,13 @@ export default function BottomNav() {
         <div className="tnav-pill">
           {navItems.map((item) => {
             const active = isActive(item.path);
-            const handleClick = item.id === "account" ? handleAccountTap : undefined;
             return (
               <Link
                 key={item.id}
                 to={item.path}
                 onClick={(e) => {
-                  saveScroll();
-                  if (handleClick) { handleClick(e); return; }
-                  restoreScroll(item.path);
+                  if (item.id === "account") { handleAccountTap(e); return; }
+                  handleNavTap(e, item);
                 }}
                 className={`tnav-item${active ? " active" : ""}`}
                 style={{ color: active ? "#2563eb" : "#3c3c43" }}
