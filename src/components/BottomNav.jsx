@@ -69,7 +69,10 @@ export default function BottomNav() {
           justify-content: center;
           padding-bottom: calc(8px + env(safe-area-inset-bottom));
           padding-top: 6px;
+          /* pointer-events only on the pill, not the entire bottom strip */
           pointer-events: none;
+          /* ensure it never creates a scroll-blocking region */
+          touch-action: none;
         }
         .tnav-pill {
           display: flex;

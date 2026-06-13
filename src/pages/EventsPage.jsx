@@ -154,7 +154,7 @@ export default function EventsPage() {
   const restEvents = events;
 
   return (
-    <div style={{ background: "white", overflowX: "hidden" }}>
+    <div style={{ background: "white" }}>
       {/* Header */}
       <header className="sticky top-0 z-50" style={{ backgroundColor: "#051a24", paddingTop: "env(safe-area-inset-top)" }}>
         <div className="flex items-center px-4 py-3 gap-3">
@@ -239,7 +239,7 @@ export default function EventsPage() {
 
 
       {/* Events list */}
-      <div className="pb-24">
+      <div style={{ paddingBottom: "calc(120px + env(safe-area-inset-bottom))" }}>
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="w-8 h-8 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin" />

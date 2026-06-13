@@ -118,12 +118,34 @@ function TicketGroup({ group, onWallet }) {
                       Add to Apple Wallet
                     </button>
                   )}
-                  <button
-                    onClick={() => navigate(`/ticket-detail/${ticket.id}`)}
-                    style={{ width: "100%", padding: "14px", borderRadius: 0, border: "none", fontWeight: 700, fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", background: "#427926", color: "white", cursor: "pointer" }}
-                  >
-                    Manage ticket
-                  </button>
+                  <div style={{ display: "flex", gap: 0 }}>
+                    <button
+                      onClick={() => navigate(`/ticket-detail/${ticket.id}`)}
+                      style={{ flex: 1, padding: "14px", border: "none", fontWeight: 700, fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", background: "#427926", color: "white", cursor: "pointer" }}
+                    >
+                      Manage ticket
+                    </button>
+                    <button
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        const shareText = `🎫 ${ticket.event_name}\n📅 ${ticket.event_date}\n📍 ${ticket.venue_name}\n💺 Section ${ticket.section_bay || "-"}, Row ${ticket.row || "-"}, Seat ${ticket.seat_number}\n\nView ticket: ${window.location.origin}/ticket-detail/${ticket.id}`;
+                        if (navigator.share) {
+                          navigator.share({ title: ticket.event_name, text: shareText });
+                        } else {
+                          await navigator.clipboard.writeText(shareText);
+                          alert("Ticket details copied to clipboard!");
+                        }
+                      }}
+                      style={{ width: 56, padding: "14px", border: "none", borderLeft: "1px solid rgba(255,255,255,0.2)", fontWeight: 700, fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center", background: "#427926", color: "white", cursor: "pointer" }}
+                      title="Share ticket"
+                    >
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/>
+                        <polyline points="16 6 12 2 8 6"/>
+                        <line x1="12" y1="2" x2="12" y2="15"/>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -180,7 +202,7 @@ export default function TicketsPage() {
         </p>
       </header>
 
-      <div style={{ padding: "0 15px", paddingBottom: 20, paddingTop: 8 }}>
+      <div style={{ padding: "0 15px", paddingBottom: "calc(120px + env(safe-area-inset-bottom))", paddingTop: 8 }}>
         {groups.length === 0 ? (
           <div style={{ padding: "40px 24px 32px" }}>
             <h2 style={{ fontSize: 20, fontWeight: 700, color: "#111", marginBottom: 16 }}>Events</h2>

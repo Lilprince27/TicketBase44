@@ -108,11 +108,16 @@
   }
   #root {
     background-color: #ffffff;
-    /* NO height restrictions */
+    /* NO height, width, or overflow restrictions — document scrolls naturally */
   }
 }
 
 /* White placeholder for dark search inputs */
 .search-input::placeholder {
   color: rgba(255, 255, 255, 0.7);
+}
+
+/* Every page inside Layout gets breathing room above the fixed BottomNav */
+.page-scroll-padding {
+  padding-bottom: calc(110px + env(safe-area-inset-bottom));
 }

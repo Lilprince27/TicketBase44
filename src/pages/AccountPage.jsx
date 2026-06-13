@@ -23,7 +23,7 @@ export default function AccountPage() {
         <p style={{ fontSize: 14, color: "rgba(255,255,255,0.65)", margin: 0 }}>Customer ID: {customerId}</p>
       </div>
 
-      <div style={{ padding: "0 0 120px" }}>
+      <div className="page-scroll-padding" style={{ padding: "0" }}>
 
         {/* Account section */}
         <div style={{ padding: "24px 20px 8px" }}>
