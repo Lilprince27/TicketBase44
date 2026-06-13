@@ -34,6 +34,9 @@ const navItems = [
   },
 ];
 
+// Persist scroll positions per route
+const scrollPositions = {};
+
 export default function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -42,17 +45,27 @@ export default function BottomNav() {
 
   const isActive = (path) => path === "/" ? location.pathname === "/" : location.pathname.startsWith(path);
 
+  // Save scroll position before leaving current page
+  const saveScroll = () => {
+    scrollPositions[location.pathname] = window.scrollY;
+  };
+
+  // Restore scroll after navigation
+  const restoreScroll = (path) => {
+    const saved = scrollPositions[path] || 0;
+    setTimeout(() => window.scrollTo({ top: saved, behavior: "instant" }), 50);
+  };
+
   const handleAccountTap = (e) => {
     e.preventDefault();
+    saveScroll();
     accountTapCount.current += 1;
     clearTimeout(accountTapTimer.current);
     accountTapTimer.current = setTimeout(() => {
-      if (accountTapCount.current >= 2) {
-        navigate("/subscriptions");
-      } else {
-        navigate("/account");
-      }
+      const dest = accountTapCount.current >= 2 ? "/subscriptions" : "/account";
       accountTapCount.current = 0;
+      navigate(dest);
+      restoreScroll(dest);
     }, 300);
   };
 
@@ -120,7 +133,11 @@ export default function BottomNav() {
               <Link
                 key={item.id}
                 to={item.path}
-                onClick={handleClick}
+                onClick={(e) => {
+                  saveScroll();
+                  if (handleClick) { handleClick(e); return; }
+                  restoreScroll(item.path);
+                }}
                 className={`tnav-item${active ? " active" : ""}`}
                 style={{ color: active ? "#2563eb" : "#3c3c43" }}
               >

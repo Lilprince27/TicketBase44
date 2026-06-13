@@ -74,9 +74,20 @@ export default function AccountPage() {
 
         {/* Delete account — red destructive action */}
         <button
-          onClick={() => {
-            if (window.confirm("Are you sure you want to delete your account? This cannot be undone.")) {
-              base44.auth.logout();
+          onClick={async () => {
+            if (window.confirm("Are you sure you want to delete your account? This will permanently delete your profile and all tickets. This cannot be undone.")) {
+              try {
+                if (user) {
+                  // Delete all user tickets
+                  const tickets = await base44.entities.Ticket.filter({ owner_email: user.email }).catch(() => []);
+                  await Promise.all(tickets.map(t => base44.entities.Ticket.delete(t.id).catch(() => {})));
+                  // Delete user profile
+                  const profiles = await base44.entities.UserProfile.filter({ user_email: user.email }).catch(() => []);
+                  await Promise.all(profiles.map(p => base44.entities.UserProfile.delete(p.id).catch(() => {})));
+                }
+              } finally {
+                base44.auth.logout();
+              }
             }
           }}
           style={{

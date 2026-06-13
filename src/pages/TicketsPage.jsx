@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import AppleWalletModal from "../components/tickets/AppleWalletModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { getCustomerId } from "../lib/customerId";
+import PullToRefresh from "../components/PullToRefresh";
 
 const isAndroid = () => /android/i.test(navigator.userAgent);
 
@@ -162,17 +163,16 @@ export default function TicketsPage() {
   const [loading, setLoading] = useState(true);
   const [walletTicket, setWalletTicket] = useState(null);
 
-  useEffect(() => {
-    async function load() {
-      const me = await base44.auth.me();
-      setUser(me);
-      const allTickets = await base44.entities.Ticket.filter({ owner_email: me.email });
-      const hidden = JSON.parse(localStorage.getItem("hidden_tickets") || "[]");
-      setTickets(allTickets.filter(t => !hidden.includes(t.id)));
-      setLoading(false);
-    }
-    load();
+  const loadTickets = useCallback(async () => {
+    const me = await base44.auth.me();
+    setUser(me);
+    const allTickets = await base44.entities.Ticket.filter({ owner_email: me.email });
+    const hidden = JSON.parse(localStorage.getItem("hidden_tickets") || "[]");
+    setTickets(allTickets.filter(t => !hidden.includes(t.id)));
+    setLoading(false);
   }, []);
+
+  useEffect(() => { loadTickets(); }, [loadTickets]);
 
   if (loading) {
     return (
@@ -191,6 +191,7 @@ export default function TicketsPage() {
   const groups = Object.values(grouped);
 
   return (
+    <PullToRefresh onRefresh={loadTickets}>
     <div style={{ background: "white", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
       {walletTicket && <AppleWalletModal ticket={walletTicket} onClose={() => setWalletTicket(null)} />}
 
@@ -228,5 +229,6 @@ export default function TicketsPage() {
         )}
       </div>
     </div>
+    </PullToRefresh>
   );
 }

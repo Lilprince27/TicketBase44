@@ -95,7 +95,7 @@
     margin: 0;
     padding: 0;
     background-color: #001a35;
-    /* NO height/overflow restrictions — let the document scroll naturally */
+    overscroll-behavior: none;
   }
   body {
     margin: 0;
@@ -104,7 +104,7 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     -webkit-overflow-scrolling: touch;
     background-color: #001a35;
-    /* NO overflow:hidden, NO fixed height — natural document scroll */
+    overscroll-behavior: none;
   }
   #root {
     background-color: #ffffff;

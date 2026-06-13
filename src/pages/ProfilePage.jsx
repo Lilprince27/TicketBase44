@@ -18,6 +18,8 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     setSaving(true);
+    // Optimistic update — reflect immediately in UI
+    setUser(prev => prev ? { ...prev, display_name: name } : prev);
     await base44.auth.updateMe({ display_name: name });
     setSaving(false);
     setSaved(true);
