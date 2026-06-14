@@ -7,6 +7,21 @@ import { ChevronUp, ChevronDown } from "lucide-react";
 import { getCustomerId } from "../lib/customerId";
 import PullToRefresh from "../components/PullToRefresh";
 
+// Generate a stable random order number in format YYYYMMDD,NNNNN based on ticket id
+function getOrderNumber(ticket) {
+  if (ticket.order_number) {
+    // Replace any / with , in existing order numbers
+    return ticket.order_number.replace("/", ",");
+  }
+  // Generate deterministic number from ticket id
+  const seed = ticket.id ? ticket.id.split("").reduce((a, c) => a + c.charCodeAt(0), 0) : 12345;
+  const date = ticket.purchase_date
+    ? ticket.purchase_date.replace(/\D/g, "").slice(0, 8)
+    : "20260313";
+  const num = String(10000 + (seed % 89999)).padStart(5, "0");
+  return `${date},${num}`;
+}
+
 const isAndroid = () => /android/i.test(navigator.userAgent);
 
 function TicketGroup({ group, onWallet }) {
@@ -24,8 +39,8 @@ function TicketGroup({ group, onWallet }) {
         </div>
         <div style={{ width: 1, background: "rgba(255,255,255,0.2)", height: 28 }} />
         <div style={{ flex: 1, textAlign: "center" }}>
-        <div style={{ fontSize: 10, opacity: 0.7, marginBottom: 5, textTransform: "uppercase" }}>Order Number</div>
-        <div style={{ fontWeight: 700, fontSize: 14 }}>{first.order_number || "-"}</div>
+          <div style={{ fontSize: 10, opacity: 0.7, marginBottom: 5, textTransform: "uppercase" }}>Order Number</div>
+          <div style={{ fontWeight: 700, fontSize: 14 }}>{getOrderNumber(first)}</div>
         </div>
 
       </div>
@@ -84,67 +99,57 @@ function TicketGroup({ group, onWallet }) {
             {/* Individual seat cards */}
             <div style={{ padding: "0 20px 16px", background: "white" }}>
               {group.map((ticket, idx) => (
-                <div key={ticket.id} style={{ marginTop: idx === 0 ? 0 : 12, border: "1.5px solid #f2f2f2", borderRadius: 18, padding: 20, background: "#fafafa" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", textAlign: "center" }}>
+                <div key={ticket.id} style={{ marginTop: idx === 0 ? 12 : 16, border: "1.5px solid #e0e0e0", borderRadius: 12, overflow: "hidden", background: "white" }}>
+                  {/* Gate / Level header row */}
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 16px", background: "white" }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "#111", textTransform: "uppercase" }}>{ticket.entry_gate ? `Gate ${ticket.entry_gate}` : (ticket.door_area ? `Door ${ticket.door_area}` : "Gate A")}</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "#111", textTransform: "uppercase" }}>{ticket.level_stand ? `Level ${ticket.level_stand}` : "Level 3"}</span>
+                  </div>
+                  <div style={{ borderTop: "1.5px dotted #ccc", margin: "0 16px" }} />
+                  {/* Door / Section / Row Seat */}
+                  <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 16px 4px" }}>
                     <div>
-                      <div style={{ fontSize: 10, color: "#666", fontWeight: 600, textTransform: "uppercase" }}>Section</div>
-                      <div style={{ fontWeight: 700, marginTop: 6, fontSize: 15 }}>{ticket.section_bay || "-"}</div>
+                      <div style={{ fontSize: 10, color: "#666", fontWeight: 600, textTransform: "uppercase", marginBottom: 4 }}>Door/Aisle</div>
+                      <div style={{ fontWeight: 700, fontSize: 18, color: "#111" }}>{ticket.door_area || "-"}</div>
                     </div>
                     <div>
-                      <div style={{ fontSize: 10, color: "#666", fontWeight: 600, textTransform: "uppercase" }}>Row</div>
-                      <div style={{ fontWeight: 700, marginTop: 6, fontSize: 15 }}>{ticket.row || "-"}</div>
+                      <div style={{ fontSize: 10, color: "#666", fontWeight: 600, textTransform: "uppercase", marginBottom: 4 }}>Section</div>
+                      <div style={{ fontWeight: 700, fontSize: 18, color: "#111" }}>{ticket.section_bay || "-"}</div>
                     </div>
-                    <div>
-                      <div style={{ fontSize: 10, color: "#666", fontWeight: 600, textTransform: "uppercase" }}>Seat</div>
-                      <div style={{ fontWeight: 700, marginTop: 6, fontSize: 15 }}>{ticket.seat_number || "-"}</div>
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontSize: 10, color: "#666", fontWeight: 600, textTransform: "uppercase", marginBottom: 4 }}>Row/Seat</div>
+                      <div style={{ fontWeight: 700, fontSize: 18, color: "#111" }}>{ticket.row || "-"}/{ticket.seat_number || "-"}</div>
                     </div>
                   </div>
-                  <div style={{ borderTop: "1.5px dotted #ddd", margin: "15px 0" }} />
-                  <p style={{ fontSize: 13, fontWeight: 500, color: "#222", margin: "0 0 15px" }}>
-                    {ticket.ticket_type || "General Admission"} · Admit 1
-                  </p>
-                  <div style={{ borderTop: "1.5px dotted #ddd", margin: "15px 0" }} />
-                  {isAndroid() ? (
-                    <button onClick={() => onWallet(ticket)}
-                      style={{ width: "100%", padding: "12px 24px", borderRadius: 8, border: "none", fontWeight: 700, fontSize: 18, display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#000", color: "white", cursor: "pointer", marginBottom: 10, fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}
-                    >
-                      <img src="https://www.image2url.com/r2/default/images/1779671280742-1ae995e2-3a65-482a-9305-9de9fedcb5da.jpeg" alt="Google Wallet" style={{ width: 32, height: 32, marginRight: 14, objectFit: "contain" }} />
-                      Add to Google Wallet
-                    </button>
-                  ) : (
-                    <button onClick={() => onWallet(ticket)}
-                      style={{ width: "100%", padding: "14px", borderRadius: 4, border: "none", fontWeight: 700, fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, background: "#000", color: "white", cursor: "pointer", marginBottom: 10 }}
-                    >
-                      <img src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/f6963ff4b_IMG_7127.jpeg" alt="Wallet" style={{ width: 30, height: "auto", objectFit: "contain" }} />
-                      Add to Apple Wallet
-                    </button>
-                  )}
-                  <div style={{ display: "flex", gap: 0 }}>
+                  <div style={{ borderTop: "1.5px dotted #ccc", margin: "8px 16px" }} />
+                  <div style={{ padding: "4px 16px 14px" }}>
+                    <p style={{ fontSize: 13, fontWeight: 500, color: "#222", margin: "0 0 2px" }}>
+                      {ticket.ticket_type || "General Admission"}
+                    </p>
+                    <p style={{ fontSize: 13, color: "#555", margin: 0 }}>Admit</p>
+                  </div>
+                  <div style={{ borderTop: "1.5px dotted #ccc", margin: "0 16px 14px" }} />
+                  <div style={{ padding: "0 16px 16px" }}>
+                    {isAndroid() ? (
+                      <button onClick={() => onWallet(ticket)}
+                        style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "#000", color: "white", cursor: "pointer", marginBottom: 10 }}
+                      >
+                        <img src="https://www.image2url.com/r2/default/images/1779671280742-1ae995e2-3a65-482a-9305-9de9fedcb5da.jpeg" alt="Google Wallet" style={{ width: 28, height: 28, marginRight: 12, objectFit: "contain" }} />
+                        Add to Google Wallet
+                      </button>
+                    ) : (
+                      <button onClick={() => onWallet(ticket)}
+                        style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, background: "#000", color: "white", cursor: "pointer", marginBottom: 10 }}
+                      >
+                        <img src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/f6963ff4b_IMG_7127.jpeg" alt="Wallet" style={{ width: 28, height: "auto", objectFit: "contain" }} />
+                        Add to Apple Wallet
+                      </button>
+                    )}
                     <button
                       onClick={() => navigate(`/ticket-detail/${ticket.id}`)}
-                      style={{ flex: 1, padding: "14px", border: "none", fontWeight: 700, fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", background: "#427926", color: "white", cursor: "pointer" }}
+                      style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "#427926", color: "white", cursor: "pointer" }}
                     >
                       Manage ticket
-                    </button>
-                    <button
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        const shareText = `🎫 ${ticket.event_name}\n📅 ${ticket.event_date}\n📍 ${ticket.venue_name}\n💺 Section ${ticket.section_bay || "-"}, Row ${ticket.row || "-"}, Seat ${ticket.seat_number}\n\nView ticket: ${window.location.origin}/ticket-detail/${ticket.id}`;
-                        if (navigator.share) {
-                          navigator.share({ title: ticket.event_name, text: shareText });
-                        } else {
-                          await navigator.clipboard.writeText(shareText);
-                          alert("Ticket details copied to clipboard!");
-                        }
-                      }}
-                      style={{ width: 56, padding: "14px", border: "none", borderLeft: "1px solid rgba(255,255,255,0.2)", fontWeight: 700, fontSize: 18, display: "flex", alignItems: "center", justifyContent: "center", background: "#427926", color: "white", cursor: "pointer" }}
-                      title="Share ticket"
-                    >
-                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/>
-                        <polyline points="16 6 12 2 8 6"/>
-                        <line x1="12" y1="2" x2="12" y2="15"/>
-                      </svg>
                     </button>
                   </div>
                 </div>
@@ -165,7 +170,13 @@ export default function TicketsPage() {
 
   const loadTickets = useCallback(async () => {
     const me = await base44.auth.me();
-    setUser(me);
+    // Get display name from UserProfile (the name on confirmation email)
+    const profiles = await base44.entities.UserProfile.filter({ user_email: me.email }).catch(() => []);
+    const profile = profiles[0];
+    const displayName = profile?.first_name
+      ? `${profile.first_name}${profile.last_name ? " " + profile.last_name : ""}`
+      : (me.display_name || me.full_name || "");
+    setUser({ ...me, display_name: displayName });
     const allTickets = await base44.entities.Ticket.filter({ owner_email: me.email });
     const hidden = JSON.parse(localStorage.getItem("hidden_tickets") || "[]");
     setTickets(allTickets.filter(t => !hidden.includes(t.id)));

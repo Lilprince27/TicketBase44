@@ -7,8 +7,9 @@ const navItems = [
     label: "Events",
     path: "/",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="28" height="28" fill={active ? "#2563eb" : "#111"}>
-        <path d="M3 10.5L12 3L21 10.5V20C21 20.6 20.6 21 20 21H4C3.4 21 3 20.6 3 20V10.5Z"/>
+      <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? "#2563eb" : "#1c1c1e"}>
+        {/* House body */}
+        <path d="M10 20V14H14V20H19V12H22L12 3L2 12H5V20H10Z"/>
       </svg>
     ),
   },
@@ -17,8 +18,11 @@ const navItems = [
     label: "Account",
     path: "/account",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="28" height="28" fill={active ? "#2563eb" : "#111"}>
-        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+      <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? "#2563eb" : "#1c1c1e"}>
+        {/* Circle head */}
+        <circle cx="12" cy="7" r="4"/>
+        {/* Rounded shoulders body */}
+        <path d="M4 20C4 16.134 7.582 13 12 13C16.418 13 20 16.134 20 20H4Z"/>
       </svg>
     ),
   },
@@ -27,8 +31,13 @@ const navItems = [
     label: "Tickets",
     path: "/tickets",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="28" height="28" fill={active ? "#2563eb" : "#111"}>
-        <path d="M22 10V6H4v4c1.1 0 2 .9 2 2s-.9 2-2 2v4h18v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" transform="rotate(-30 12 12)"/>
+      <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? "#2563eb" : "#1c1c1e"}>
+        {/* Diagonal ticket — rotated rectangle with notch cutouts */}
+        <g transform="rotate(-45 12 12)">
+          <rect x="3" y="8" width="18" height="8" rx="1"/>
+          <circle cx="3" cy="12" r="2" fill="white"/>
+          <circle cx="21" cy="12" r="2" fill="white"/>
+        </g>
       </svg>
     ),
   },
