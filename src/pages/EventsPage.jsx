@@ -8,10 +8,11 @@ const TM_API_KEY = "ysl6MCmD7CZKfSZtD9MGlKh8rGG4mNgO";
 
 // Curated real Ticketek events — updated to match current Ticketek AU homepage
 const CURATED_EVENTS = [
+  { id: "c3", title: "Secret Screenings with Beau Miles", date: "Nov 2026", venue: "Various venues, Australia", image: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800&h=400&fit=crop" },
+  { id: "c4", title: "Jay Shetty LIVE: This Changes Everything", date: "Nov 2026", venue: "Melbourne, Sydney, Brisbane", image: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/a92324834_IMG_2770.png" },
+  { id: "charlie", title: "Charlie Puth", date: "2026", venue: "Various venues, Australia", image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=400&fit=crop" },
   { id: "c1", title: "The Original Wailers featuring Al Anderson", date: "Multiple dates", venue: "Various venues, Australia", image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=400&fit=crop" },
   { id: "c2", title: "Air Supply", date: "2026", venue: "Various venues, Australia", image: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=400&fit=crop" },
-  { id: "c3", title: "Secret Screenings with Beau Miles", date: "Nov 2026", venue: "Various venues, Australia", image: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800&h=400&fit=crop" },
-  { id: "c4", title: "Jay Shetty LIVE: This Changes Everything", date: "Nov 2026", venue: "Melbourne, Sydney, Brisbane", image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=400&fit=crop" },
   { id: "c5", title: "Joji", date: "2026", venue: "Qudos Bank Arena, Sydney", image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=400&fit=crop" },
   { id: "c6", title: "Khalid – It's Always Summer Somewhere World Tour with Lauv", date: "2026", venue: "Rod Laver Arena, Melbourne", image: "https://images.unsplash.com/photo-1501386761578-eaa54b9e9295?w=800&h=400&fit=crop" },
   { id: "c7", title: "AIDA – The Spectacular Musical", date: "2026", venue: "Sydney Opera House", image: "https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&h=400&fit=crop" },
@@ -190,29 +191,29 @@ export default function EventsPage() {
           <div
             className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center relative"
             style={{
-              background: "conic-gradient(from 180deg, #a855f7, #3b82f6, #06b6d4, #10b981, #a855f7)",
+              background: "conic-gradient(from 180deg, #a855f7, #3b82f6, #eab308, #a855f7)",
               padding: 2,
-              boxShadow: "0 0 14px rgba(168,85,247,0.5)",
+              boxShadow: "0 0 10px rgba(168,85,247,0.4)",
             }}
           >
             <div
               className="w-full h-full rounded-full flex items-center justify-center overflow-hidden"
-              style={{ background: "#1a1a2e" }}
+              style={{ background: "#0e0e1a" }}
             >
-              {/* Alexis face */}
+              {/* Robot face matching screenshot */}
               <svg viewBox="0 0 36 36" width="30" height="30" fill="none">
-                {/* Head */}
-                <circle cx="18" cy="18" r="14" fill="#2a2a3e"/>
+                {/* Head/helmet */}
+                <circle cx="18" cy="18" r="13" fill="#1a1a2e"/>
+                {/* White face plate */}
+                <rect x="9" y="11" width="18" height="15" rx="7" fill="white"/>
                 {/* Eyes */}
-                <circle cx="13" cy="16" r="3" fill="white"/>
-                <circle cx="23" cy="16" r="3" fill="white"/>
-                <circle cx="14" cy="16.5" r="1.5" fill="#1a1a2e"/>
-                <circle cx="24" cy="16.5" r="1.5" fill="#1a1a2e"/>
-                {/* Shine dots */}
-                <circle cx="14.8" cy="15.5" r="0.6" fill="white"/>
-                <circle cx="24.8" cy="15.5" r="0.6" fill="white"/>
+                <circle cx="13.5" cy="18" r="3" fill="#0e0e1a"/>
+                <circle cx="22.5" cy="18" r="3" fill="#0e0e1a"/>
+                {/* Eye shine */}
+                <circle cx="14.5" cy="17" r="1" fill="white"/>
+                <circle cx="23.5" cy="17" r="1" fill="white"/>
                 {/* Smile */}
-                <path d="M13 22 Q18 26 23 22" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+                <path d="M14 23 Q18 26.5 22 23" stroke="#0e0e1a" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
               </svg>
             </div>
           </div>
