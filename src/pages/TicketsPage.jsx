@@ -203,7 +203,7 @@ export default function TicketsPage() {
         </p>
       </header>
 
-      <div style={{ padding: "0 15px", paddingBottom: "calc(120px + env(safe-area-inset-bottom))", paddingTop: 8 }}>
+      <div style={{ padding: "0 15px", paddingBottom: "calc(140px + env(safe-area-inset-bottom))", paddingTop: 8 }}>
         {groups.length === 0 ? (
           <div style={{ padding: "40px 24px 32px" }}>
             <h2 style={{ fontSize: 20, fontWeight: 700, color: "#111", marginBottom: 16 }}>Events</h2>

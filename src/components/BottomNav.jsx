@@ -104,8 +104,8 @@ export default function BottomNav() {
           padding-top: 6px;
           /* pointer-events only on the pill, not the entire bottom strip */
           pointer-events: none;
-          /* ensure it never creates a scroll-blocking region */
-          touch-action: none;
+          /* pass all scroll/touch gestures through the transparent strip */
+          touch-action: pan-y;
         }
         .tnav-pill {
           display: flex;
