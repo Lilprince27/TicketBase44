@@ -166,12 +166,10 @@ export default function EventsPage() {
       {/* Header */}
       <header className="sticky top-0 z-50" style={{ backgroundColor: "#051a24", paddingTop: "env(safe-area-inset-top)" }}>
         <div className="flex items-center px-4 py-3 gap-3">
-          {/* Ticketek logo */}
-          <img
-            src="https://www.image2url.com/r2/default/images/1779845454260-b504dfba-e0cc-4742-a9ce-72da00920a7b.png"
-            alt="Ticketek"
-            className="w-9 h-9 object-contain rounded flex-shrink-0"
-          />
+          {/* Star icon */}
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="white" className="flex-shrink-0">
+            <path d="M12 2L14.39 8.26L21 9.27L16.16 13.88L17.3 20.5L12 17.27L6.7 20.5L7.84 13.88L3 9.27L9.61 8.26Z"/>
+          </svg>
           {/* Search bar */}
           <div
             className="flex-1 flex items-center rounded-xl px-3 py-2.5"

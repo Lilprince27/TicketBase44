@@ -63,7 +63,7 @@ function TicketGroup({ group, onWallet }) {
               {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
           </div>
-          <p style={{ fontSize: 13, margin: "2px 0", fontWeight: 600 }}>{first.purchase_date || first.event_date || "-"}</p>
+          <p style={{ fontSize: 13, margin: "2px 0", fontWeight: 600 }}>{first.event_date || "-"}</p>
           <p style={{ fontSize: 13, margin: 0, color: "#666" }}>{first.venue_name}</p>
           {first.add_ons && first.add_ons.length > 0 && first.add_ons.map((addon, i) => (
             <p key={i} style={{ fontSize: 11, margin: "2px 0 0", color: "#888" }}>Ticket includes {addon}</p>
