@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import AppleWalletModal from "../components/tickets/AppleWalletModal";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronUp, ChevronDown, Upload } from "lucide-react";
+import { ChevronUp, ChevronDown, Plus } from "lucide-react";
 import { getCustomerId } from "../lib/customerId";
 import PullToRefresh from "../components/PullToRefresh";
 
@@ -217,10 +217,10 @@ export default function TicketsPage() {
             </p>
           </div>
           <button
-            onClick={() => navigate("/import-ticket")}
+            onClick={() => navigate("/create-ticket")}
             style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 8, padding: "8px 12px", color: "white", fontWeight: 600, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}
           >
-            <Upload size={16} /> Import
+            <Plus size={16} /> Create
           </button>
         </div>
       </header>
@@ -232,10 +232,10 @@ export default function TicketsPage() {
             <p style={{ fontSize: 16, color: "#333", marginBottom: 8 }}>You don't have any upcoming events.</p>
             <p style={{ fontSize: 16, color: "#333", marginBottom: 40 }}>Browse events to find tickets to hundreds of amazing experiences.</p>
             <button
-              onClick={() => navigate("/import-ticket")}
+              onClick={() => navigate("/create-ticket")}
               style={{ width: "100%", padding: "18px", borderRadius: 100, border: "none", background: "#001a2c", color: "white", fontWeight: 700, fontSize: 16, cursor: "pointer", marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
             >
-              <Upload size={18} /> Import Ticket from Screenshot
+              <Plus size={18} /> Create Ticket
             </button>
             <button
               onClick={() => window.location.href = "/"}

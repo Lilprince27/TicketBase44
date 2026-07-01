@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Upload, Loader2 } from "lucide-react";
 import {
   generateSerialNumber, generatePaxNumber, generateTransactionNumber,
   generateSellerId, generatePurchaseDate, generateEventCode, generateOrderNumber,
@@ -85,6 +85,9 @@ export default function CreateTicketPage() {
   const [showPresenterSheet, setShowPresenterSheet] = useState(false);
   const [showCompassSheet, setShowCompassSheet] = useState(false);
   const [emailPricing, setEmailPricing] = useState({ ticket_item_price: "", sub_total: "", refundable_fee: "", service_fee: "", total: "" });
+  const [importing, setImporting] = useState(false);
+  const [importStatus, setImportStatus] = useState("");
+  const importFileRef = useRef(null);
 
   const urlParams = new URLSearchParams(window.location.search);
 
@@ -147,6 +150,64 @@ export default function CreateTicketPage() {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) { setImageFile(file); setImagePreview(URL.createObjectURL(file)); }
+  };
+
+  const handleImportScreenshot = async (file) => {
+    if (!file) return;
+    setImporting(true);
+    setImportStatus("Uploading screenshot...");
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setImportStatus("Reading ticket details...");
+      const result = await base44.integrations.Core.ExtractDataFromUploadedFile({
+        file_url,
+        json_schema: {
+          type: "object",
+          properties: {
+            event_name: { type: "string", description: "Event or artist name" },
+            venue_name: { type: "string", description: "Venue name" },
+            event_date: { type: "string", description: "Event date and time" },
+            holder_name: { type: "string", description: "Ticket holder name" },
+            seat_number: { type: "string" },
+            row: { type: "string" },
+            section_bay: { type: "string", description: "Section or bay" },
+            entry_gate: { type: "string", description: "Entry gate" },
+            level_stand: { type: "string", description: "Level or stand" },
+            door_area: { type: "string", description: "Door or area" },
+            ticket_type: { type: "string" },
+            price: { type: "string" },
+          },
+        },
+      });
+      if (result?.status === "success" && result.output) {
+        const data = typeof result.output === "string" ? JSON.parse(result.output) : result.output;
+        setForm(prev => ({
+          ...prev,
+          event_name: data.event_name || prev.event_name,
+          venue_name: data.venue_name || prev.venue_name,
+          event_date: data.event_date || prev.event_date,
+          holder_name: data.holder_name || prev.holder_name,
+          section_bay: data.section_bay || prev.section_bay,
+          entry_gate: data.entry_gate || prev.entry_gate,
+          level_stand: data.level_stand || prev.level_stand,
+          door_area: data.door_area || prev.door_area,
+          ticket_type: data.ticket_type || prev.ticket_type,
+          price: data.price || prev.price,
+          row: data.row || prev.row,
+          seat_number: data.seat_number || prev.seat_number,
+        }));
+        if (data.row || data.seat_number) {
+          setSeats([{ row: data.row || "", seat_number: data.seat_number || "" }]);
+        }
+        setImportStatus("Ticket details imported — review and edit if needed.");
+      } else {
+        setImportStatus("Could not read all details. Please fill in manually.");
+      }
+    } catch (e) {
+      setImportStatus("Import failed. Please fill in manually.");
+    }
+    setImporting(false);
+    setTimeout(() => setImportStatus(""), 5000);
   };
 
   const toggleAddon = (item) => {
@@ -213,9 +274,20 @@ export default function CreateTicketPage() {
         <div className="flex items-center px-4">
           <button onClick={() => navigate(-1)} className="text-2xl text-gray-800 font-light">‹</button>
           <h1 className="text-lg font-bold text-gray-900 flex-1">Create Ticket</h1>
-          <div className="w-6" />
+          <button onClick={() => importFileRef.current?.click()} disabled={importing}
+            className="flex items-center gap-1.5 text-sm font-semibold text-blue-600 border-none bg-transparent cursor-pointer disabled:opacity-50">
+            {importing ? <Loader2 size={18} className="animate-spin" /> : <Upload size={18} />}
+            Import
+          </button>
+          <input ref={importFileRef} type="file" accept="image/*" className="hidden" onChange={e => handleImportScreenshot(e.target.files?.[0])} />
         </div>
       </header>
+
+      {importStatus && (
+        <div className="mx-5 mt-4 px-4 py-3 rounded-lg text-sm font-medium" style={{ background: importing ? "#eff6ff" : "#f0fdf4", color: importing ? "#1e40af" : "#166534" }}>
+          {importStatus}
+        </div>
+      )}
 
       <div className="px-5 py-6" style={{ paddingBottom: 40 }}>
         {/* Image upload */}

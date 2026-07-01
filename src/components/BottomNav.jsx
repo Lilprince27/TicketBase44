@@ -133,16 +133,18 @@ export default function BottomNav() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 8px 20px;
+          padding: 8px 14px;
           border-radius: 80px;
           text-decoration: none;
           cursor: pointer;
           border: none;
           background: transparent;
           gap: 3px;
-          min-width: 80px;
+          width: 96px;
+          flex-shrink: 0;
+          box-sizing: border-box;
           -webkit-tap-highlight-color: transparent;
-          transition: transform 0.15s ease;
+          transition: transform 0.15s ease, background-color 0.15s ease;
         }
         .tnav-item:active { transform: scale(0.92); }
         .tnav-item.active { background: #e0e0f0; }
