@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import AppleWalletModal from "../components/tickets/AppleWalletModal";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { ChevronUp, ChevronDown, Upload } from "lucide-react";
 import { getCustomerId } from "../lib/customerId";
 import PullToRefresh from "../components/PullToRefresh";
 
@@ -163,6 +163,7 @@ function TicketGroup({ group, onWallet }) {
 }
 
 export default function TicketsPage() {
+  const navigate = useNavigate();
   const [tickets, setTickets] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -208,10 +209,20 @@ export default function TicketsPage() {
 
       {/* Header */}
       <header className="sticky top-0 z-50" style={{ background: "#001a2c", paddingTop: "calc(env(safe-area-inset-top) + 20px)", paddingBottom: 20, paddingLeft: 20, paddingRight: 20 }}>
-        <h1 style={{ fontSize: 26, margin: 0, fontWeight: 700, color: "white" }}>Ticket Wallet</h1>
-        <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", margin: "4px 0 0 0" }}>
-          Customer ID: {getCustomerId(user?.id || "")}
-        </p>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+          <div>
+            <h1 style={{ fontSize: 26, margin: 0, fontWeight: 700, color: "white" }}>Ticket Wallet</h1>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", margin: "4px 0 0 0" }}>
+              Customer ID: {getCustomerId(user?.id || "")}
+            </p>
+          </div>
+          <button
+            onClick={() => navigate("/import-ticket")}
+            style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 8, padding: "8px 12px", color: "white", fontWeight: 600, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}
+          >
+            <Upload size={16} /> Import
+          </button>
+        </div>
       </header>
 
       <div style={{ padding: "0 15px", paddingBottom: "calc(140px + env(safe-area-inset-bottom))", paddingTop: 8 }}>
@@ -221,10 +232,10 @@ export default function TicketsPage() {
             <p style={{ fontSize: 16, color: "#333", marginBottom: 8 }}>You don't have any upcoming events.</p>
             <p style={{ fontSize: 16, color: "#333", marginBottom: 40 }}>Browse events to find tickets to hundreds of amazing experiences.</p>
             <button
-              onClick={() => window.location.href = "/"}
-              style={{ width: "100%", padding: "18px", borderRadius: 100, border: "none", background: "#001a2c", color: "white", fontWeight: 700, fontSize: 16, cursor: "pointer", marginBottom: 14 }}
+              onClick={() => navigate("/import-ticket")}
+              style={{ width: "100%", padding: "18px", borderRadius: 100, border: "none", background: "#001a2c", color: "white", fontWeight: 700, fontSize: 16, cursor: "pointer", marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
             >
-              Order History
+              <Upload size={18} /> Import Ticket from Screenshot
             </button>
             <button
               onClick={() => window.location.href = "/"}

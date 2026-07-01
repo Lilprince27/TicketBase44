@@ -8,19 +8,9 @@ const TM_API_KEY = "ysl6MCmD7CZKfSZtD9MGlKh8rGG4mNgO";
 
 // Curated real Ticketek events — updated to match current Ticketek AU homepage
 const CURATED_EVENTS = [
-  { id: "c3", title: "Secret Screenings with Beau Miles", date: "Nov 2026", venue: "Various venues, Australia", image: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=800&h=400&fit=crop" },
-  { id: "c4", title: "Jay Shetty LIVE: This Changes Everything", date: "Nov 2026", venue: "Melbourne, Sydney, Brisbane", image: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/a92324834_IMG_2770.png" },
-  { id: "charlie", title: "Charlie Puth", date: "2026", venue: "Various venues, Australia", image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=400&fit=crop" },
-  { id: "c1", title: "The Original Wailers featuring Al Anderson", date: "Multiple dates", venue: "Various venues, Australia", image: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/53dc5da4e_IMG_2727.jpeg" },
-  { id: "c2", title: "Air Supply", date: "2026", venue: "Various venues, Australia", image: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/eefb092e8_IMG_2728.jpeg" },
-  { id: "c5", title: "Joji", date: "2026", venue: "Qudos Bank Arena, Sydney", image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=400&fit=crop" },
-  { id: "c6", title: "Khalid – It's Always Summer Somewhere World Tour with Lauv", date: "2026", venue: "Rod Laver Arena, Melbourne", image: "https://images.unsplash.com/photo-1501386761578-eaa54b9e9295?w=800&h=400&fit=crop" },
-  { id: "c7", title: "AIDA – The Spectacular Musical", date: "2026", venue: "Sydney Opera House", image: "https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&h=400&fit=crop" },
-  { id: "c8", title: "Nick Cave & The Bad Seeds", date: "Oct 2026", venue: "Adelaide Entertainment Centre", image: "https://images.unsplash.com/photo-1598387993441-a364f854cfac?w=800&h=400&fit=crop" },
-  { id: "c9", title: "Coldplay – Music of the Spheres World Tour", date: "Nov 2026", venue: "Marvel Stadium, Melbourne", image: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800&h=400&fit=crop" },
-  { id: "c10", title: "Ed Sheeran – Mathematics Tour", date: "Nov 2026", venue: "Accor Stadium, Sydney", image: "https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=800&h=400&fit=crop" },
-  { id: "c11", title: "Taylor Swift – The Eras Tour", date: "Feb 2027", venue: "Optus Stadium, Perth", image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=400&fit=crop" },
-  { id: "c12", title: "AFL Grand Final 2026", date: "Sep 2026", venue: "MCG, Melbourne", image: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=400&fit=crop" },
+  { id: "socceroos", title: "Socceroos v Brazil", date: "Tue 29 Sep 2026", venue: "Suncorp Stadium, Brisbane", image: "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&h=400&fit=crop" },
+  { id: "secretgarden", title: "The Return of Secret Garden", date: "2026 Australian Concert Tour", venue: "Various venues, Australia", image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&h=400&fit=crop" },
+  { id: "wanderlust", title: "Wanderlust: This Changes Everything", date: "Australian Tour November 2026", venue: "Various venues, Australia", image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=400&fit=crop" },
 ];
 
 const CATEGORIES = [

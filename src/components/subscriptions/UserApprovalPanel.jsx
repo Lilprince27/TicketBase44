@@ -25,6 +25,26 @@ export default function UserApprovalPanel() {
     load();
   };
 
+  const handleDeleteAndLogout = async (record) => {
+    if (!window.confirm(`Delete and logout ${record.full_name || record.user_email}? This removes their profile, tickets, subscriptions, and approval. This cannot be undone.`)) return;
+    const email = record.user_email;
+    // Delete user's tickets
+    const tickets = await base44.entities.Ticket.filter({ owner_email: email }).catch(() => []);
+    await base44.entities.Ticket.deleteMany({ owner_email: email }).catch(() => {});
+    // Delete user profile
+    const profiles = await base44.entities.UserProfile.filter({ user_email: email }).catch(() => []);
+    await Promise.all(profiles.map(p => base44.entities.UserProfile.delete(p.id).catch(() => {})));
+    // Delete subscriptions
+    const subs = await base44.entities.Subscription.filter({ user_email: email }).catch(() => []);
+    await Promise.all(subs.map(s => base44.entities.Subscription.delete(s.id).catch(() => {})));
+    // Delete device codes
+    const codes = await base44.entities.DeviceCode.filter({ user_email: email }).catch(() => []);
+    await Promise.all(codes.map(c => base44.entities.DeviceCode.delete(c.id).catch(() => {})));
+    // Delete the approval record
+    await base44.entities.UserApproval.delete(record.id).catch(() => {});
+    load();
+  };
+
   const filtered = approvals.filter(a => a.status === activeTab);
 
   return (
@@ -68,7 +88,13 @@ export default function UserApprovalPanel() {
                   Approve
                 </button>
               ) : (
-                <span className="text-green-600 text-xs font-bold">✓ Approved</span>
+                <button
+                  onClick={() => handleDeleteAndLogout(record)}
+                  className="px-3 py-2 rounded-lg text-white text-xs font-bold border-none cursor-pointer"
+                  style={{ backgroundColor: "#dc2626" }}
+                >
+                  Delete & Logout
+                </button>
               )}
             </div>
           ))}

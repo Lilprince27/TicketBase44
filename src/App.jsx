@@ -22,6 +22,7 @@ import AccountPage from './pages/AccountPage.jsx';
 import TicketsPage from './pages/TicketsPage';
 import TicketDetailPage from './pages/TicketDetailPage.jsx';
 import CreateTicketPage from './pages/CreateTicketPage.jsx';
+import ImportTicketPage from './pages/ImportTicketPage.jsx';
 import SubscriptionPage from './pages/SubscriptionPage';
 import ProfilePage from './pages/ProfilePage';
 
@@ -262,6 +263,7 @@ const AuthenticatedApp = () => {
         <Route path="/tickets" element={<TicketsPage />} />
         <Route path="/subscriptions" element={<SubscriptionPage />} />
         <Route path="/create-ticket" element={<CreateTicketPage />} />
+        <Route path="/import-ticket" element={<ImportTicketPage />} />
         <Route path="/profile" element={<ProfilePage />} />
       </Route>
       <Route path="/ticket-detail/:id" element={<TicketDetailPage />} />
