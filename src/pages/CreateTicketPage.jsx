@@ -158,6 +158,10 @@ export default function CreateTicketPage() {
     setImportStatus("Uploading screenshot...");
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      // Use the uploaded Ticketek screenshot as the event image
+      setPrefilledImageUrl(file_url);
+      setImagePreview(file_url);
+      setImageFile(null);
       setImportStatus("Reading ticket details...");
       const result = await base44.integrations.Core.ExtractDataFromUploadedFile({
         file_url,
@@ -289,7 +293,7 @@ export default function CreateTicketPage() {
         </div>
       )}
 
-      <div className="px-5 py-6" style={{ paddingBottom: 40 }}>
+      <div className="px-5 pt-6" style={{ paddingBottom: "calc(140px + env(safe-area-inset-bottom))" }}>
         {/* Image upload */}
         <div className="flex flex-col items-center mb-8">
           <div className="relative">

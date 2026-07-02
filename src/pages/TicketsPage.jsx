@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import AppleWalletModal from "../components/tickets/AppleWalletModal";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronUp, ChevronDown, Plus } from "lucide-react";
+import { ChevronUp, ChevronDown } from "lucide-react";
 import { getCustomerId } from "../lib/customerId";
 import PullToRefresh from "../components/PullToRefresh";
 
@@ -226,13 +226,7 @@ export default function TicketsPage() {
             <p style={{ fontSize: 16, color: "#333", marginBottom: 8 }}>You don't have any upcoming events.</p>
             <p style={{ fontSize: 16, color: "#333", marginBottom: 40 }}>Browse events to find tickets to hundreds of amazing experiences.</p>
             <button
-              onClick={() => navigate("/create-ticket")}
-              style={{ width: "100%", padding: "18px", borderRadius: 100, border: "none", background: "#001a2c", color: "white", fontWeight: 700, fontSize: 16, cursor: "pointer", marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
-            >
-              <Plus size={18} /> Create Ticket
-            </button>
-            <button
-              onClick={() => window.location.href = "/"}
+              onClick={() => navigate("/")}
               style={{ width: "100%", padding: "18px", borderRadius: 100, border: "1.5px solid #111", background: "#f5f5f5", color: "#111", fontWeight: 600, fontSize: 16, cursor: "pointer" }}
             >
               Browse events

@@ -36,7 +36,7 @@ export default function ProfilePage() {
         </div>
       </header>
 
-      <div className="px-6 py-8">
+      <div className="px-6 pt-8" style={{ paddingBottom: "calc(140px + env(safe-area-inset-bottom))" }}>
         <label className="block text-sm font-medium text-gray-600 mb-2">Display Name</label>
         <input
           type="text"

@@ -73,7 +73,7 @@ export default function SubscriptionPage() {
         </div>
       </header>
 
-      <div className="px-5 py-6">
+      <div className="px-5 pt-6" style={{ paddingBottom: "calc(140px + env(safe-area-inset-bottom))" }}>
         {/* User Dashboard card */}
         {!isAdmin && userProfile && (
           <div className="rounded-xl p-4 mb-4 bg-gray-50 border border-gray-200">
@@ -204,17 +204,6 @@ export default function SubscriptionPage() {
             <h3 className="text-base font-bold text-gray-800 mb-3">My Tickets</h3>
             <UserTicketManager userEmail={user.email} />
           </div>
-        )}
-
-        {/* Create ticket button (only if has subscription or is admin) */}
-        {(subscription || isAdmin) && (
-          <button
-            onClick={() => navigate("/create-ticket")}
-            className="w-full py-4 rounded-lg text-white font-bold text-base border-none cursor-pointer mb-8"
-            style={{ backgroundColor: "#418029" }}
-          >
-            Create Ticket
-          </button>
         )}
 
         {isAdmin && <AdminSubscriptionPanel />}

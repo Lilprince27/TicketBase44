@@ -7,7 +7,7 @@ const navItems = [
     label: "Events",
     path: "/",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? "#2E72E7" : "#1c1c1e"}>
+      <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? "#007AFF" : "#000000"}>
         {/* House body */}
         <path d="M10 20V14H14V20H19V12H22L12 3L2 12H5V20H10Z"/>
       </svg>
@@ -18,7 +18,7 @@ const navItems = [
     label: "Account",
     path: "/account",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? "#2E72E7" : "#1c1c1e"}>
+      <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? "#007AFF" : "#000000"}>
         {/* Circle head */}
         <circle cx="12" cy="7" r="4"/>
         {/* Rounded shoulders body */}
@@ -31,7 +31,7 @@ const navItems = [
     label: "Tickets",
     path: "/tickets",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? "#2E72E7" : "#1c1c1e"}>
+      <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? "#007AFF" : "#000000"}>
         {/* Diagonal ticket — rotated rectangle with notch cutouts */}
         <g transform="rotate(-45 12 12)">
           <rect x="3" y="8" width="18" height="8" rx="1"/>
@@ -147,7 +147,7 @@ export default function BottomNav() {
           transition: transform 0.15s ease, background-color 0.15s ease;
         }
         .tnav-item:active { transform: scale(0.92); }
-        .tnav-item.active { background: #e0e0f0; }
+        .tnav-item.active { background: #E8E8E8; }
         .tnav-label {
           font-size: 11px;
           font-weight: 600;
@@ -168,10 +168,10 @@ export default function BottomNav() {
                   handleNavTap(e, item);
                 }}
                 className={`tnav-item${active ? " active" : ""}`}
-                style={{ color: active ? "#2E72E7" : "#3c3c43" }}
+                style={{ color: active ? "#007AFF" : "#000000" }}
               >
                 {item.icon(active)}
-                <span className="tnav-label" style={{ color: active ? "#2E72E7" : "#3c3c43" }}>
+                <span className="tnav-label" style={{ color: active ? "#007AFF" : "#000000" }}>
                   {item.label}
                 </span>
               </Link>

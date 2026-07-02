@@ -119,5 +119,5 @@
 
 /* Every page inside Layout gets breathing room above the fixed BottomNav */
 .page-scroll-padding {
-  padding-bottom: calc(110px + env(safe-area-inset-bottom));
+  padding-bottom: calc(140px + env(safe-area-inset-bottom));
 }
