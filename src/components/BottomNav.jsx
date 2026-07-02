@@ -109,8 +109,8 @@ export default function BottomNav() {
           z-index: 9999;
           display: flex;
           justify-content: center;
-          padding-bottom: calc(8px + env(safe-area-inset-bottom));
-          padding-top: 6px;
+          padding-bottom: calc(2px + env(safe-area-inset-bottom));
+          padding-top: 4px;
           /* pointer-events only on the pill, not the entire bottom strip */
           pointer-events: none;
           /* pass all scroll/touch gestures through the transparent strip */

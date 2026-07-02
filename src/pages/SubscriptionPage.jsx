@@ -186,6 +186,17 @@ export default function SubscriptionPage() {
             Message Admin on Telegram
           </a>
 
+          {/* Create ticket — green button with hover */}
+          <button
+            onClick={() => navigate("/create-ticket")}
+            className="w-full py-4 rounded-xl text-white font-semibold text-base border-none cursor-pointer transition-colors duration-150"
+            style={{ backgroundColor: "#418029" }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#376a1f")}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#418029")}
+          >
+            Create Ticket
+          </button>
+
         </div>
 
         {/* My Tickets button */}
