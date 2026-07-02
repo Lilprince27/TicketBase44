@@ -216,12 +216,6 @@ export default function TicketsPage() {
               Customer ID: {getCustomerId(user?.id || "")}
             </p>
           </div>
-          <button
-            onClick={() => navigate("/create-ticket")}
-            style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 8, padding: "8px 12px", color: "white", fontWeight: 600, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}
-          >
-            <Plus size={16} /> Create
-          </button>
         </div>
       </header>
 

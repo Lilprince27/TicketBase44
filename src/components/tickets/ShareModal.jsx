@@ -25,7 +25,7 @@ export default function ShareModal({ ticket, onClose }) {
 
   const seatNumber = ticket?.seat_number || "";
 
-  const overlayStyle = { background: "rgba(240,242,245,0.85)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" };
+  const overlayStyle = { background: "rgba(0,0,0,0.5)", backdropFilter: "blur(2px)", WebkitBackdropFilter: "blur(2px)" };
 
   if (loadingSettings) {
     return (

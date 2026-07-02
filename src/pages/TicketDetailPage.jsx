@@ -39,8 +39,6 @@ export default function TicketDetailPage() {
     );
   }
 
-  if (showShareModal) return <ShareModal ticket={ticket} onClose={() => setShowShareModal(false)} />;
-
   if (!ticket) {
     return (
       <div className="flex items-center justify-center h-screen text-gray-500">
@@ -54,6 +52,7 @@ export default function TicketDetailPage() {
   return (
     <div style={{ margin: "0 auto", backgroundColor: "#f2f2f2", minHeight: "100vh", fontFamily: "-apple-system, system-ui, sans-serif", color: "#000", maxWidth: 500 }}>
       {showWallet && <AppleWalletModal ticket={ticket} onClose={() => setShowWallet(false)} />}
+      {showShareModal && <ShareModal ticket={ticket} onClose={() => setShowShareModal(false)} />}
 
       {/* Header */}
       <div style={{ position: "sticky", top: 0, zIndex: 100, background: "white", height: 55, display: "flex", alignItems: "center", borderBottom: "1px solid #ddd" }}>

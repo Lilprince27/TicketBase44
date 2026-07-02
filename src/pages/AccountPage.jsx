@@ -41,6 +41,11 @@ export default function AccountPage() {
           onClick={() => setShowTickets(true)}
         />
         <MenuItem
+          icon={<CreateTicketIcon />}
+          label="Create ticket"
+          onClick={() => navigate("/create-ticket")}
+        />
+        <MenuItem
           icon={<SettingsIcon />}
           label="Settings"
           onClick={() => navigate("/subscriptions")}
@@ -152,6 +157,14 @@ const ProfileIcon = () => (
 const TicketIcon = () => (
   <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#555" strokeWidth="1.6">
     <path d="M3 7h18v3a2 2 0 000 4v3H3v-3a2 2 0 000-4V7z" strokeLinejoin="round"/>
+  </svg>
+);
+
+const CreateTicketIcon = () => (
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#555" strokeWidth="1.6">
+    <circle cx="12" cy="12" r="9"/>
+    <line x1="12" y1="8" x2="12" y2="16" strokeLinecap="round"/>
+    <line x1="8" y1="12" x2="16" y2="12" strokeLinecap="round"/>
   </svg>
 );
 
