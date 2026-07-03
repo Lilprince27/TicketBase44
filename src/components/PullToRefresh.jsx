@@ -47,7 +47,7 @@ export default function PullToRefresh({ onRefresh, children }) {
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
-      style={{ position: "relative" }}
+      style={{ position: "relative", touchAction: "pan-y" }}
     >
       {/* Indicator */}
       <div style={{
@@ -77,7 +77,7 @@ export default function PullToRefresh({ onRefresh, children }) {
           }} />
         )}
       </div>
-      <div style={{ transform: `translateY(${pullY}px)`, transition: pulling ? "none" : "transform 0.3s ease" }}>
+      <div style={{ transform: pullY > 0 ? `translateY(${pullY}px)` : undefined, transition: pulling ? "none" : "transform 0.3s ease" }}>
         {children}
       </div>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
