@@ -7,8 +7,8 @@ const navItems = [
     label: "Events",
     path: "/",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? "#007AFF" : "#000000"}>
-        <path d="M10 20v-6h4v6h5v-9h3L12 3 2 11h3v9z" />
+      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? "#2D73F5" : "#1D1D1D"}>
+        <path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6h-6v6H4a1 1 0 01-1-1v-9z" />
       </svg>
     ),
   },
@@ -17,9 +17,9 @@ const navItems = [
     label: "Account",
     path: "/account",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? "#007AFF" : "#000000"}>
-        <circle cx="12" cy="8" r="4" />
-        <path d="M4 21c0-4.42 3.58-8 8-8s8 3.58 8 8H4z" />
+      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? "#2D73F5" : "#1D1D1D"}>
+        <circle cx="12" cy="8" r="4.5" />
+        <path d="M3 21c0-4.97 4.03-9 9-9s9 4.03 9 9H3z" />
       </svg>
     ),
   },
@@ -28,7 +28,7 @@ const navItems = [
     label: "Tickets",
     path: "/tickets",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? "#007AFF" : "#000000"}>
+      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? "#2D73F5" : "#1D1D1D"}>
         <path d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
       </svg>
     ),
@@ -154,10 +154,10 @@ export default function BottomNav() {
                   handleNavTap(e, item);
                 }}
                 className={`tnav-item${active ? " active" : ""}`}
-                style={{ color: active ? "#007AFF" : "#000000" }}
+                style={{ color: active ? "#2D73F5" : "#1D1D1D" }}
               >
                 {item.icon(active)}
-                <span className="tnav-label" style={{ color: active ? "#007AFF" : "#000000" }}>
+                <span className="tnav-label" style={{ color: active ? "#2D73F5" : "#1D1D1D" }}>
                   {item.label}
                 </span>
               </Link>
