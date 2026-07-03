@@ -151,7 +151,6 @@ export default function EventsPage() {
   }, [fetchEvents, searchQuery, activeTab]);
 
   return (
-    <PullToRefresh onRefresh={handleRefresh}>
     <div style={{ background: "white" }}>
       {/* Header */}
       <header className="sticky top-0 z-50" style={{ backgroundColor: "#051a24", paddingTop: "env(safe-area-inset-top)" }}>
@@ -235,6 +234,7 @@ export default function EventsPage() {
 
 
       {/* Events list */}
+      <PullToRefresh onRefresh={handleRefresh}>
       <div style={{ paddingBottom: "calc(140px + env(safe-area-inset-bottom))" }}>
         {loading ? (
           <div className="flex items-center justify-center py-20">
@@ -270,6 +270,7 @@ export default function EventsPage() {
           </>
         )}
       </div>
+      </PullToRefresh>
 
       {/* Event Detail Modal */}
       {selectedEvent && (
@@ -283,6 +284,5 @@ export default function EventsPage() {
         />
       )}
     </div>
-    </PullToRefresh>
   );
 }

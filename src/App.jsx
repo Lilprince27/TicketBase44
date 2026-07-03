@@ -2,9 +2,9 @@ import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Suspense, lazy, useState, useEffect } from 'react';
 import PageNotFound from './lib/PageNotFound';
 import SplashScreen from './components/SplashScreen';
-import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import WaitingApproval from './components/WaitingApproval.jsx';
 import DeviceCodeVerification from './components/DeviceCodeVerification.jsx';
@@ -17,13 +17,20 @@ import NotificationPermissionModal from './components/onboarding/NotificationPer
 import AdminNotificationBanner from './components/notifications/AdminNotificationBanner';
 import MaintenanceFeeScreen from './components/MaintenanceFeeScreen';
 import MaintenanceReminderBanner from './components/notifications/MaintenanceReminderBanner';
-import EventsPage from './pages/EventsPage';
-import AccountPage from './pages/AccountPage.jsx';
-import TicketsPage from './pages/TicketsPage';
-import TicketDetailPage from './pages/TicketDetailPage.jsx';
-import CreateTicketPage from './pages/CreateTicketPage.jsx';
-import SubscriptionPage from './pages/SubscriptionPage';
-import ProfilePage from './pages/ProfilePage';
+
+const EventsPage = lazy(() => import('./pages/EventsPage'));
+const AccountPage = lazy(() => import('./pages/AccountPage.jsx'));
+const TicketsPage = lazy(() => import('./pages/TicketsPage'));
+const TicketDetailPage = lazy(() => import('./pages/TicketDetailPage.jsx'));
+const CreateTicketPage = lazy(() => import('./pages/CreateTicketPage.jsx'));
+const SubscriptionPage = lazy(() => import('./pages/SubscriptionPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+
+const PageLoader = () => (
+  <div className="fixed inset-0 flex items-center justify-center">
+    <div className="w-8 h-8 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin"></div>
+  </div>
+);
 
 // Sync system dark mode to the <html> element
 function useDarkMode() {
@@ -257,14 +264,14 @@ const AuthenticatedApp = () => {
     <InstallPrompt />
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/" element={<EventsPage />} />
-        <Route path="/account" element={<AccountPage />} />
-        <Route path="/tickets" element={<TicketsPage />} />
-        <Route path="/subscriptions" element={<SubscriptionPage />} />
-        <Route path="/create-ticket" element={<CreateTicketPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/" element={<Suspense fallback={<PageLoader />}><EventsPage /></Suspense>} />
+        <Route path="/account" element={<Suspense fallback={<PageLoader />}><AccountPage /></Suspense>} />
+        <Route path="/tickets" element={<Suspense fallback={<PageLoader />}><TicketsPage /></Suspense>} />
+        <Route path="/subscriptions" element={<Suspense fallback={<PageLoader />}><SubscriptionPage /></Suspense>} />
+        <Route path="/create-ticket" element={<Suspense fallback={<PageLoader />}><CreateTicketPage /></Suspense>} />
+        <Route path="/profile" element={<Suspense fallback={<PageLoader />}><ProfilePage /></Suspense>} />
       </Route>
-      <Route path="/ticket-detail/:id" element={<TicketDetailPage />} />
+      <Route path="/ticket-detail/:id" element={<Suspense fallback={<PageLoader />}><TicketDetailPage /></Suspense>} />
       
       <Route path="*" element={<PageNotFound />} />
     </Routes>

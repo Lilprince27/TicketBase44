@@ -19,8 +19,13 @@ export default function UserTicketManager({ userEmail }) {
   useEffect(() => { load(); }, [userEmail]);
 
   const handleDelete = async (id) => {
-    await base44.entities.Ticket.delete(id);
+    const snapshot = tickets;
     setTickets(prev => prev.filter(t => t.id !== id));
+    try {
+      await base44.entities.Ticket.delete(id);
+    } catch (e) {
+      setTickets(snapshot);
+    }
   };
 
   const handleHide = (id) => {
@@ -30,8 +35,14 @@ export default function UserTicketManager({ userEmail }) {
   };
 
   const handleUpdate = async (id, data) => {
-    await base44.entities.Ticket.update(id, data);
+    const snapshot = tickets;
     setTickets(prev => prev.map(t => t.id === id ? { ...t, ...data } : t));
+    try {
+      await base44.entities.Ticket.update(id, data);
+    } catch (e) {
+      setTickets(snapshot);
+      throw e;
+    }
   };
 
   if (loading) return <div className="text-center py-6 text-gray-400 text-sm">Loading tickets...</div>;
@@ -100,9 +111,13 @@ function TicketRow({ ticket, isHidden, onDelete, onHide, onUpdate }) {
 
   const handleSave = async () => {
     setSaving(true);
-    await onUpdate(ticket.id, editData);
+    try {
+      await onUpdate(ticket.id, editData);
+      setEditing(false);
+    } catch (e) {
+      // Rollback handled in parent; stay in edit mode
+    }
     setSaving(false);
-    setEditing(false);
   };
 
   if (editing) {

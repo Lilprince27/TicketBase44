@@ -64,7 +64,7 @@ export default function SubscriptionPage() {
   }
 
   return (
-    <div className="bg-white min-h-screen max-w-[500px] mx-auto">
+    <div className="bg-white min-h-screen max-w-[500px] mx-auto" style={{ overscrollBehavior: "none" }}>
       <header className="sticky top-0 bg-white text-center py-4 border-b border-gray-200 z-50">
         <div className="flex items-center px-4">
           <button onClick={() => navigate("/account")} className="text-2xl text-gray-800 font-light">‹</button>

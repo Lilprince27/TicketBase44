@@ -237,33 +237,42 @@ export default function CreateTicketPage() {
       imageUrl = result.file_url;
     }
     const sharedOrderNumber = generateOrderNumber();
-    for (const seat of seats) {
-      const ticketData = {
-        ...form,
-        row: seat.row,
-        seat_number: seat.seat_number,
-        event_image: imageUrl,
-        serial_number: generateSerialNumber(),
-        pax_number: generatePaxNumber(),
-        purchase_date: form.purchase_date || generatePurchaseDate(),
-        seller_id: generateSellerId(),
-        transaction_number: generateTransactionNumber(),
-        event_code: generateEventCode(form.venue_name, form.event_date, form.event_name),
-        order_number: sharedOrderNumber,
-        owner_email: user.email,
-        barcode_locked: barcodeLocked,
-        auth_message: barcodeLocked ? authMessage : "",
-        marketplace_notice: marketplaceNotice,
-        add_ons: selectedAddons.length > 0 ? selectedAddons : [],
-      };
-      await base44.entities.Ticket.create(ticketData);
+    const createdTickets = [];
+    try {
+      for (const seat of seats) {
+        const ticketData = {
+          ...form,
+          row: seat.row,
+          seat_number: seat.seat_number,
+          event_image: imageUrl,
+          serial_number: generateSerialNumber(),
+          pax_number: generatePaxNumber(),
+          purchase_date: form.purchase_date || generatePurchaseDate(),
+          seller_id: generateSellerId(),
+          transaction_number: generateTransactionNumber(),
+          event_code: generateEventCode(form.venue_name, form.event_date, form.event_name),
+          order_number: sharedOrderNumber,
+          owner_email: user.email,
+          barcode_locked: barcodeLocked,
+          auth_message: barcodeLocked ? authMessage : "",
+          marketplace_notice: marketplaceNotice,
+          add_ons: selectedAddons.length > 0 ? selectedAddons : [],
+        };
+        const created = await base44.entities.Ticket.create(ticketData);
+        createdTickets.push(created);
+      }
+      if (sendEmailNotification) {
+        const firstTicket = { ...form, order_number: sharedOrderNumber };
+        await sendConfirmationEmail(firstTicket, user, sharedOrderNumber).catch(() => {});
+      }
+      setCreating(false);
+      navigate("/tickets");
+    } catch (e) {
+      // Rollback: delete any tickets that were created before the failure
+      await Promise.all(createdTickets.map(t => base44.entities.Ticket.delete(t.id).catch(() => {})));
+      setCreating(false);
+      alert("Failed to create ticket. Please try again.");
     }
-    if (sendEmailNotification) {
-      const firstTicket = { ...form, order_number: sharedOrderNumber };
-      await sendConfirmationEmail(firstTicket, user, sharedOrderNumber).catch(() => {});
-    }
-    setCreating(false);
-    navigate("/tickets");
   };
 
   if (loading) return <div className="flex items-center justify-center h-screen"><div className="w-8 h-8 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin" /></div>;
@@ -273,7 +282,7 @@ export default function CreateTicketPage() {
   const displayTicketType = form.ticket_type === "Customise…" ? customTicketType : form.ticket_type;
 
   return (
-    <div style={{ background: "white" }}>
+    <div style={{ background: "white", minHeight: "100vh" }}>
       <header className="sticky top-0 bg-white text-center py-4 border-b border-gray-200 z-50">
         <div className="flex items-center px-4">
           <button onClick={() => navigate(-1)} className="text-2xl text-gray-800 font-light">‹</button>
