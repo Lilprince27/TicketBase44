@@ -103,7 +103,6 @@ export default function BottomNav() {
           align-items: flex-end;
           padding-bottom: calc(env(safe-area-inset-bottom) + 4px);
           pointer-events: none;
-          touch-action: pan-y;
         }
         .tnav-pill {
           display: flex;

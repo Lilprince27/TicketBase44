@@ -2,10 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import AppleWalletModal from "../components/tickets/AppleWalletModal";
-import { motion, AnimatePresence } from "framer-motion";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { getCustomerId } from "../lib/customerId";
-import PullToRefresh from "../components/PullToRefresh";
 
 // Generate a stable random order number in format YYYYMMDD,NNNNN based on ticket id
 function getOrderNumber(ticket) {
@@ -72,16 +70,10 @@ function TicketGroup({ group, onWallet }) {
       </div>
 
       {/* Expandable details */}
-      <AnimatePresence initial={false}>
-        {expanded && (
-          <motion.div
-            key="details"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-            style={{ overflow: "hidden" }}
-          >
+      {expanded && (
+        <div
+          style={{ overflow: "hidden", transition: "max-height 0.25s ease-in-out", maxHeight: expanded ? '9999px' : '0' }}
+        >
             {/* Marketplace notice - styled banner */}
             {first.marketplace_notice && (
               <div style={{ margin: "12px 20px 0", display: "flex", alignItems: "stretch", border: "1px solid #e0e0e0", borderRadius: 6, overflow: "hidden" }}>
@@ -155,9 +147,8 @@ function TicketGroup({ group, onWallet }) {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
     </div>
   );
 }
@@ -203,7 +194,6 @@ export default function TicketsPage() {
   const groups = Object.values(grouped);
 
   return (
-    <PullToRefresh onRefresh={loadTickets}>
     <div style={{ background: "white", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", minHeight: "100vh" }}>
       {walletTicket && <AppleWalletModal ticket={walletTicket} onClose={() => setWalletTicket(null)} />}
 
@@ -239,6 +229,5 @@ export default function TicketsPage() {
         )}
       </div>
     </div>
-    </PullToRefresh>
   );
 }

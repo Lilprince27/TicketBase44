@@ -84,6 +84,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
   }
   input, textarea {
     user-select: text;
@@ -97,6 +98,8 @@
     background-color: #001a35;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: auto;
+    touch-action: pan-y;
   }
   body {
     margin: 0;
@@ -106,6 +109,7 @@
     -webkit-overflow-scrolling: touch;
     background-color: #001a35;
     overscroll-behavior-y: auto;
+    touch-action: pan-y;
   }
   #root {
     background-color: #ffffff;
@@ -121,4 +125,15 @@
 /* Every page inside Layout gets breathing room above the fixed BottomNav */
 .page-scroll-padding {
   padding-bottom: calc(140px + env(safe-area-inset-bottom));
+}
+
+/* Ensure all interactive elements don't block scroll */
+input, textarea, select, button {
+  touch-action: manipulation;
+}
+
+/* Allow scroll to continue even when inputs are focused */
+html, body {
+  overflow-y: auto;
+  height: auto;
 }
