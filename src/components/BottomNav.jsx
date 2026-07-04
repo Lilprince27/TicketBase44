@@ -1,8 +1,9 @@
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useRef } from "react";
 
-const ACTIVE_COLOR = "#007AFF";
-const INACTIVE_COLOR = "#000000";
+const ACTIVE_COLOR = "#3B82F6";
+const INACTIVE_COLOR = "#1A1A1A";
+const PILL_BG = "#EEEEEE";
 
 const navItems = [
   {
@@ -23,16 +24,6 @@ const navItems = [
       <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
         <circle cx="12" cy="7" r="4.2" />
         <path d="M4 20.5c0-4.42 3.58-7.5 8-7.5s8 3.08 8 7.5z" />
-      </svg>
-    ),
-  },
-  {
-    id: "tickets",
-    label: "Tickets",
-    path: "/tickets",
-    icon: (active) => (
-      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <path transform="rotate(45 12 12)" d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
       </svg>
     ),
   },
@@ -135,7 +126,7 @@ export default function BottomNav() {
           transition: transform 0.15s ease, background-color 0.15s ease;
         }
         .tnav-item:active { transform: scale(0.92); }
-        .tnav-item.active { background: #EBEBEB; }
+        .tnav-item.active { background: ${PILL_BG}; }
         .tnav-label {
           font-size: 11px;
           font-weight: 600;
