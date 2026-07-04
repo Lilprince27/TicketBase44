@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import EventDetailModal from "../components/events/EventDetailModal";
-import PullToRefresh from "../components/PullToRefresh";
 
 const TM_API_KEY = "ysl6MCmD7CZKfSZtD9MGlKh8rGG4mNgO";
 
@@ -145,10 +144,7 @@ export default function EventsPage() {
   const featuredEvent = null;
   const restEvents = events;
 
-  const handleRefresh = useCallback(async () => {
-    setOffset(0);
-    await fetchEvents(searchQuery, CATEGORIES[activeTab].value, 0, true);
-  }, [fetchEvents, searchQuery, activeTab]);
+
 
   return (
     <div style={{ background: "white" }}>
@@ -234,7 +230,6 @@ export default function EventsPage() {
 
 
       {/* Events list */}
-      <PullToRefresh onRefresh={handleRefresh}>
       <div style={{ paddingBottom: "calc(140px + env(safe-area-inset-bottom))" }}>
         {loading ? (
           <div className="flex items-center justify-center py-20">
@@ -270,7 +265,6 @@ export default function EventsPage() {
           </>
         )}
       </div>
-      </PullToRefresh>
 
       {/* Event Detail Modal */}
       {selectedEvent && (

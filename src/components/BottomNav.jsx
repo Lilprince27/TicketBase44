@@ -1,14 +1,17 @@
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useRef } from "react";
 
+const ACTIVE_COLOR = "#007AFF";
+const INACTIVE_COLOR = "#000000";
+
 const navItems = [
   {
     id: "events",
     label: "Events",
     path: "/",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? "#2D73F5" : "#1D1D1D"}>
-        <path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6h-6v6H4a1 1 0 01-1-1v-9z" />
+      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+        <path d="M12 3l-9 8v2h2v8h5v-5h4v5h5v-8h2v-2z" />
       </svg>
     ),
   },
@@ -17,9 +20,9 @@ const navItems = [
     label: "Account",
     path: "/account",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? "#2D73F5" : "#1D1D1D"}>
-        <circle cx="12" cy="8" r="4.5" />
-        <path d="M3 21c0-4.97 4.03-9 9-9s9 4.03 9 9H3z" />
+      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+        <circle cx="12" cy="7" r="4.2" />
+        <path d="M4 20.5c0-4.42 3.58-7.5 8-7.5s8 3.08 8 7.5z" />
       </svg>
     ),
   },
@@ -28,8 +31,8 @@ const navItems = [
     label: "Tickets",
     path: "/tickets",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? "#2D73F5" : "#1D1D1D"}>
-        <path d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
+      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+        <path transform="rotate(45 12 12)" d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
       </svg>
     ),
   },
@@ -133,7 +136,7 @@ export default function BottomNav() {
           transition: transform 0.15s ease, background-color 0.15s ease;
         }
         .tnav-item:active { transform: scale(0.92); }
-        .tnav-item.active { background: #EEEEEE; }
+        .tnav-item.active { background: #EBEBEB; }
         .tnav-label {
           font-size: 11px;
           font-weight: 600;
@@ -154,10 +157,10 @@ export default function BottomNav() {
                   handleNavTap(e, item);
                 }}
                 className={`tnav-item${active ? " active" : ""}`}
-                style={{ color: active ? "#2D73F5" : "#1D1D1D" }}
+                style={{ color: active ? ACTIVE_COLOR : INACTIVE_COLOR }}
               >
                 {item.icon(active)}
-                <span className="tnav-label" style={{ color: active ? "#2D73F5" : "#1D1D1D" }}>
+                <span className="tnav-label" style={{ color: active ? ACTIVE_COLOR : INACTIVE_COLOR }}>
                   {item.label}
                 </span>
               </Link>
