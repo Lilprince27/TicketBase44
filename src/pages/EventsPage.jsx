@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import EventDetailModal from "../components/events/EventDetailModal";
+import TicketekLogo from "../components/TicketekLogo";
 
 const TM_API_KEY = "ysl6MCmD7CZKfSZtD9MGlKh8rGG4mNgO";
 
@@ -151,10 +152,8 @@ export default function EventsPage() {
       {/* Header */}
       <header className="sticky top-0 z-50" style={{ backgroundColor: "#051a24", paddingTop: "env(safe-area-inset-top)" }}>
         <div className="flex items-center px-4 py-3 gap-3">
-          {/* Star icon */}
-          <svg viewBox="0 0 24 24" width="28" height="28" fill="white" className="flex-shrink-0">
-            <path d="M12 2L14.39 8.26L21 9.27L16.16 13.88L17.3 20.5L12 17.27L6.7 20.5L7.84 13.88L3 9.27L9.61 8.26Z"/>
-          </svg>
+          {/* Ticketek logo */}
+          <TicketekLogo size={28} variant="white" className="flex-shrink-0" />
           {/* Search bar */}
           <div
             className="flex-1 flex items-center rounded-xl px-3 py-2.5"

@@ -1,3 +1,5 @@
+import TicketekLogo from "../TicketekLogo";
+
 export default function AppleWalletModal({ ticket, onClose }) {
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${ticket?.serial_number || ticket?.id || "ticket"}`;
 
@@ -14,9 +16,7 @@ export default function AppleWalletModal({ ticket, onClose }) {
           {/* Top: TICKETEK logo + date/event in lime */}
           <div style={{ padding: "16px 16px 12px", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="#ffffff">
-                <path d="M12 2L14.39 8.26L21 9.27L16.16 13.88L17.3 20.5L12 17.27L6.7 20.5L7.84 13.88L3 9.27L9.61 8.26Z"/>
-              </svg>
+              <TicketekLogo size={18} variant="white" />
               <span style={{ color: "#ffffff", fontSize: 13, fontWeight: 700, letterSpacing: 1 }}>TICKETEK</span>
             </div>
             <div style={{ textAlign: "right" }}>
