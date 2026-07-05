@@ -2,7 +2,7 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useRef } from "react";
 
 const ACTIVE_COLOR = "#007AFF";
-const INACTIVE_COLOR = "#000000";
+const INACTIVE_COLOR = "#1C1C1C";
 
 const navItems = [
   {
@@ -11,7 +11,8 @@ const navItems = [
     path: "/",
     icon: (active) => (
       <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <path d="M12 3l-9 8v2h2v8h5v-5h4v5h5v-8h2v-2z" />
+        <path d="M12 3L3 12v9h18v-9z" />
+        <rect x="14.5" y="4" width="2.5" height="5" />
       </svg>
     ),
   },
@@ -21,8 +22,8 @@ const navItems = [
     path: "/account",
     icon: (active) => (
       <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <circle cx="12" cy="7" r="4.2" />
-        <path d="M4 20.5c0-4.42 3.58-7.5 8-7.5s8 3.08 8 7.5z" />
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 22c0-4.42 3.58-8 8-8s8 3.58 8 8z" />
       </svg>
     ),
   },
@@ -32,7 +33,7 @@ const navItems = [
     path: "/tickets",
     icon: (active) => (
       <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <path transform="rotate(45 12 12)" d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
+        <path transform="rotate(225 12 12)" d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
       </svg>
     ),
   },
@@ -101,7 +102,7 @@ export default function BottomNav() {
           display: flex;
           justify-content: center;
           align-items: flex-end;
-          padding-bottom: calc(env(safe-area-inset-bottom) + 4px);
+          padding-bottom: env(safe-area-inset-bottom);
           pointer-events: none;
         }
         .tnav-pill {
