@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 
-export default function ShareModal({ ticket, onClose }) {
-  const [contact, setContact] = useState("");
+export default function ShareModal({ ticket, onClose, onTransferred }) {
+  const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [shareSettings, setShareSettings] = useState(null);
   const [loadingSettings, setLoadingSettings] = useState(true);
+  const [transferring, setTransferring] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     base44.entities.ShareSettings.list().then(list => {
@@ -17,10 +20,52 @@ export default function ShareModal({ ticket, onClose }) {
     });
   }, []);
 
-  const isValid = contact.trim() !== "" && name.trim() !== "";
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isValid = emailRegex.test(email.trim()) && name.trim() !== "";
 
-  const handleShare = () => {
-    if (isValid) onClose();
+  const handleShare = async () => {
+    if (!isValid) return;
+    setTransferring(true);
+    setError("");
+    try {
+      // Transfer ticket ownership to recipient
+      await base44.entities.Ticket.update(ticket.id, { owner_email: email.trim() });
+
+      // Send notification email to recipient
+      const emailHtml = `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;margin:0;padding:0">
+        <div style="max-width:600px;margin:0 auto;background:#fff;border-top:4px solid #001c3d">
+          <div style="background:#001c3d;padding:15px 20px"><span style="color:#fff;font-size:20px;font-weight:bold">Ticket Transfer</span></div>
+          <div style="padding:30px 20px">
+            <h1 style="font-size:22px;font-weight:800;margin:0 0 10px">You've received a ticket!</h1>
+            <p style="font-size:15px;color:#333;margin-bottom:20px">Hi ${name.trim()},</p>
+            <p style="font-size:14px;color:#333;line-height:1.6;margin-bottom:25px">A ticket has been transferred to you. Here are the details:</p>
+            <div style="background:#f8f8f8;border-radius:8px;padding:20px;margin-bottom:25px">
+              <p style="font-size:16px;font-weight:bold;margin:0 0 4px">${ticket.event_name}</p>
+              <p style="font-size:14px;color:#333;margin:0 0 4px">${ticket.event_date}</p>
+              <p style="font-size:14px;color:#333;margin:0 0 12px">${ticket.venue_name}</p>
+              <p style="font-size:13px;color:#555;margin:0">Section: ${ticket.section_bay || "-"} | Row: ${ticket.row || "-"} | Seat: ${ticket.seat_number || "-"}</p>
+            </div>
+            <p style="font-size:14px;color:#333;line-height:1.6">Please log in to the app to view your ticket.</p>
+          </div>
+        </div>
+      </body></html>`;
+
+      await base44.integrations.Core.SendEmail({
+        to: email.trim(),
+        subject: `Ticket transferred to you: ${ticket.event_name}`,
+        body: emailHtml,
+      }).catch(() => {});
+
+      setSuccess(true);
+      setTransferring(false);
+      setTimeout(() => {
+        if (onTransferred) onTransferred();
+        else onClose();
+      }, 1800);
+    } catch (e) {
+      setError("Transfer failed. Please try again.");
+      setTransferring(false);
+    }
   };
 
   const seatNumber = ticket?.seat_number || "";
@@ -103,6 +148,23 @@ export default function ShareModal({ ticket, onClose }) {
     );
   }
 
+  // Success state
+  if (success) {
+    return (
+      <div className="fixed inset-0 z-[2000] flex items-end justify-center" style={overlayStyle}>
+        <div className="bg-white w-full max-w-[500px] rounded-t-xl px-5 pt-8 pb-9 text-center">
+          <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <polyline points="20 6 9 17 4 12" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">Ticket Transferred!</h3>
+          <p className="text-sm text-gray-500">The ticket has been sent to {email.trim()}.</p>
+        </div>
+      </div>
+    );
+  }
+
   // Normal mode
   return (
     <div className="fixed inset-0 z-[2000] flex items-end justify-center" style={overlayStyle} onClick={onClose}>
@@ -114,35 +176,39 @@ export default function ShareModal({ ticket, onClose }) {
           </svg>
           <div>
             <h2 className="text-xl font-semibold text-gray-600">Share ticket{seatNumber ? ` for Seat ${seatNumber}` : ""}</h2>
-            <p className="text-sm text-gray-500 mt-1">Securely share tickets. <a href="#" className="font-medium" style={{ color: "#004b8d" }}>How it works</a></p>
+            <p className="text-sm text-gray-500 mt-1">Transfer this ticket to anyone via email.</p>
           </div>
         </div>
 
-        <div className="relative mb-4">
-          <input type="text" value={contact} onChange={e => setContact(e.target.value)}
-            placeholder="Enter mobile or email"
+        <div className="mb-4">
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+            placeholder="Enter recipient email"
             className="w-full px-4 py-4 border border-gray-200 rounded-lg text-base outline-none text-gray-800 placeholder-gray-400" />
-          <svg className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6" style={{ color: "#004b8d" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="8.5" cy="7" r="4" />
-            <circle cx="20" cy="11" r="3" /><line x1="20" y1="8" x2="20" y2="14" /><line x1="17" y1="11" x2="23" y2="11" />
-          </svg>
         </div>
         <div className="mb-4">
           <input type="text" value={name} onChange={e => setName(e.target.value)}
-            placeholder="Enter name"
+            placeholder="Enter recipient name"
             className="w-full px-4 py-4 border border-gray-200 rounded-lg text-base outline-none text-gray-800 placeholder-gray-400" />
         </div>
 
+        {error && <p className="text-sm text-red-500 text-center mb-3">{error}</p>}
+
         <p className="text-sm text-gray-400 text-center my-5 px-2">
-          By entering this information you agree that you have the receiver's consent to do so.
+          The ticket will be transferred to the recipient. You will no longer have access to it.
         </p>
 
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 py-4 rounded-lg font-semibold text-base border border-gray-200 bg-white cursor-pointer" style={{ color: "#004b8d" }}>Cancel</button>
-          <button onClick={handleShare} disabled={!isValid}
-            className="flex-1 py-4 rounded-lg font-semibold text-base border-none transition-all cursor-pointer"
-            style={{ backgroundColor: isValid ? "#418029" : "#e8e8e8", color: isValid ? "white" : "#9ca3af" }}>
-            Share ticket
+          <button onClick={onClose} disabled={transferring}
+            className="flex-1 py-4 rounded-lg font-semibold text-base border border-gray-200 bg-white cursor-pointer disabled:opacity-50" style={{ color: "#004b8d" }}>Cancel</button>
+          <button onClick={handleShare} disabled={!isValid || transferring}
+            className="flex-1 py-4 rounded-lg font-semibold text-base border-none transition-all cursor-pointer flex items-center justify-center gap-2"
+            style={{ backgroundColor: isValid && !transferring ? "#418029" : "#e8e8e8", color: isValid && !transferring ? "white" : "#9ca3af" }}>
+            {transferring ? (
+              <>
+                <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Transferring...
+              </>
+            ) : "Transfer ticket"}
           </button>
         </div>
       </div>

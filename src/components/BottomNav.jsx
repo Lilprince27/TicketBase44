@@ -101,7 +101,7 @@ export default function BottomNav() {
           display: flex;
           justify-content: center;
           align-items: flex-end;
-          padding-bottom: calc(env(safe-area-inset-bottom) + 6px);
+          padding-bottom: max(env(safe-area-inset-bottom) - 10px, 4px);
           pointer-events: none;
         }
         .tnav-pill {
