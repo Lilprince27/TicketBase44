@@ -10,7 +10,7 @@ const navItems = [
     label: "Events",
     path: "/",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
         <path d="M12 3L2 12v8h20v-8z" />
       </svg>
     ),
@@ -20,9 +20,9 @@ const navItems = [
     label: "Account",
     path: "/account",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <circle cx="12" cy="8" r="4" />
-        <path d="M9.5 10 L14.5 10 L19 21 L5 21 Z" />
+      <svg viewBox="0 0 24 24" width="22" height="22" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+        <circle cx="12" cy="7.5" r="3.5" />
+        <path d="M9 11 L15 11 L18.5 21 L5.5 21 Z" />
       </svg>
     ),
   },
@@ -31,8 +31,8 @@ const navItems = [
     label: "Tickets",
     path: "/tickets",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <path transform="rotate(45 12 12)" d="M3 6 L9 6 A3 3 0 0 1 15 6 L21 6 L21 18 L15 18 A3 3 0 0 1 9 18 L3 18 Z" />
+      <svg viewBox="0 0 24 24" width="22" height="22" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+        <path transform="rotate(45 12 12)" d="M4 7 L10 7 A2 2 0 0 0 14 7 L20 7 L20 17 L14 17 A2 2 0 0 0 10 17 L4 17 Z" />
       </svg>
     ),
   },
