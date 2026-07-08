@@ -11,7 +11,7 @@ const navItems = [
     path: "/",
     icon: (active) => (
       <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <path d="M12 3L2 12h3v8h5v-6h4v6h5v-8h3z" />
+        <path d="M12 3L2 12v8h20v-8z" />
       </svg>
     ),
   },
@@ -21,8 +21,8 @@ const navItems = [
     path: "/account",
     icon: (active) => (
       <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <circle cx="12" cy="8" r="4.2" />
-        <path d="M5 21c0-3.87 3.13-7 7-7s7 3.13 7 7v1H5z" />
+        <circle cx="12" cy="8" r="4" />
+        <path d="M9.5 10 L14.5 10 L19 21 L5 21 Z" />
       </svg>
     ),
   },
@@ -32,7 +32,7 @@ const navItems = [
     path: "/tickets",
     icon: (active) => (
       <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <path transform="rotate(45 12 12)" d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
+        <path transform="rotate(45 12 12)" d="M3 6 L9 6 A3 3 0 0 1 15 6 L21 6 L21 18 L15 18 A3 3 0 0 1 9 18 L3 18 Z" />
       </svg>
     ),
   },
