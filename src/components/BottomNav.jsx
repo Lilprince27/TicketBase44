@@ -2,7 +2,7 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useRef } from "react";
 
 const ACTIVE_COLOR = "#007AFF";
-const INACTIVE_COLOR = "#1C1C1C";
+const INACTIVE_COLOR = "#000000";
 
 const navItems = [
   {
@@ -11,8 +11,7 @@ const navItems = [
     path: "/",
     icon: (active) => (
       <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <path d="M12 3L3 12v9h18v-9z" />
-        <rect x="14.5" y="4" width="2.5" height="5" />
+        <path d="M12 3L2 12h3v8h5v-6h4v6h5v-8h3z" />
       </svg>
     ),
   },
@@ -33,7 +32,7 @@ const navItems = [
     path: "/tickets",
     icon: (active) => (
       <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <path transform="rotate(225 12 12)" d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
+        <path transform="rotate(45 12 12)" d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
       </svg>
     ),
   },
@@ -102,19 +101,17 @@ export default function BottomNav() {
           display: flex;
           justify-content: center;
           align-items: flex-end;
-          padding-bottom: env(safe-area-inset-bottom);
+          padding-bottom: calc(env(safe-area-inset-bottom) + 6px);
           pointer-events: none;
         }
         .tnav-pill {
           display: flex;
           align-items: center;
-          background: rgba(255, 255, 255, 0.98);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
+          background: #FFFFFF;
           border-radius: 100px;
           padding: 6px 8px;
           gap: 2px;
-          box-shadow: 0 2px 16px rgba(0,0,0,0.10), 0 0 0 0.5px rgba(0,0,0,0.06);
+          box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 0 0 0.5px rgba(0,0,0,0.04);
           pointer-events: all;
         }
         .tnav-item {
