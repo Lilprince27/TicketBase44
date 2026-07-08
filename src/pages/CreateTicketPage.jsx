@@ -6,6 +6,7 @@ import {
   generateSerialNumber, generatePaxNumber, generateTransactionNumber,
   generateSellerId, generatePurchaseDate, generateEventCode, generateOrderNumber,
 } from "../lib/ticketUtils";
+import EventNameSearch from "../components/events/EventNameSearch";
 
 const PRESENTERS = [
   { group: "TEG's Internal Promotion Network", items: ["TEG Dainty", "TEG Live", "TEG Van Egmond", "MJR Presents"] },
@@ -361,11 +362,22 @@ export default function CreateTicketPage() {
           </button>
         </div>
 
-        {/* Event Name */}
+        {/* Event Name — with Ticketek API search */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">Event/Artist Name</label>
-          <input type="text" value={form.event_name} onChange={e => handleChange("event_name", e.target.value)} placeholder="e.g., Deftones"
-            className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400" />
+          <EventNameSearch
+            currentValue={form.event_name}
+            onSelect={(data) => {
+              handleChange("event_name", data.event_name || "");
+              if (data.event_date) handleChange("event_date", data.event_date);
+              if (data.venue_name) handleChange("venue_name", data.venue_name);
+              if (data.event_image_url) { setPrefilledImageUrl(data.event_image_url); setImagePreview(data.event_image_url); setImageFile(null); }
+            }}
+            onClear={() => {
+              handleChange("event_name", "");
+            }}
+          />
+          <p className="text-xs text-gray-400 mt-1">Search to auto-fill event details from Ticketek.</p>
         </div>
 
         {/* Event Date */}
