@@ -28,6 +28,7 @@ export default function EventDetailModal({ event, onClose, onCustomize }) {
         )}
 
         <div className="px-6 py-5">
+          {event.subtitle && <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-1">{event.subtitle}</p>}
           <h2 className="text-lg font-bold text-gray-900 mb-1">{event.title}</h2>
           {event.date && <p className="text-sm text-gray-500 mb-0.5">{event.date}</p>}
           {event.venue && <p className="text-sm text-gray-400 mb-5">{event.venue}</p>}
