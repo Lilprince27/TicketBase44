@@ -32,7 +32,7 @@ const navItems = [
     path: "/tickets",
     icon: (active) => (
       <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <path transform="rotate(45 12 12)" d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
+        <path transform="rotate(225 12 12)" d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
       </svg>
     ),
   },
