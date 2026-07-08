@@ -371,6 +371,7 @@ export default function CreateTicketPage() {
               handleChange("event_name", data.event_name || "");
               if (data.event_date) handleChange("event_date", data.event_date);
               if (data.venue_name) handleChange("venue_name", data.venue_name);
+              if (data.presenter) { setForm(f => ({ ...f, presenter: data.presenter })); }
               if (data.event_image_url) { setPrefilledImageUrl(data.event_image_url); setImagePreview(data.event_image_url); setImageFile(null); }
             }}
             onClear={() => {
