@@ -67,12 +67,12 @@ export default function DeviceCodeVerification({ user, onVerified }) {
       </button>
 
       <a
-        href="https://t.me/ebuka43"
+        href="https://wa.me/2347026855490"
         target="_blank"
         rel="noopener noreferrer"
         className="text-sm text-blue-600 underline text-center"
       >
-        Lost your code? Contact admin @ebuka43
+        Lost your code? Message admin on WhatsApp 07026855490
       </a>
 
       <button

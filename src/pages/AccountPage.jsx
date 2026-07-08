@@ -119,7 +119,7 @@ function MenuItem({ icon, label, onClick, bottomDivider }) {
         onClick={onClick}
         style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
-          width: "100%", padding: "16px 20px",
+          width: "100%", padding: "22px 20px",
           background: "none", border: "none", borderBottom: "1px solid #f0f0f2",
           cursor: "pointer", textAlign: "left",
         }}
