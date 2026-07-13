@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, X, Loader2 } from "lucide-react";
+import { getLocalOverride } from "./localEventOverrides";
 
 const TM_API_KEY = "ysl6MCmD7CZKfSZtD9MGlKh8rGG4mNgO";
 const FALLBACK_IMG = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=300&fit=crop";
@@ -62,6 +63,16 @@ export default function EventNameSearch({ onSelect, onClear, currentValue }) {
     }
     setLoading(true);
     setShowResults(true);
+
+    // Local override — return pre-defined results without hitting the API
+    const localResults = getLocalOverride(q);
+    if (localResults) {
+      setResults(localResults);
+      setLoading(false);
+      setSearched(true);
+      return;
+    }
+
     try {
       const params = new URLSearchParams({
         apikey: TM_API_KEY,
@@ -132,6 +143,14 @@ export default function EventNameSearch({ onSelect, onClear, currentValue }) {
     setQuery(event.title);
     setShowResults(false);
     setSelecting(true);
+
+    // Local events — use pre-defined data, no API fetch
+    if (event.local && event.localData) {
+      onSelect?.(event.localData);
+      setSelecting(false);
+      return;
+    }
+
     try {
       const detail = await fetchEventDetails(event.id);
       const e = detail || event.raw;
