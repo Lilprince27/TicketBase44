@@ -11,11 +11,6 @@ export const TICKETEK_FEATURED = [
   { id: "bassem", title: "Bassem Youssef", subtitle: "The Belly of the Beast Tour", image: `${CDN}/sfx362763.jpg`, venue: "Various venues, Australia" },
 ];
 
-export const TICKETEK_HOME_FEATURED = [
-  { id: "gabriel-iglesias", title: "Gabriel Iglesias", subtitle: "The 1976 Tour: A Fluffy Celebration", image: `${CDN}/sfx363551.jpg`, venue: "Various venues, Australia", date: "Sat 5 Dec 2026" },
-  { id: "adam-kay", title: "Adam Kay", subtitle: "Twas The Nightshift Before Christmas Live", image: `${CDN}/sfx363546.jpg`, venue: "Various venues, Australia", date: "Mon 30 Nov 2026" },
-];
-
 export const TICKETEK_TRENDING = [
   { id: "hannah", title: "Hannah Ferguson", subtitle: "", image: `${CDN}/sfx363385.jpg`, venue: "Various venues, Australia" },
   { id: "carlbarron", title: "Carl Barron", subtitle: "", image: `${CDN}/sfx349088.jpg`, venue: "Various venues, Australia" },

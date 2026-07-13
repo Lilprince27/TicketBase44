@@ -4,8 +4,6 @@ import { Search } from "lucide-react";
 import EventDetailModal from "../components/events/EventDetailModal";
 import EventListItem from "../components/events/EventListItem";
 import TicketekLogo from "../components/TicketekLogo";
-import StellaChat from "../components/stella/StellaChat";
-import { TICKETEK_HOME_FEATURED } from "../components/events/ticketekEvents";
 
 const TM_API_KEY = "ysl6MCmD7CZKfSZtD9MGlKh8rGG4mNgO";
 
@@ -45,7 +43,6 @@ export default function EventsPage() {
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [showStella, setShowStella] = useState(false);
   const debounceTimer = useRef(null);
   const loaderRef = useRef(null);
 
@@ -133,8 +130,6 @@ export default function EventsPage() {
     return () => obs.disconnect();
   }, [fetchEvents]);
 
-  const isFeaturedMode = !searchQuery && activeTab === 0;
-
   return (
     <div style={{ background: "#0A141D", minHeight: "100vh" }}>
       {/* Header */}
@@ -155,24 +150,15 @@ export default function EventsPage() {
               style={{ color: "white" }}
             />
           </div>
-          {/* Stella AI icon */}
+          {/* Profile icon */}
           <button
-            className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer border-none bg-transparent p-0"
-            onClick={() => setShowStella(true)}
+            className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center"
+            style={{ border: "1.5px solid rgba(255,255,255,0.3)", background: "transparent" }}
+            onClick={() => navigate("/account")}
           >
-            <div className="w-full h-full rounded-full flex items-center justify-center" style={{ background: "conic-gradient(from 180deg, #a855f7, #3b82f6, #eab308, #a855f7)", padding: 2 }}>
-              <div className="w-full h-full rounded-full flex items-center justify-center overflow-hidden" style={{ background: "#0e0e1a" }}>
-                <svg viewBox="0 0 36 36" width="30" height="30" fill="none">
-                  <circle cx="18" cy="18" r="13" fill="#1a1a2e" />
-                  <rect x="9" y="11" width="18" height="15" rx="7" fill="white" />
-                  <circle cx="13.5" cy="18" r="3" fill="#0e0e1a" />
-                  <circle cx="22.5" cy="18" r="3" fill="#0e0e1a" />
-                  <circle cx="14.5" cy="17" r="1" fill="white" />
-                  <circle cx="23.5" cy="17" r="1" fill="white" />
-                  <path d="M14 23 Q18 26.5 22 23" stroke="#0e0e1a" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-                </svg>
-              </div>
-            </div>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" strokeWidth="1.5">
+              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" strokeLinecap="round"/>
+            </svg>
           </button>
         </div>
 
@@ -211,9 +197,6 @@ export default function EventsPage() {
           <div className="text-center py-20" style={{ color: "rgba(255,255,255,0.5)" }}>No events found</div>
         ) : (
           <>
-            {isFeaturedMode && TICKETEK_HOME_FEATURED.map(event => (
-              <EventListItem key={event.id} event={event} onClick={setSelectedEvent} />
-            ))}
             {events.map(event => (
               <EventListItem key={event.id} event={event} onClick={setSelectedEvent} />
             ))}
@@ -223,9 +206,6 @@ export default function EventsPage() {
           </>
         )}
       </div>
-
-      {/* Stella AI Chat */}
-      {showStella && <StellaChat onClose={() => setShowStella(false)} />}
 
       {/* Event Detail Modal */}
       {selectedEvent && (
