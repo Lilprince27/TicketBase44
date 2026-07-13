@@ -2,21 +2,15 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import EventDetailModal from "../components/events/EventDetailModal";
-import EventHeroCarousel from "../components/events/EventHeroCarousel";
-import EventHorizontalScroll from "../components/events/EventHorizontalScroll";
 import EventListItem from "../components/events/EventListItem";
-import { TICKETEK_FEATURED, TICKETEK_TRENDING, TICKETEK_WAITLISTS } from "../components/events/ticketekEvents";
 import TicketekLogo from "../components/TicketekLogo";
 
 const TM_API_KEY = "ysl6MCmD7CZKfSZtD9MGlKh8rGG4mNgO";
 
 const CATEGORIES = [
-  { label: "Featured", value: "", segment: false },
-  { label: "Sports", value: "Sports", segment: true },
-  { label: "Concerts", value: "Music", segment: true },
-  { label: "Theatre", value: "Arts & Theatre", segment: true },
-  { label: "Family", value: "Family", segment: true },
-  { label: "Comedy", value: "Comedy", segment: false },
+  { label: "Featured", value: "", sort: "relevance,desc" },
+  { label: "Nearby", value: "", sort: "date,asc" },
+  { label: "This Week", value: "", sort: "date,asc", thisWeek: true },
 ];
 
 const PLACEHOLDER_IMGS = {
@@ -56,15 +50,14 @@ export default function EventsPage() {
     if (replace) setLoading(true);
     else setLoadingMore(true);
 
-    const baseParams = new URLSearchParams({ apikey: TM_API_KEY, size: "15", page: String(Math.floor(currentOffset / 15)), countryCode: "AU", sort: "relevance,desc" });
+    const baseParams = new URLSearchParams({ apikey: TM_API_KEY, size: "15", page: String(Math.floor(currentOffset / 15)), countryCode: "AU", sort: category.sort || "relevance,desc" });
 
-    // Apply category filter (segmentName for segments, keyword for non-segments like Comedy)
-    if (category.value) {
-      if (category.segment) {
-        baseParams.set("segmentName", category.value);
-      } else if (!query) {
-        baseParams.set("keyword", category.value);
-      }
+    if (category.thisWeek) {
+      const now = new Date();
+      const endOfWeek = new Date(now);
+      endOfWeek.setDate(now.getDate() + 7);
+      baseParams.set("startDateTime", now.toISOString().split("T")[0] + "T00:00:00Z");
+      baseParams.set("endDateTime", endOfWeek.toISOString().split("T")[0] + "T23:59:59Z");
     }
     if (query) baseParams.set("keyword", query);
 
@@ -137,19 +130,17 @@ export default function EventsPage() {
     return () => obs.disconnect();
   }, [fetchEvents]);
 
-  const isFeaturedMode = !searchQuery && activeTab === 0;
-
   return (
-    <div style={{ background: "white" }}>
+    <div style={{ background: "#0A141D", minHeight: "100vh" }}>
       {/* Header */}
-      <header className="sticky top-0 z-50" style={{ backgroundColor: "#051a24", paddingTop: "env(safe-area-inset-top)" }}>
+      <header className="sticky top-0 z-50" style={{ backgroundColor: "#0A141D", paddingTop: "env(safe-area-inset-top)" }}>
         <div className="flex items-center px-4 py-3 gap-3">
-          <TicketekLogo size={28} variant="white" className="flex-shrink-0" />
+          <TicketekLogo size={26} variant="white" className="flex-shrink-0" />
           <div
             className="flex-1 flex items-center rounded-xl px-3 py-2.5"
-            style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}
+            style={{ background: "#1B2936", border: "none" }}
           >
-            <Search className="w-5 h-5 flex-shrink-0" style={{ color: "#ffffff" }} />
+            <Search className="w-5 h-5 flex-shrink-0" style={{ color: "rgba(255,255,255,0.5)" }} />
             <input
               type="text"
               placeholder="What are you looking for?"
@@ -159,45 +150,27 @@ export default function EventsPage() {
               style={{ color: "white" }}
             />
           </div>
-          {/* Alexis AI Avatar */}
-          <div
-            className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center relative"
-            style={{
-              background: "conic-gradient(from 180deg, #a855f7, #3b82f6, #eab308, #a855f7)",
-              padding: 2,
-              boxShadow: "0 0 10px rgba(168,85,247,0.4)",
-            }}
+          {/* Profile icon */}
+          <button
+            className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center"
+            style={{ border: "1.5px solid rgba(255,255,255,0.3)", background: "transparent" }}
+            onClick={() => navigate("/account")}
           >
-            <div
-              className="w-full h-full rounded-full flex items-center justify-center overflow-hidden"
-              style={{ background: "#0e0e1a" }}
-            >
-              <svg viewBox="0 0 36 36" width="30" height="30" fill="none">
-                <circle cx="18" cy="18" r="13" fill="#1a1a2e" />
-                <rect x="9" y="11" width="18" height="15" rx="7" fill="white" />
-                <circle cx="13.5" cy="18" r="3" fill="#0e0e1a" />
-                <circle cx="22.5" cy="18" r="3" fill="#0e0e1a" />
-                <circle cx="14.5" cy="17" r="1" fill="white" />
-                <circle cx="23.5" cy="17" r="1" fill="white" />
-                <path d="M14 23 Q18 26.5 22 23" stroke="#0e0e1a" strokeWidth="1.5" strokeLinecap="round" fill="none" />
-              </svg>
-            </div>
-          </div>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" strokeWidth="1.5">
+              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" strokeLinecap="round"/>
+            </svg>
+          </button>
         </div>
 
-        {/* Category tabs — horizontally scrollable */}
-        <div
-          className="flex px-2 overflow-x-auto"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}
-        >
-          <style>{`.tk-tabs::-webkit-scrollbar { display: none; }`}</style>
+        {/* Tabs */}
+        <div className="flex px-2">
           {CATEGORIES.map((tab, idx) => {
             const isActive = activeTab === idx;
             return (
               <button
                 key={tab.label}
                 onClick={() => setActiveTab(idx)}
-                className="tk-tabs flex-shrink-0 py-3 px-4 text-base font-semibold bg-transparent border-none cursor-pointer transition-all whitespace-nowrap relative"
+                className="flex-shrink-0 py-3 px-4 text-base font-semibold bg-transparent border-none cursor-pointer transition-all whitespace-nowrap relative"
                 style={{ color: "#ffffff" }}
               >
                 {tab.label}
@@ -209,7 +182,7 @@ export default function EventsPage() {
           })}
         </div>
         <style>{`
-          .search-input::placeholder { color: rgba(255,255,255,0.52); }
+          .search-input::placeholder { color: rgba(255,255,255,0.4); }
           .search-input:focus { outline: none; }
         `}</style>
       </header>
@@ -218,45 +191,19 @@ export default function EventsPage() {
       <div style={{ paddingBottom: "calc(140px + env(safe-area-inset-bottom))" }}>
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-gray-700 border-t-white rounded-full animate-spin" />
           </div>
-        ) : isFeaturedMode ? (
-          <>
-            {/* Hero carousel */}
-            <EventHeroCarousel events={TICKETEK_FEATURED} onSelect={setSelectedEvent} />
-
-            {/* Trending now */}
-            <EventHorizontalScroll title="Trending now" events={TICKETEK_TRENDING} onSelect={setSelectedEvent} />
-
-            {/* Waitlists */}
-            <EventHorizontalScroll title="Waitlists" events={TICKETEK_WAITLISTS} onSelect={setSelectedEvent} />
-
-            {/* More events from API */}
-            {events.length > 0 && (
-              <>
-                <h2 className="px-4 pt-5 pb-3 text-lg font-bold text-gray-900">More events</h2>
-                {events.map(event => (
-                  <EventListItem key={event.id} event={event} onClick={setSelectedEvent} />
-                ))}
-                <div ref={loaderRef} className="flex justify-center py-6">
-                  {loadingMore && <div className="w-6 h-6 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin" />}
-                </div>
-              </>
-            )}
-          </>
+        ) : events.length === 0 ? (
+          <div className="text-center py-20" style={{ color: "rgba(255,255,255,0.5)" }}>No events found</div>
         ) : (
-          events.length === 0 ? (
-            <div className="text-center py-20 text-gray-400">No events found</div>
-          ) : (
-            <>
-              {events.map(event => (
-                <EventListItem key={event.id} event={event} onClick={setSelectedEvent} />
-              ))}
-              <div ref={loaderRef} className="flex justify-center py-6">
-                {loadingMore && <div className="w-6 h-6 border-4 border-gray-200 border-t-blue-500 rounded-full animate-spin" />}
-              </div>
-            </>
-          )
+          <>
+            {events.map(event => (
+              <EventListItem key={event.id} event={event} onClick={setSelectedEvent} />
+            ))}
+            <div ref={loaderRef} className="flex justify-center py-6">
+              {loadingMore && <div className="w-6 h-6 border-4 border-gray-700 border-t-white rounded-full animate-spin" />}
+            </div>
+          </>
         )}
       </div>
 
