@@ -24,8 +24,8 @@ const navItems = [
     path: "/account",
     icon: (active) => (
       <svg viewBox="0 0 24 24" width="23" height="23" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <circle cx="12" cy="8" r="4.5" />
-        <path d="M3.5 21c0-4.69 3.81-8.5 8.5-8.5s8.5 3.81 8.5 8.5v1H3.5z" />
+        <circle cx="12" cy="7" r="4.5" />
+        <path d="M3.5 21c0-3.5 3.81-7 8.5-7s8.5 3.5 8.5 7v1H3.5z" />
       </svg>
     ),
   },
