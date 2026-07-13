@@ -7,6 +7,7 @@ import EventHorizontalScroll from "../components/events/EventHorizontalScroll";
 import EventListItem from "../components/events/EventListItem";
 import { TICKETEK_FEATURED, TICKETEK_TRENDING, TICKETEK_WAITLISTS } from "../components/events/ticketekEvents";
 import TicketekLogo from "../components/TicketekLogo";
+import StellaChat from "../components/stella/StellaChat";
 
 const TM_API_KEY = "ysl6MCmD7CZKfSZtD9MGlKh8rGG4mNgO";
 
@@ -42,6 +43,7 @@ function formatDate(dateStr) {
 export default function EventsPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(0);
+  const [showStella, setShowStella] = useState(false);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -161,7 +163,8 @@ export default function EventsPage() {
           </div>
           {/* Alexis AI Avatar */}
           <div
-            className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center relative"
+            onClick={() => setShowStella(true)}
+            className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center relative cursor-pointer"
             style={{
               background: "conic-gradient(from 180deg, #a855f7, #3b82f6, #eab308, #a855f7)",
               padding: 2,
@@ -259,6 +262,8 @@ export default function EventsPage() {
           )
         )}
       </div>
+
+      {showStella && <StellaChat onClose={() => setShowStella(false)} />}
 
       {/* Event Detail Modal */}
       {selectedEvent && (

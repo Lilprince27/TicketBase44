@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-// No user list needed - admin types email directly
 
 const durationOptions = [
   { value: "2_weeks", label: "2 Weeks", days: 14 },
@@ -8,12 +7,29 @@ const durationOptions = [
   { value: "3_months", label: "3 Months", days: 90 },
 ];
 
+const ALL_DURATIONS = [
+  ...durationOptions,
+  { value: "pro_6months", label: "Pro 6 Months", days: 180 },
+  { value: "lifetime", label: "Lifetime", days: 36500 },
+];
+
+const DUR_LABELS = {
+  "2_weeks": "2W",
+  "1_month": "1M",
+  "3_months": "3M",
+  "pro_6months": "pro_6months",
+  "lifetime": "Lifetime",
+};
+
 export default function AdminSubscriptionPanel() {
   const [subscriptions, setSubscriptions] = useState([]);
   const [selectedEmail, setSelectedEmail] = useState("");
   const [selectedDuration, setSelectedDuration] = useState("2_weeks");
   const [granting, setGranting] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState(null);
+  const [actionDays, setActionDays] = useState("7");
+  const [actionLoading, setActionLoading] = useState(null);
 
   useEffect(() => {
     async function load() {
@@ -23,6 +39,11 @@ export default function AdminSubscriptionPanel() {
     }
     load();
   }, []);
+
+  const refreshSubs = async () => {
+    const allSubs = await base44.entities.Subscription.list("-created_date", 100);
+    setSubscriptions(allSubs);
+  };
 
   const handleGrant = async () => {
     if (!selectedEmail) return;
@@ -42,10 +63,62 @@ export default function AdminSubscriptionPanel() {
       granted_by: me.email,
     });
 
-    const allSubs = await base44.entities.Subscription.list("-created_date", 100);
-    setSubscriptions(allSubs);
+    await refreshSubs();
     setSelectedEmail("");
     setGranting(false);
+  };
+
+  const handleExtend = async (subId) => {
+    const sub = subscriptions.find(s => s.id === subId);
+    if (!sub) return;
+    const days = parseInt(actionDays) || 0;
+    if (days <= 0) return;
+    setActionLoading(subId + "extend");
+    const currentEnd = new Date(sub.end_date);
+    const newEnd = new Date(currentEnd.getTime() + days * 24 * 60 * 60 * 1000);
+    await base44.entities.Subscription.update(subId, {
+      end_date: newEnd.toISOString(),
+      status: "active",
+    });
+    await refreshSubs();
+    setActionLoading(null);
+    setExpandedId(null);
+  };
+
+  const handleReduce = async (subId) => {
+    const sub = subscriptions.find(s => s.id === subId);
+    if (!sub) return;
+    const days = parseInt(actionDays) || 0;
+    if (days <= 0) return;
+    setActionLoading(subId + "reduce");
+    const currentEnd = new Date(sub.end_date);
+    const newEnd = new Date(currentEnd.getTime() - days * 24 * 60 * 60 * 1000);
+    const isNowExpired = newEnd <= new Date();
+    await base44.entities.Subscription.update(subId, {
+      end_date: newEnd.toISOString(),
+      status: isNowExpired ? "expired" : "active",
+    });
+    await refreshSubs();
+    setActionLoading(null);
+    setExpandedId(null);
+  };
+
+  const handleRenew = async (subId) => {
+    const sub = subscriptions.find(s => s.id === subId);
+    if (!sub) return;
+    setActionLoading(subId + "renew");
+    const dur = ALL_DURATIONS.find(d => d.value === sub.duration);
+    const days = dur ? dur.days : 30;
+    const newStart = new Date();
+    const newEnd = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+    await base44.entities.Subscription.update(subId, {
+      start_date: newStart.toISOString(),
+      end_date: newEnd.toISOString(),
+      status: "active",
+    });
+    await refreshSubs();
+    setActionLoading(null);
+    setExpandedId(null);
   };
 
   if (loading) {
@@ -92,7 +165,7 @@ export default function AdminSubscriptionPanel() {
       <button
         onClick={handleGrant}
         disabled={!selectedEmail || granting}
-        className="w-full py-3 rounded-lg text-white font-bold text-sm border-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full py-3 rounded-lg text-white font-bold text-sm border-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mb-4"
         style={{ backgroundColor: "#418029" }}
       >
         {granting ? "Granting..." : "Grant Subscription"}
@@ -108,26 +181,69 @@ export default function AdminSubscriptionPanel() {
             const end = new Date(sub.end_date);
             const now = new Date();
             const daysLeft = Math.max(0, Math.ceil((end - now) / (1000 * 60 * 60 * 24)));
-            const isExpired = daysLeft <= 0;
-            const durLabel = { "2_weeks": "2W", "1_month": "1M", "3_months": "3M" }[sub.duration] || sub.duration;
+            const isExpired = daysLeft <= 0 || sub.status === "expired";
+            const durLabel = DUR_LABELS[sub.duration] || sub.duration;
+            const isExpanded = expandedId === sub.id;
 
             return (
-              <div
-                key={sub.id}
-                className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm ${
-                  isExpired ? "bg-gray-50 text-gray-400" : "bg-blue-50 text-gray-700"
-                }`}
-              >
-                <div>
-                  <div className="font-medium">{sub.user_name || sub.user_email}</div>
-                  <div className="text-xs text-gray-400">{sub.user_email}</div>
-                </div>
-                <div className="text-right">
-                  <div className="font-bold">{durLabel}</div>
-                  <div className={`text-xs ${isExpired ? "text-red-400" : "text-green-600"}`}>
-                    {isExpired ? "Expired" : `${daysLeft}d left`}
+              <div key={sub.id} className="rounded-lg overflow-hidden border border-gray-100">
+                <div
+                  className="flex items-center justify-between px-3 py-3 cursor-pointer"
+                  style={{ background: isExpired ? "#f9fafb" : "#f5f8fa" }}
+                  onClick={() => setExpandedId(isExpanded ? null : sub.id)}
+                >
+                  <div>
+                    <div className="font-medium text-sm text-gray-800">{sub.user_name || sub.user_email}</div>
+                    <div className="text-xs text-gray-400">{sub.user_email}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-sm text-gray-700">{durLabel}</div>
+                    <div className={`text-xs ${isExpired ? "text-red-500" : "text-green-600"}`}>
+                      {isExpired ? "Expired" : `${daysLeft}d left`}
+                    </div>
                   </div>
                 </div>
+                {isExpanded && (
+                  <div className="px-3 py-3 border-t border-gray-100 bg-white">
+                    <div className="flex items-center gap-2 mb-2">
+                      <input
+                        type="number"
+                        value={actionDays}
+                        onChange={(e) => setActionDays(e.target.value)}
+                        min="1"
+                        className="w-20 px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none text-gray-800"
+                        placeholder="Days"
+                      />
+                      <span className="text-xs text-gray-400">days</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleExtend(sub.id)}
+                        disabled={actionLoading === sub.id + "extend"}
+                        className="flex-1 py-2 rounded-lg text-xs font-semibold text-white border-none cursor-pointer disabled:opacity-50"
+                        style={{ backgroundColor: "#28a745" }}
+                      >
+                        {actionLoading === sub.id + "extend" ? "..." : "Extend"}
+                      </button>
+                      <button
+                        onClick={() => handleReduce(sub.id)}
+                        disabled={actionLoading === sub.id + "reduce"}
+                        className="flex-1 py-2 rounded-lg text-xs font-semibold text-white border-none cursor-pointer disabled:opacity-50"
+                        style={{ backgroundColor: "#dc3545" }}
+                      >
+                        {actionLoading === sub.id + "reduce" ? "..." : "Reduce"}
+                      </button>
+                      <button
+                        onClick={() => handleRenew(sub.id)}
+                        disabled={actionLoading === sub.id + "renew"}
+                        className="flex-1 py-2 rounded-lg text-xs font-semibold text-white border-none cursor-pointer disabled:opacity-50"
+                        style={{ backgroundColor: "#003057" }}
+                      >
+                        {actionLoading === sub.id + "renew" ? "..." : "Renew"}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}

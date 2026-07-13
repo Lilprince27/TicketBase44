@@ -2,24 +2,24 @@
 const CDN = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages";
 
 export const TICKETEK_FEATURED = [
+  { id: "gabrieliglesias", title: "Gabriel Iglesias", subtitle: "The 1976 Tour: A Fluffy Celebration", image: `${CDN}/sfx363550.jpg`, venue: "Various venues, Australia" },
+  { id: "adamkay", title: "Adam Kay", subtitle: "Twas The Nightshift Before Christmas Live", image: `${CDN}/sfx363545.jpg`, venue: "Various venues, Australia" },
+  { id: "daraobriain", title: "Dara Ó Briain", subtitle: "Re:Creation", image: `${CDN}/sfx363561.jpg`, venue: "Various venues, Australia" },
   { id: "wailers", title: "The Original Wailers featuring Al Anderson", subtitle: "One Love Tour", image: `${CDN}/sfx362050.jpg`, venue: "Various venues, Australia" },
   { id: "script", title: "THE SCRIPT", subtitle: "Man in the Arena Tour 2027", image: `${CDN}/sfx361263.jpg`, venue: "Various venues, Australia" },
-  { id: "comealive", title: "Come Alive!", subtitle: "The Greatest Showman Circus Spectacular", image: `${CDN}/sfx351232.jpg`, venue: "Various venues, Australia" },
   { id: "westlife", title: "Westlife", subtitle: "25 - The Anniversary World Tour", image: `${CDN}/sfx360728.jpg`, venue: "Various venues, Australia" },
-  { id: "globetrotters", title: "Harlem Globetrotters", subtitle: "The 100 Year Tour", image: `${CDN}/sfx352930.jpg`, venue: "Various venues, Australia" },
-  { id: "disneyonice", title: "Disney On Ice", subtitle: "presents Magic In The Stars", image: `${CDN}/sfx357674.jpg`, venue: "Various venues, Australia" },
-  { id: "bassem", title: "Bassem Youssef", subtitle: "The Belly of the Beast Tour", image: `${CDN}/sfx362763.jpg`, venue: "Various venues, Australia" },
+  { id: "comealive", title: "Come Alive!", subtitle: "The Greatest Showman Circus Spectacular", image: `${CDN}/sfx351232.jpg`, venue: "Various venues, Australia" },
 ];
 
 export const TICKETEK_TRENDING = [
-  { id: "hannah", title: "Hannah Ferguson", subtitle: "", image: `${CDN}/sfx363385.jpg`, venue: "Various venues, Australia" },
-  { id: "carlbarron", title: "Carl Barron", subtitle: "", image: `${CDN}/sfx349088.jpg`, venue: "Various venues, Australia" },
-  { id: "bobbylee", title: "Bobby Lee", subtitle: "", image: `${CDN}/sfx359426.jpg`, venue: "Various venues, Australia" },
-  { id: "maxamini", title: "Max Amini", subtitle: "", image: `${CDN}/sfx361067.jpg`, venue: "Various venues, Australia" },
-  { id: "pawpatrol", title: "PAW Patrol Live!", subtitle: "", image: `${CDN}/sfx358368.jpg`, venue: "Various venues, Australia" },
-  { id: "karanaujla", title: "Karan Aujla", subtitle: "", image: `${CDN}/sfx362311.jpg`, venue: "Various venues, Australia" },
-  { id: "urzila", title: "Urzila Carlson", subtitle: "", image: `${CDN}/sfx349659.jpg`, venue: "Various venues, Australia" },
-  { id: "happymondays", title: "Happy Mondays", subtitle: "", image: `${CDN}/sfx355090.jpg`, venue: "Various venues, Australia" },
+  { id: "lornashore", title: "Lorna Shore", subtitle: "", image: `${CDN}/sfx360030.jpg`, venue: "Various venues, Australia" },
+  { id: "louistomlinson", title: "Louis Tomlinson", subtitle: "", image: `${CDN}/sfx356366.jpg`, venue: "Various venues, Australia" },
+  { id: "secretscreenings", title: "Secret Screenings with Beau Miles", subtitle: "", image: `${CDN}/sfx362216.jpg`, venue: "Various venues, Australia" },
+  { id: "hanszimmer", title: "Hans Zimmer Live", subtitle: "", image: `${CDN}/sfx361540.jpg`, venue: "Various venues, Australia" },
+  { id: "dabbledarts", title: "Dabble Darts ANZ Premier League", subtitle: "", image: `${CDN}/sfx362077.jpg`, venue: "Various venues, Australia" },
+  { id: "supercars", title: "Repco Supercars Championship", subtitle: "", image: `${CDN}/sfx317198.jpg`, venue: "Various venues, Australia" },
+  { id: "ashanti", title: "Ashanti", subtitle: "", image: `${CDN}/sfx361768.jpg`, venue: "Various venues, Australia" },
+  { id: "shinedown", title: "Shinedown & Bush", subtitle: "", image: `${CDN}/sfx357495.jpg`, venue: "Various venues, Australia" },
 ];
 
 export const TICKETEK_WAITLISTS = [
