@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import AppleWalletModal from "../components/tickets/AppleWalletModal";
 import ShareModal from "../components/tickets/ShareModal";
+import TicketEditForm from "../components/tickets/TicketEditForm";
 
 const isAndroid = () => /android/i.test(navigator.userAgent);
 
@@ -14,6 +15,8 @@ export default function TicketDetailPage() {
   const [showWallet, setShowWallet] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [hideSettings, setHideSettings] = useState({});
+  const [editing, setEditing] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     base44.entities.HideSettings.list().then(list => {
@@ -48,6 +51,26 @@ export default function TicketDetailPage() {
   }
 
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${ticket.serial_number}`;
+
+  const handleSave = async (editData) => {
+    try {
+      await base44.entities.Ticket.update(ticket.id, editData);
+      setTicket({ ...ticket, ...editData });
+      setEditing(false);
+    } catch (e) {
+      alert("Failed to save. Please try again.");
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await base44.entities.Ticket.delete(ticket.id);
+      navigate("/tickets");
+    } catch (e) {
+      alert("Failed to delete ticket. Please try again.");
+      setConfirmDelete(false);
+    }
+  };
 
   return (
     <div style={{ margin: "0 auto", backgroundColor: "#f2f2f2", minHeight: "100vh", fontFamily: "-apple-system, system-ui, sans-serif", color: "#000", maxWidth: 500 }}>
@@ -189,6 +212,43 @@ export default function TicketDetailPage() {
               Add to Apple Wallet
             </button>
           )
+        )}
+
+        {/* Edit / Delete section */}
+        {editing ? (
+          <TicketEditForm ticket={ticket} onSave={handleSave} onCancel={() => setEditing(false)} />
+        ) : (
+          <div style={{ padding: "0 0 8px" }}>
+            <button
+              onClick={() => setEditing(true)}
+              style={{ width: "100%", padding: "14px", borderRadius: 6, border: "1.5px solid #003057", background: "white", color: "#003057", fontWeight: 700, fontSize: 16, cursor: "pointer", marginBottom: 10 }}
+            >
+              Edit Ticket
+            </button>
+            {confirmDelete ? (
+              <div style={{ display: "flex", gap: 8 }}>
+                <button
+                  onClick={handleDelete}
+                  style={{ flex: 1, padding: "14px", borderRadius: 6, border: "none", background: "#dc2626", color: "white", fontWeight: 700, fontSize: 16, cursor: "pointer" }}
+                >
+                  Confirm Delete
+                </button>
+                <button
+                  onClick={() => setConfirmDelete(false)}
+                  style={{ flex: 1, padding: "14px", borderRadius: 6, border: "1px solid #e0e0e0", background: "white", color: "#666", fontWeight: 600, fontSize: 16, cursor: "pointer" }}
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setConfirmDelete(true)}
+                style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", background: "#dc2626", color: "white", fontWeight: 700, fontSize: 16, cursor: "pointer" }}
+              >
+                Delete Ticket
+              </button>
+            )}
+          </div>
         )}
 
         {/* Fine print */}

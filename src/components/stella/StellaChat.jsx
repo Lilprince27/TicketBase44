@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import ReactMarkdown from "react-markdown";
 import { TICKETEK_FEATURED, TICKETEK_TRENDING, TICKETEK_WAITLISTS } from "../events/ticketekEvents";
@@ -24,6 +25,7 @@ const StellaRobotIcon = ({ size = 32 }) => (
 );
 
 export default function StellaChat({ onClose }) {
+  const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -166,7 +168,31 @@ User question: ${userMessage}`;
         </h1>
 
         {messages.map((msg, idx) => (
-          <MessageBubble key={idx} message={msg} />
+          <div key={idx}>
+            <MessageBubble message={msg} />
+            {msg.role === "assistant" && idx > 0 && !loading && (
+              <button
+                onClick={() => {
+                  const lastUserMsg = [...messages].reverse().find(m => m.role === "user")?.content || "";
+                  onClose();
+                  navigate(`/create-ticket?event_name=${encodeURIComponent(lastUserMsg)}`);
+                }}
+                style={{
+                  display: "flex", alignItems: "center", gap: 6,
+                  marginTop: 4, marginBottom: 16, marginLeft: 42,
+                  padding: "8px 16px", borderRadius: 100,
+                  border: "1px solid #005d9e", background: "transparent",
+                  color: "#4da6ff", fontSize: 13, fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 2L11 13M22 2l-7 20-4-9-9-4z" />
+                </svg>
+                Create Ticket
+              </button>
+            )}
+          </div>
         ))}
 
         {loading && (
