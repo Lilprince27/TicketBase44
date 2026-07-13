@@ -5,111 +5,12 @@ import { base44 } from "@/api/base44Client";
 const FALLBACK_IMG = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=300&fit=crop";
 
 /**
- * Fetch a Ticketek show page and extract the real banner image URL.
- * The show page HTML contains:
- *   <img src="https://d35kvm5iuwjt9t.cloudfront.net/dbimages/sfx346000.jpg"
- *        class="desktop-tablet-banner" alt="Olivia Dean">
+ * Single LLM call with web search — finds events on Ticketek's website.
+ * No CORS proxy scraping, no show-page fetching. Fast and reliable.
  */
-async function fetchShowImage(showUrl) {
-  if (!showUrl) return null;
-  try {
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(showUrl)}`;
-    const res = await fetch(proxyUrl);
-    if (!res.ok) return null;
-    const html = await res.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-    const img = doc.querySelector("img.desktop-tablet-banner")
-      || doc.querySelector(".showBanner img")
-      || doc.querySelector(".show-image-container img");
-    let src = img?.getAttribute("src") || "";
-    if (src && !src.startsWith("http")) {
-      src = "https://premier.ticketek.com.au" + (src.startsWith("/") ? "" : "/") + src;
-    }
-    return src || null;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Search the Ticketek Australia website directly by scraping the
- * search results page.
- */
-async function searchTicketekWebsite(query) {
-  const searchUrl = `https://premier.ticketek.com.au/search/SearchResults.aspx?k=${encodeURIComponent(query)}`;
-  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(searchUrl)}`;
-
-  const res = await fetch(proxyUrl);
-  if (!res.ok) throw new Error("fetch failed");
-  const html = await res.text();
-
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
-
-  const events = [];
-  const seen = new Set();
-
-  const anchors = doc.querySelectorAll('a[href*="show.aspx?sh="]');
-
-  anchors.forEach(a => {
-    const href = a.getAttribute("href") || "";
-    const m = href.match(/sh=([A-Za-z0-9]+)/);
-    if (!m) return;
-    const code = m[1];
-    if (seen.has(code)) return;
-
-    // Normalize show URL
-    let showUrl = href;
-    if (showUrl && !showUrl.startsWith("http")) {
-      showUrl = "https://premier.ticketek.com.au" + (showUrl.startsWith("/") ? "" : "/") + showUrl;
-    }
-
-    // Image — check inside the link, then parent container, then data-src
-    const img = a.querySelector("img") || a.closest("div")?.querySelector("img");
-    let imgUrl = img?.getAttribute("src") || img?.getAttribute("data-src") || "";
-    if (imgUrl && !imgUrl.startsWith("http")) {
-      imgUrl = "https://premier.ticketek.com.au" + (imgUrl.startsWith("/") ? "" : "/") + imgUrl;
-    }
-    const alt = img?.getAttribute("alt") || "";
-
-    const strong = a.querySelector("strong");
-    let name = strong?.textContent?.trim() || alt.replace(/\s*thumbnail\s*/i, "").trim();
-    if (!name || name.length < 2) return;
-    seen.add(code);
-
-    const text = a.textContent.replace(/\s+/g, " ").trim();
-
-    const dateMatch = text.match(/(\w{3}\s+\d{1,2}\s+\w{3}\s+\d{4}(?:\s+to\s+\w{3}\s+\d{1,2}\s+\w{3}\s+\d{4})?(?:\s+\d{1,2}:\d{2}[ap]m)?)/i);
-    const dateStr = dateMatch ? dateMatch[1].trim() : "";
-
-    const bulletVenue = text.match(/([^•]+•[^•]+•[^•]+)/);
-    let venueStr = bulletVenue ? bulletVenue[1].trim() : "";
-    if (!venueStr) {
-      const commaVenue = text.match(/([A-Z][^,]+,\s*[^,]+,\s*(?:VIC|NSW|QLD|SA|WA|ACT|TAS|NT))/);
-      if (commaVenue) venueStr = commaVenue[1].trim();
-    }
-
-    events.push({
-      id: code,
-      title: name,
-      date: dateStr,
-      venue: venueStr,
-      image: imgUrl || "",
-      showUrl,
-    });
-  });
-
-  return events;
-}
-
-/**
- * Fallback: use the LLM with web search to find Ticketek events.
- * Asks for the show page URL so we can fetch the real image.
- */
-async function searchWithLLM(query) {
+async function searchTicketekEvents(query) {
   const result = await base44.integrations.Core.InvokeLLM({
-    prompt: `Search the Ticketek Australia website (premier.ticketek.com.au) for events matching "${query}". Return ONLY upcoming events (dates from July 2026 onwards — do NOT include past events). For each event provide the event name, date, venue name, city, and the full Ticketek show page URL (e.g. https://premier.ticketek.com.au/shows/show.aspx?sh=XXXXX). Return each unique show once — do not list individual performances separately.`,
+    prompt: `Search the Ticketek Australia website (premier.ticketek.com.au) for events matching "${query}". Return ALL upcoming events you can find. For each event provide: event_name, date (e.g. "Fri 9 Oct 2026"), venue_name, city, and image_url if you can find one from the Ticketek website (images are hosted on d35kvm5iuwjt9t.cloudfront.net/dbimages/). Return each unique show once.`,
     add_context_from_internet: true,
     model: "gemini_3_flash",
     response_json_schema: {
@@ -124,7 +25,7 @@ async function searchWithLLM(query) {
               date: { type: "string" },
               venue_name: { type: "string" },
               city: { type: "string" },
-              show_url: { type: "string" },
+              image_url: { type: "string" },
             },
           },
         },
@@ -132,29 +33,13 @@ async function searchWithLLM(query) {
     },
   });
 
-  const events = result?.events || [];
-  return events.map((e, i) => ({
-    id: `llm_${i}`,
+  return (result?.events || []).map((e, i) => ({
+    id: `ev_${i}`,
     title: e.event_name || "",
     date: e.date || "",
     venue: [e.venue_name, e.city].filter(Boolean).join(", "),
-    image: "",
-    showUrl: e.show_url || "",
+    image: e.image_url || FALLBACK_IMG,
   }));
-}
-
-/** Filter out events whose date is clearly in the past. */
-function isUpcoming(dateStr) {
-  if (!dateStr) return true;
-  const parsed = new Date(dateStr);
-  if (!isNaN(parsed)) {
-    return parsed >= new Date("2026-07-13");
-  }
-  const yearMatch = dateStr.match(/20(\d{2})/);
-  if (yearMatch) {
-    return 2000 + parseInt(yearMatch[1]) >= 2026;
-  }
-  return true;
 }
 
 export default function EventNameSearch({ onSelect, onClear, currentValue }) {
@@ -191,33 +76,7 @@ export default function EventNameSearch({ onSelect, onClear, currentValue }) {
     setLoading(true);
     setShowResults(true);
     try {
-      // Try scraping the Ticketek website first (fast, free)
-      let events = [];
-      try {
-        events = await searchTicketekWebsite(q);
-      } catch {
-        // CORS proxy failed — fall through to LLM
-      }
-      // If the website scrape returned nothing, use LLM with web search
-      if (events.length === 0) {
-        events = await searchWithLLM(q);
-      }
-      // Remove past events
-      events = events.filter(e => isUpcoming(e.date));
-
-      // Fetch real images from show pages for any event missing one
-      const needingImage = events.filter(e => !e.image || e.image === FALLBACK_IMG);
-      if (needingImage.length > 0) {
-        await Promise.all(needingImage.map(async (e) => {
-          if (e.showUrl) {
-            const img = await fetchShowImage(e.showUrl);
-            if (img) e.image = img;
-          }
-        }));
-        // Set fallback for any that still don't have an image
-        events.forEach(e => { if (!e.image) e.image = FALLBACK_IMG; });
-      }
-
+      const events = await searchTicketekEvents(q);
       setResults(events);
     } catch {
       setResults([]);
