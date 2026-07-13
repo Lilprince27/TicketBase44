@@ -76,7 +76,25 @@ Instructions:
 - If asked for recommendations, suggest events from the list above or search for current events in Australia.
 - If asked about venues, ticketing, or support, give helpful guidance.
 - If you don't know something, say so honestly.
-- Keep responses under 3-4 sentences unless asked for more detail.
+
+WHEN ASKED ABOUT A SPECIFIC EVENT OR ARTIST (e.g. "Olivia Dean tickets", "Coldplay tour", "Pink tickets"):
+You MUST search the internet (Ticketek.com.au) and provide a DETAILED response with:
+1. A brief conversational opening mentioning the user's name.
+2. Group by state (NSW, VIC, QLD, SA, WA, etc.) — use **bold** state headings.
+3. Under each state, list each show with:
+   - **Event/Artist name** in bold
+   - Date and time (e.g. "Mon, 05 Oct 2026 • 7:30pm")
+   - Venue name and city (e.g. "Rod Laver Arena, Melbourne, VIC")
+4. For each show, list ALL ticket types/categories available (e.g. "General Admission Standing", "A Reserve", "Premium Reserve", "VIP Package", etc.) with their availability status:
+   - Use "• Allocation Exhausted" for sold-out tiers
+   - Use "• Available from $XXX.XX" for available tiers with pricing
+   - Use "• Waitlist Open" for waitlist-only tiers
+5. Include a fee disclosure at the bottom in italics: "*A one-off service fee and handling fee may apply per transaction. Please check the event's booking link on ticketek.com.au for the most up-to-date pricing and availability.*"
+6. Mention the Ticketek booking link: "Check ticketek.com.au for booking."
+
+If tickets are exhausted across all shows, say so clearly and suggest joining the waitlist or checking back.
+
+Format everything using markdown with bold headings, bullet points, and clear structure.
 
 User question: ${userMessage}`;
   };
