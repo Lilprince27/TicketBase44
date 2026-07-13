@@ -105,7 +105,7 @@ User question: ${userMessage}`;
   const handleSend = () => sendMessage(input);
 
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "#082438", display: "flex", flexDirection: "column" }}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 100000, background: "#082438", display: "flex", flexDirection: "column" }}>
       <style>{`
         .stella-input { color: white; }
         .stella-input::placeholder { color: rgba(255,255,255,0.4); }
