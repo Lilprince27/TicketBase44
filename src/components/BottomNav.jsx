@@ -23,9 +23,9 @@ const navItems = [
     label: "Account",
     path: "/account",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="23" height="23" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <circle cx="12" cy="7" r="4.5" />
-        <path d="M4 14 L4 19 Q4 22 7 22 L17 22 Q20 22 20 19 L20 14 Z" />
+      <svg viewBox="0 0 24 24" width="22" height="22" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+        <circle cx="12" cy="7" r="4" />
+        <path d="M7 14 L5 20 Q5 22 6.5 22 L17.5 22 Q19 22 19 20 L17 14 Z" />
       </svg>
     ),
   },
@@ -107,19 +107,19 @@ export default function BottomNav() {
           display: flex;
           justify-content: center;
           align-items: flex-end;
-          padding-bottom: max(env(safe-area-inset-bottom) - 2px, 2px);
+          padding-bottom: max(env(safe-area-inset-bottom) - 10px, 2px);
           pointer-events: none;
         }
         .tnav-pill {
           display: flex;
           align-items: center;
-          background: rgba(248, 248, 248, 0.8);
+          background: rgba(239, 239, 239, 0.92);
           backdrop-filter: blur(20px) saturate(180%);
           -webkit-backdrop-filter: blur(20px) saturate(180%);
           border-radius: 100px;
-          padding: 7px 8px;
+          padding: 5px 7px;
           gap: 2px;
-          box-shadow: 0 2px 16px rgba(0,0,0,0.1), 0 0 0 0.5px rgba(0,0,0,0.06);
+          box-shadow: 0 1px 10px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.04);
           pointer-events: all;
         }
         .tnav-item {
@@ -127,31 +127,27 @@ export default function BottomNav() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 5px 16px;
-          border-radius: 16px;
+          padding: 6px 18px;
+          border-radius: 20px;
           text-decoration: none;
           cursor: pointer;
           border: none;
           background: transparent;
-          gap: 3px;
-          width: 80px;
+          gap: 2px;
+          width: 76px;
           flex-shrink: 0;
           box-sizing: border-box;
           -webkit-tap-highlight-color: transparent;
-          transition: transform 0.15s ease;
+          transition: background-color 0.15s ease, transform 0.15s ease;
         }
         .tnav-item:active { transform: scale(0.92); }
+        .tnav-item.active {
+          background: rgba(0, 0, 0, 0.06);
+        }
         .tnav-icon-wrap {
-          width: 34px;
-          height: 34px;
-          border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: background-color 0.2s ease;
-        }
-        .tnav-icon-wrap.active {
-          background: rgba(0, 122, 255, 0.1);
         }
         .tnav-label {
           font-size: 10px;
