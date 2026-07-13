@@ -5,10 +5,36 @@ import { base44 } from "@/api/base44Client";
 const FALLBACK_IMG = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=300&fit=crop";
 
 /**
+ * Fetch a Ticketek show page and extract the real banner image URL.
+ * The show page HTML contains:
+ *   <img src="https://d35kvm5iuwjt9t.cloudfront.net/dbimages/sfx346000.jpg"
+ *        class="desktop-tablet-banner" alt="Olivia Dean">
+ */
+async function fetchShowImage(showUrl) {
+  if (!showUrl) return null;
+  try {
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(showUrl)}`;
+    const res = await fetch(proxyUrl);
+    if (!res.ok) return null;
+    const html = await res.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+    const img = doc.querySelector("img.desktop-tablet-banner")
+      || doc.querySelector(".showBanner img")
+      || doc.querySelector(".show-image-container img");
+    let src = img?.getAttribute("src") || "";
+    if (src && !src.startsWith("http")) {
+      src = "https://premier.ticketek.com.au" + (src.startsWith("/") ? "" : "/") + src;
+    }
+    return src || null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Search the Ticketek Australia website directly by scraping the
- * search results page.  This finds ALL events listed on Ticketek
- * (the real ticketing partner), not just the subset that happens to
- * also appear on the Ticketmaster Discovery API.
+ * search results page.
  */
 async function searchTicketekWebsite(query) {
   const searchUrl = `https://premier.ticketek.com.au/search/SearchResults.aspx?k=${encodeURIComponent(query)}`;
@@ -24,8 +50,7 @@ async function searchTicketekWebsite(query) {
   const events = [];
   const seen = new Set();
 
-  // Find all <a> tags that link to a show page
-  const anchors = doc.querySelectorAll('a[href*="shows/show.aspx?sh="]');
+  const anchors = doc.querySelectorAll('a[href*="show.aspx?sh="]');
 
   anchors.forEach(a => {
     const href = a.getAttribute("href") || "";
@@ -34,28 +59,30 @@ async function searchTicketekWebsite(query) {
     const code = m[1];
     if (seen.has(code)) return;
 
-    // Image inside the link (or in the closest container)
-    const img = a.querySelector("img");
-    let imgUrl = img?.getAttribute("src") || "";
+    // Normalize show URL
+    let showUrl = href;
+    if (showUrl && !showUrl.startsWith("http")) {
+      showUrl = "https://premier.ticketek.com.au" + (showUrl.startsWith("/") ? "" : "/") + showUrl;
+    }
+
+    // Image — check inside the link, then parent container, then data-src
+    const img = a.querySelector("img") || a.closest("div")?.querySelector("img");
+    let imgUrl = img?.getAttribute("src") || img?.getAttribute("data-src") || "";
     if (imgUrl && !imgUrl.startsWith("http")) {
       imgUrl = "https://premier.ticketek.com.au" + (imgUrl.startsWith("/") ? "" : "/") + imgUrl;
     }
     const alt = img?.getAttribute("alt") || "";
 
-    // Event name — prefer <strong>, fall back to image alt text
     const strong = a.querySelector("strong");
     let name = strong?.textContent?.trim() || alt.replace(/\s*thumbnail\s*/i, "").trim();
     if (!name || name.length < 2) return;
     seen.add(code);
 
-    // Full link text for date / venue extraction
     const text = a.textContent.replace(/\s+/g, " ").trim();
 
-    // Date patterns: "Mon 5 Oct 2026 6:00pm" or "Mon 05 Oct 2026 to Tue 06 Oct 2026"
     const dateMatch = text.match(/(\w{3}\s+\d{1,2}\s+\w{3}\s+\d{4}(?:\s+to\s+\w{3}\s+\d{1,2}\s+\w{3}\s+\d{4})?(?:\s+\d{1,2}:\d{2}[ap]m)?)/i);
     const dateStr = dateMatch ? dateMatch[1].trim() : "";
 
-    // Venue: "Rod Laver Arena • Melbourne • VIC"  OR  "Rod Laver Arena, Melbourne, VIC"
     const bulletVenue = text.match(/([^•]+•[^•]+•[^•]+)/);
     let venueStr = bulletVenue ? bulletVenue[1].trim() : "";
     if (!venueStr) {
@@ -68,7 +95,8 @@ async function searchTicketekWebsite(query) {
       title: name,
       date: dateStr,
       venue: venueStr,
-      image: imgUrl || FALLBACK_IMG,
+      image: imgUrl || "",
+      showUrl,
     });
   });
 
@@ -77,11 +105,11 @@ async function searchTicketekWebsite(query) {
 
 /**
  * Fallback: use the LLM with web search to find Ticketek events.
- * This kicks in if the CORS proxy is blocked or returns nothing.
+ * Asks for the show page URL so we can fetch the real image.
  */
 async function searchWithLLM(query) {
   const result = await base44.integrations.Core.InvokeLLM({
-    prompt: `Search the Ticketek Australia website (ticketek.com.au) for events matching "${query}". Return ONLY upcoming events (dates from July 2026 onwards — do NOT include past events). For each event provide the event name, date, venue name, and city. If you can find an image URL from the Ticketek website, include it.`,
+    prompt: `Search the Ticketek Australia website (premier.ticketek.com.au) for events matching "${query}". Return ONLY upcoming events (dates from July 2026 onwards — do NOT include past events). For each event provide the event name, date, venue name, city, and the full Ticketek show page URL (e.g. https://premier.ticketek.com.au/shows/show.aspx?sh=XXXXX). Return each unique show once — do not list individual performances separately.`,
     add_context_from_internet: true,
     model: "gemini_3_flash",
     response_json_schema: {
@@ -96,7 +124,7 @@ async function searchWithLLM(query) {
               date: { type: "string" },
               venue_name: { type: "string" },
               city: { type: "string" },
-              image_url: { type: "string" },
+              show_url: { type: "string" },
             },
           },
         },
@@ -110,7 +138,8 @@ async function searchWithLLM(query) {
     title: e.event_name || "",
     date: e.date || "",
     venue: [e.venue_name, e.city].filter(Boolean).join(", "),
-    image: e.image_url || FALLBACK_IMG,
+    image: "",
+    showUrl: e.show_url || "",
   }));
 }
 
@@ -175,6 +204,20 @@ export default function EventNameSearch({ onSelect, onClear, currentValue }) {
       }
       // Remove past events
       events = events.filter(e => isUpcoming(e.date));
+
+      // Fetch real images from show pages for any event missing one
+      const needingImage = events.filter(e => !e.image || e.image === FALLBACK_IMG);
+      if (needingImage.length > 0) {
+        await Promise.all(needingImage.map(async (e) => {
+          if (e.showUrl) {
+            const img = await fetchShowImage(e.showUrl);
+            if (img) e.image = img;
+          }
+        }));
+        // Set fallback for any that still don't have an image
+        events.forEach(e => { if (!e.image) e.image = FALLBACK_IMG; });
+      }
+
       setResults(events);
     } catch {
       setResults([]);
