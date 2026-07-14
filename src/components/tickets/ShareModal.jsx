@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { buildTransferEmailHtml } from "@/lib/transferEmailTemplate";
 
 export default function ShareModal({ ticket, onClose, onTransferred }) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [senderName, setSenderName] = useState("");
   const [shareSettings, setShareSettings] = useState(null);
   const [loadingSettings, setLoadingSettings] = useState(true);
   const [transferring, setTransferring] = useState(false);
@@ -18,6 +20,13 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
       setShareSettings({ mode: "normal" });
       setLoadingSettings(false);
     });
+    // Fetch sender's display name
+    base44.auth.me().then(me => {
+      const profiles = base44.entities.UserProfile.filter({ user_email: me.email }).then(p => {
+        const disp = p[0]?.first_name ? `${p[0].first_name}${p[0].last_name ? " " + p[0].last_name : ""}` : (me.display_name || me.full_name || me.email);
+        setSenderName(disp);
+      }).catch(() => setSenderName(me.display_name || me.full_name || me.email));
+    }).catch(() => {});
   }, []);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -31,24 +40,12 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
       // Transfer ticket ownership to recipient
       await base44.entities.Ticket.update(ticket.id, { owner_email: email.trim() });
 
-      // Send notification email to recipient
-      const emailHtml = `<!DOCTYPE html><html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f4f4;margin:0;padding:0">
-        <div style="max-width:600px;margin:0 auto;background:#fff;border-top:4px solid #001c3d">
-          <div style="background:#001c3d;padding:15px 20px"><span style="color:#fff;font-size:20px;font-weight:bold">Ticket Transfer</span></div>
-          <div style="padding:30px 20px">
-            <h1 style="font-size:22px;font-weight:800;margin:0 0 10px">You've received a ticket!</h1>
-            <p style="font-size:15px;color:#333;margin-bottom:20px">Hi ${name.trim()},</p>
-            <p style="font-size:14px;color:#333;line-height:1.6;margin-bottom:25px">A ticket has been transferred to you. Here are the details:</p>
-            <div style="background:#f8f8f8;border-radius:8px;padding:20px;margin-bottom:25px">
-              <p style="font-size:16px;font-weight:bold;margin:0 0 4px">${ticket.event_name}</p>
-              <p style="font-size:14px;color:#333;margin:0 0 4px">${ticket.event_date}</p>
-              <p style="font-size:14px;color:#333;margin:0 0 12px">${ticket.venue_name}</p>
-              <p style="font-size:13px;color:#555;margin:0">Section: ${ticket.section_bay || "-"} | Row: ${ticket.row || "-"} | Seat: ${ticket.seat_number || "-"}</p>
-            </div>
-            <p style="font-size:14px;color:#333;line-height:1.6">Please log in to the app to view your ticket.</p>
-          </div>
-        </div>
-      </body></html>`;
+      // Send premium notification email to recipient
+      const emailHtml = buildTransferEmailHtml({
+        ticket,
+        recipientName: name.trim(),
+        senderName: senderName || "A Ticketek user",
+      });
 
       await base44.integrations.Core.SendEmail({
         to: email.trim(),
