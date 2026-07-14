@@ -13,7 +13,7 @@ const navItems = [
     label: "Events",
     path: "/",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="23" height="23" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+      <svg viewBox="0 0 24 24" width="39" height="39" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
         <path d="M12 3L2 12h3v8h5v-6h4v6h5v-8h3z" />
       </svg>
     ),
