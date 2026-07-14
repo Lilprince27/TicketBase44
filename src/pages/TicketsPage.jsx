@@ -211,31 +211,23 @@ export default function TicketsPage() {
 
       <div style={{ padding: "0 20px", paddingBottom: "calc(140px + env(safe-area-inset-bottom))", paddingTop: 0 }}>
         {groups.length === 0 ? (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", minHeight: "calc(100vh - 160px)", justifyContent: "center", padding: "40px 0" }}>
-            {/* Illustration */}
-            <div style={{ width: 96, height: 96, borderRadius: "50%", background: "#f5f7fa", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 32 }}>
-              <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#b0bcc8" strokeWidth="1.5">
-                <path d="M3 7h18v3a2 2 0 000 4v3H3v-3a2 2 0 000-4V7z" strokeLinejoin="round"/>
-                <line x1="6" y1="5" x2="6" y2="19" strokeDasharray="2 2" />
-              </svg>
-            </div>
-            <h2 style={{ fontSize: 26, fontWeight: 800, color: "#0a1929", margin: "0 0 12px", letterSpacing: "-0.5px" }}>No tickets yet</h2>
-            <p style={{ fontSize: 15, color: "#8a9aaa", margin: "0 0 40px", lineHeight: 1.5, maxWidth: 280 }}>
-              Browse events to find tickets to hundreds of amazing experiences.
-            </p>
+          <div style={{ padding: "40px 24px 32px" }}>
+            <h2 style={{ fontSize: 22, fontWeight: 700, color: "#000", margin: "0 0 16px" }}>Events</h2>
+            <p style={{ fontSize: 16, color: "#000", margin: "0 0 6px", lineHeight: 1.5 }}>You don't have any upcoming events.</p>
+            <p style={{ fontSize: 16, color: "#000", margin: "0 0 40px", lineHeight: 1.5 }}>Browse events to find tickets to hundreds of amazing experiences.</p>
             {/* Primary button */}
             <button
-              onClick={() => navigate("/")}
-              style={{ width: "100%", maxWidth: 320, padding: "16px", borderRadius: 100, border: "none", background: "#001a2c", color: "#fff", fontWeight: 700, fontSize: 16, cursor: "pointer", letterSpacing: "0.2px", marginBottom: 12, boxShadow: "0 2px 12px rgba(0,26,44,0.15)" }}
+              onClick={() => navigate("/account")}
+              style={{ width: "100%", padding: "17px", borderRadius: 100, border: "none", background: "#001a2c", color: "#fff", fontWeight: 700, fontSize: 16, cursor: "pointer", letterSpacing: "0.2px", marginBottom: 12 }}
             >
-              Browse events
+              Order History
             </button>
             {/* Secondary button */}
             <button
-              onClick={() => navigate("/account")}
-              style={{ width: "100%", maxWidth: 320, padding: "16px", borderRadius: 100, border: "1.5px solid #e0e6ec", background: "#fff", color: "#0a1929", fontWeight: 600, fontSize: 16, cursor: "pointer", letterSpacing: "0.2px" }}
+              onClick={() => navigate("/")}
+              style={{ width: "100%", padding: "17px", borderRadius: 100, border: "1.5px solid #d1d5db", background: "#fff", color: "#000", fontWeight: 700, fontSize: 16, cursor: "pointer", letterSpacing: "0.2px" }}
             >
-              Order History
+              Browse events
             </button>
           </div>
         ) : (
