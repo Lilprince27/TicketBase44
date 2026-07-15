@@ -14,7 +14,7 @@ const navItems = [
     path: "/",
     icon: (active) => (
       <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <path d="M12 3L2 12h3v8h5v-6h4v6h5v-8h3z" />
+        <path d="M12 3 L21 12 L21 21 L3 21 L3 12 Z" />
       </svg>
     ),
   },
@@ -24,8 +24,8 @@ const navItems = [
     path: "/account",
     icon: (active) => (
       <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <circle cx="12" cy="7" r="4" />
-        <path d="M7 14 L5 20 Q5 22 6.5 22 L17.5 22 Q19 22 19 20 L17 14 Z" />
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8z" />
       </svg>
     ),
   },
@@ -34,8 +34,12 @@ const navItems = [
     label: "Tickets",
     path: "/tickets",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <path transform="rotate(-45 12 12)" d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
+      <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR} fillRule="evenodd">
+        <g transform="rotate(-45 12 12)">
+          <rect x="3.5" y="6.5" width="17" height="11" rx="2.2" />
+          <circle cx="12" cy="7.3" r="1.3" />
+          <circle cx="12" cy="16.7" r="1.3" />
+        </g>
       </svg>
     ),
   },
