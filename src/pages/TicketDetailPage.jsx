@@ -193,7 +193,7 @@ export default function TicketDetailPage() {
         )}
 
         {/* Fine print */}
-        <div style={{ padding: "25px 8px", fontSize: "10.5px", color: "#777", lineHeight: 1.4 }}>
+        <div className="selectable-text" style={{ padding: "25px 8px", fontSize: "10.5px", color: "#777", lineHeight: 1.4 }}>
           <p><strong>Ticketek Pty Limited ABN 92 010 129 110</strong></p>
           <p>Each mobile ticket has a unique bar code. This bar code allows one entry only so please ensure that each individual attending the event has his or her own mobile ticket.</p>
           <p>Do not give a copy of your mobile ticket to anyone and do not buy a mobile ticket except from Ticketek's website, mobile site, call centre or agencies. If there are multiple copies of a mobile ticket, only the 1st copy to be scanned on arrival at the event will allow the ticket holder entry. Additional copies will fail the scanning process and will not be granted entry.</p>

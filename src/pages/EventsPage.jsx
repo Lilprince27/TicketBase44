@@ -8,6 +8,7 @@ import EventListItem from "../components/events/EventListItem";
 import { TICKETEK_FEATURED, TICKETEK_TRENDING, TICKETEK_WAITLISTS } from "../components/events/ticketekEvents";
 import TicketekLogo from "../components/TicketekLogo";
 import StellaChat from "../components/stella/StellaChat";
+import PullToRefresh from "../components/PullToRefresh";
 
 const TM_API_KEY = "ysl6MCmD7CZKfSZtD9MGlKh8rGG4mNgO";
 
@@ -54,9 +55,9 @@ export default function EventsPage() {
   const debounceTimer = useRef(null);
   const loaderRef = useRef(null);
 
-  const fetchEvents = useCallback(async (query, category, currentOffset, replace = false) => {
-    if (replace) setLoading(true);
-    else setLoadingMore(true);
+  const fetchEvents = useCallback(async (query, category, currentOffset, replace = false, silent = false) => {
+    if (replace && !silent) setLoading(true);
+    else if (!replace) setLoadingMore(true);
 
     const baseParams = new URLSearchParams({ apikey: TM_API_KEY, size: "15", page: String(Math.floor(currentOffset / 15)), countryCode: "AU", sort: "relevance,desc" });
 
@@ -110,6 +111,10 @@ export default function EventsPage() {
     setLoadingMore(false);
   }, []);
 
+  const handlePullRefresh = useCallback(async () => {
+    await fetchEvents(searchQuery, CATEGORIES[activeTab], 0, true, true);
+  }, [fetchEvents, searchQuery, activeTab]);
+
   useEffect(() => {
     setOffset(0);
     fetchEvents(searchQuery, CATEGORIES[activeTab], 0, true);
@@ -142,6 +147,7 @@ export default function EventsPage() {
   const isFeaturedMode = !searchQuery && activeTab === 0;
 
   return (
+    <PullToRefresh onRefresh={handlePullRefresh}>
     <div style={{ background: "white" }}>
       {/* Header */}
       <header className="sticky top-0 z-50" style={{ backgroundColor: "#051a24", paddingTop: "env(safe-area-inset-top)" }}>
@@ -277,5 +283,6 @@ export default function EventsPage() {
         />
       )}
     </div>
+    </PullToRefresh>
   );
 }

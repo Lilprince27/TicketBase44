@@ -98,7 +98,7 @@
     background-color: #001a35;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: auto;
+    overscroll-behavior-y: none;
     touch-action: pan-y;
   }
   body {
@@ -108,7 +108,7 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     -webkit-overflow-scrolling: touch;
     background-color: #001a35;
-    overscroll-behavior-y: auto;
+    overscroll-behavior-y: none;
     touch-action: pan-y;
   }
   #root {
@@ -136,4 +136,29 @@ input, textarea, select, button {
 html, body {
   overflow-y: auto;
   height: auto;
+}
+
+/* Selectively re-enable text selection for copyable content */
+.selectable-text,
+.selectable-text * {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -webkit-touch-callout: default;
+}
+
+/* Eliminate unwanted vertical elastic bounce (iOS rubber-band)
+   on absolute layouts, modal content wrappers & sub-page scroll frames */
+.page-scroll-padding,
+[class*="fixed"][class*="inset-0"],
+[class*="absolute"][class*="inset-0"],
+.no-bounce {
+  overscroll-behavior-y: none;
+}
+
+/* Nested scrollable areas inside modals/sheets should contain, not chain */
+[style*="overflow-y: auto"],
+[style*="overflow-y:auto"],
+[style*="overflow-y: scroll"],
+[style*="overflow-y:scroll"] {
+  overscroll-behavior-y: contain;
 }

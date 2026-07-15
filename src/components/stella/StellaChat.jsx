@@ -263,7 +263,7 @@ function MessageBubble({ message }) {
   return (
     <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
       <StellaRobotIcon size={32} />
-      <div className="stella-msg" style={{ background: "#0d2d43", color: "white", borderRadius: "4px 18px 18px 18px", padding: "14px 16px", fontSize: 14, maxWidth: "80%", lineHeight: 1.5, border: "1px solid rgba(0,93,158,0.3)" }}>
+      <div className="stella-msg selectable-text" style={{ background: "#0d2d43", color: "white", borderRadius: "4px 18px 18px 18px", padding: "14px 16px", fontSize: 14, maxWidth: "80%", lineHeight: 1.5, border: "1px solid rgba(0,93,158,0.3)" }}>
         <ReactMarkdown>{message.content}</ReactMarkdown>
       </div>
     </div>

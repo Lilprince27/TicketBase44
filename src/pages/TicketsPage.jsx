@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import AppleWalletModal from "../components/tickets/AppleWalletModal";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { getCustomerId } from "../lib/customerId";
+import PullToRefresh from "../components/PullToRefresh";
 
 // Generate a stable random order number in format YYYYMMDD,NNNNN based on ticket id
 function getOrderNumber(ticket) {
@@ -194,6 +195,7 @@ export default function TicketsPage() {
   const groups = Object.values(grouped);
 
   return (
+    <PullToRefresh onRefresh={loadTickets}>
     <div style={{ background: "white", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", minHeight: "100vh" }}>
       {walletTicket && <AppleWalletModal ticket={walletTicket} onClose={() => setWalletTicket(null)} />}
 
@@ -237,5 +239,6 @@ export default function TicketsPage() {
         )}
       </div>
     </div>
+    </PullToRefresh>
   );
 }
