@@ -14,7 +14,7 @@ const navItems = [
     path: "/",
     icon: (active) => (
       <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <path d="M12 3 L21 12 L21 21 L3 21 L3 12 Z" />
+        <path d="M3 11.5 L12 3 L16.2 7 L16.2 4.5 L18.8 4.5 L18.8 9.4 L21 11.5 L21 21 L15 21 L15 15 L9 15 L9 21 L3 21 Z" />
       </svg>
     ),
   },
@@ -25,7 +25,7 @@ const navItems = [
     icon: (active) => (
       <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
         <circle cx="12" cy="8" r="4" />
-        <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8z" />
+        <path d="M4 21c0-2.7 5.3-4 8-4s8 1.3 8 4z" />
       </svg>
     ),
   },
@@ -35,10 +35,10 @@ const navItems = [
     path: "/tickets",
     icon: (active) => (
       <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR} fillRule="evenodd">
-        <g transform="rotate(-45 12 12)">
-          <rect x="3.5" y="6.5" width="17" height="11" rx="2.2" />
-          <circle cx="12" cy="7.3" r="1.3" />
-          <circle cx="12" cy="16.7" r="1.3" />
+        <g transform="rotate(45 12 12)">
+          <rect x="4" y="7" width="16" height="10" rx="2.5" />
+          <circle cx="12" cy="7" r="2" />
+          <circle cx="12" cy="17" r="2" />
         </g>
       </svg>
     ),
