@@ -2,7 +2,7 @@ import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useRef } from "react";
 
 const ACTIVE_COLOR = "#007AFF";
-const INACTIVE_COLOR = "#000000";
+const INACTIVE_COLOR = "#1A1A1A";
 
 // Nav bar only appears on these main pages
 const NAV_PATHS = ["/", "/account", "/tickets"];
@@ -13,8 +13,8 @@ const navItems = [
     label: "Events",
     path: "/",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <path d="M3 11.5 L12 3 L16.2 7 L16.2 4.5 L18.8 4.5 L18.8 9.4 L21 11.5 L21 21 L15 21 L15 15 L9 15 L9 21 L3 21 Z" />
+      <svg viewBox="0 0 24 24" width="39" height="39" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+        <path d="M12 3L2 12h3v8h5v-6h4v6h5v-8h3z" />
       </svg>
     ),
   },
@@ -23,9 +23,9 @@ const navItems = [
     label: "Account",
     path: "/account",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <circle cx="12" cy="8" r="4" />
-        <path d="M4 21c0-2.7 5.3-4 8-4s8 1.3 8 4z" />
+      <svg viewBox="0 0 24 24" width="39" height="39" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+        <circle cx="12" cy="7" r="4" />
+        <path d="M7 14 L5 20 Q5 22 6.5 22 L17.5 22 Q19 22 19 20 L17 14 Z" />
       </svg>
     ),
   },
@@ -34,12 +34,8 @@ const navItems = [
     label: "Tickets",
     path: "/tickets",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR} fillRule="evenodd">
-        <g transform="rotate(45 12 12)">
-          <rect x="4" y="7" width="16" height="10" rx="2.5" />
-          <circle cx="12" cy="7" r="2" />
-          <circle cx="12" cy="17" r="2" />
-        </g>
+      <svg viewBox="0 0 24 24" width="35" height="35" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+        <path transform="rotate(-45 12 12)" d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
       </svg>
     ),
   },
@@ -111,20 +107,19 @@ export default function BottomNav() {
           display: flex;
           justify-content: center;
           align-items: flex-end;
-          padding: 0 16px;
-          padding-bottom: max(env(safe-area-inset-bottom) - 10px, 6px);
+          padding-bottom: max(env(safe-area-inset-bottom) - 16px, 0px);
           pointer-events: none;
         }
         .tnav-pill {
           display: flex;
           align-items: center;
-          background: rgba(242, 242, 242, 0.88);
+          background: rgba(239, 239, 239, 0.92);
           backdrop-filter: blur(20px) saturate(180%);
           -webkit-backdrop-filter: blur(20px) saturate(180%);
           border-radius: 100px;
-          padding: 6px 8px;
-          gap: 4px;
-          box-shadow: 0 4px 18px rgba(0,0,0,0.10), 0 0 0 0.5px rgba(0,0,0,0.05);
+          padding: 5px 7px;
+          gap: 2px;
+          box-shadow: 0 1px 10px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.04);
           pointer-events: all;
         }
         .tnav-item {
@@ -132,18 +127,18 @@ export default function BottomNav() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 8px 20px;
-          border-radius: 26px;
+          padding: 6px 18px;
+          border-radius: 20px;
           text-decoration: none;
           cursor: pointer;
           border: none;
           background: transparent;
-          gap: 1.5px;
-          width: 82px;
+          gap: 2px;
+          width: 76px;
           flex-shrink: 0;
           box-sizing: border-box;
           -webkit-tap-highlight-color: transparent;
-          transition: background-color 0.18s ease, transform 0.15s ease;
+          transition: background-color 0.15s ease, transform 0.15s ease;
         }
         .tnav-item:active { transform: scale(0.92); }
         .tnav-item.active {
@@ -153,14 +148,12 @@ export default function BottomNav() {
           display: flex;
           align-items: center;
           justify-content: center;
-          height: 28px;
         }
         .tnav-label {
-          font-size: 10.5px;
+          font-size: 10px;
           font-weight: 600;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
           letter-spacing: 0.1px;
-          line-height: 1;
         }
       `}</style>
       <div className="tnav-wrap">
