@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import OrderHistorySheet from "../components/tickets/OrderHistorySheet";
 import { getCustomerId } from "../lib/customerId";
 
 export default function AccountPage() {
   const [user, setUser] = useState(null);
-  const [showTickets, setShowTickets] = useState(false);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const orderSheetOpen = searchParams.get('sheet') === 'order-history';
 
   useEffect(() => { base44.auth.me().then(setUser); }, []);
 
@@ -38,7 +39,7 @@ export default function AccountPage() {
         <MenuItem
           icon={<TicketIcon />}
           label="Your tickets"
-          onClick={() => setShowTickets(true)}
+          onClick={() => setSearchParams({ sheet: 'order-history' })}
         />
         <MenuItem
           icon={<SettingsIcon />}
@@ -107,7 +108,7 @@ export default function AccountPage() {
         </div>
       </div>
 
-      {showTickets && <OrderHistorySheet user={user} onClose={() => setShowTickets(false)} />}
+      {orderSheetOpen && <OrderHistorySheet user={user} onClose={() => navigate(-1)} />}
     </div>
   );
 }

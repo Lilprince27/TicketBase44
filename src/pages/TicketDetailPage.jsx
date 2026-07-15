@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import AppleWalletModal from "../components/tickets/AppleWalletModal";
 import ShareModal from "../components/tickets/ShareModal";
@@ -12,9 +12,10 @@ export default function TicketDetailPage() {
   const navigate = useNavigate();
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showWallet, setShowWallet] = useState(false);
-  const [showShareModal, setShowShareModal] = useState(false);
   const [hideSettings, setHideSettings] = useState({});
+  const [searchParams, setSearchParams] = useSearchParams();
+  const showWallet = searchParams.get('modal') === 'wallet';
+  const showShare = searchParams.get('modal') === 'share';
 
   useEffect(() => {
     base44.entities.HideSettings.list().then(list => {
@@ -52,8 +53,8 @@ export default function TicketDetailPage() {
 
   return (
     <div style={{ margin: "0 auto", backgroundColor: "#f2f2f2", minHeight: "100vh", fontFamily: "-apple-system, system-ui, sans-serif", color: "#000", maxWidth: 500 }}>
-      {showWallet && <AppleWalletModal ticket={ticket} onClose={() => setShowWallet(false)} />}
-      {showShareModal && <ShareModal ticket={ticket} onClose={() => setShowShareModal(false)} onTransferred={() => navigate("/tickets")} />}
+      {showWallet && <AppleWalletModal ticket={ticket} onClose={() => navigate(-1)} />}
+      {showShare && <ShareModal ticket={ticket} onClose={() => navigate(-1)} onTransferred={() => navigate("/tickets", { replace: true })} />}
 
       {/* Header */}
       <div style={{ position: "sticky", top: 0, zIndex: 100, background: "white", height: 55, display: "flex", alignItems: "center", borderBottom: "1px solid #ddd" }}>
@@ -153,7 +154,7 @@ export default function TicketDetailPage() {
         {/* Share button */}
         {!hideSettings.hide_share_button && (
           <button
-            onClick={() => setShowShareModal(true)}
+            onClick={() => setSearchParams({ modal: 'share' })}
             style={{ backgroundColor: "#43822a", color: "white", width: "100%", border: "none", padding: "12px", fontSize: 17, borderRadius: 4, fontWeight: 600, marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, cursor: "pointer" }}
           >
             <svg style={{ width: 32, height: 32 }} viewBox="0 0 24 24" fill="none">
@@ -175,7 +176,7 @@ export default function TicketDetailPage() {
         {!hideSettings.hide_wallet_button && (
           isAndroid() ? (
             <button
-              onClick={() => setShowWallet(true)}
+              onClick={() => setSearchParams({ modal: 'wallet' })}
               style={{ backgroundColor: "#000", color: "white", width: "100%", border: "none", padding: "12px 24px", fontSize: 20, borderRadius: 8, fontWeight: 700, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 0, cursor: "pointer", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" }}
             >
               <img src="https://www.image2url.com/r2/default/images/1779671280742-1ae995e2-3a65-482a-9305-9de9fedcb5da.jpeg" alt="Google Wallet" style={{ width: 32, height: 32, marginRight: 14, objectFit: "contain", display: "block" }} />
@@ -183,7 +184,7 @@ export default function TicketDetailPage() {
             </button>
           ) : (
             <button
-              onClick={() => setShowWallet(true)}
+              onClick={() => setSearchParams({ modal: 'wallet' })}
               style={{ backgroundColor: "black", color: "white", width: "100%", border: "none", padding: "8px", fontSize: 16, borderRadius: 6, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
             >
               <img src="https://www.image2url.com/r2/default/images/1777758037946-fd4ad460-0bfd-4c21-9c8f-3949e32a0c92.jpeg" alt="Wallet Icon" style={{ height: 32 }} />

@@ -201,13 +201,13 @@ export default function OrderHistorySheet({ user, onClose }) {
                         style={{ display: "block", width: "100%", backgroundColor: "#fff", border: "1px solid #cbd5e0", color: "#004b87", fontSize: 15, fontWeight: 500, padding: 12, borderRadius: 6, cursor: "pointer", textAlign: "center", marginBottom: 10 }}>
                         View Venue Map
                       </button>
-                      <button onClick={() => { onClose(); navigate(`/ticket-detail/${first.id}`); }}
+                      <button onClick={() => navigate(`/ticket-detail/${first.id}`, { replace: true })}
                         style={{ display: "block", width: "100%", backgroundColor: "#fff", border: "1px solid #cbd5e0", color: "#004b87", fontSize: 15, fontWeight: 500, padding: 12, borderRadius: 6, cursor: "pointer", textAlign: "center", marginBottom: 16 }}>
                         View Event Details
                       </button>
 
                       <h5 style={{ fontSize: 15, fontWeight: 500, color: "#1a202c", textAlign: "center", margin: "0 0 12px 0" }}>Download Your Tickets</h5>
-                      <button onClick={() => { onClose(); navigate(`/ticket-detail/${first.id}`); }}
+                      <button onClick={() => navigate(`/ticket-detail/${first.id}`, { replace: true })}
                         style={{ display: "block", width: "100%", backgroundColor: "#38761d", color: "#fff", border: "none", fontSize: 15, fontWeight: 500, padding: 12, borderRadius: 6, cursor: "pointer", textAlign: "center", marginBottom: 10 }}>
                         Mobile Ticket
                       </button>

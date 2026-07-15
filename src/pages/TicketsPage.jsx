@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import AppleWalletModal from "../components/tickets/AppleWalletModal";
 import { ChevronUp, ChevronDown } from "lucide-react";
@@ -160,6 +160,17 @@ export default function TicketsPage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [walletTicket, setWalletTicket] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const walletOpen = searchParams.get('modal') === 'wallet';
+
+  const openWallet = useCallback((ticket) => {
+    setWalletTicket(ticket);
+    setSearchParams({ modal: 'wallet' });
+  }, []);
+
+  useEffect(() => {
+    if (!walletOpen) setWalletTicket(null);
+  }, [walletOpen]);
 
   const loadTickets = useCallback(async () => {
     const me = await base44.auth.me();
@@ -197,7 +208,7 @@ export default function TicketsPage() {
   return (
     <PullToRefresh onRefresh={loadTickets}>
     <div style={{ background: "white", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", minHeight: "100vh" }}>
-      {walletTicket && <AppleWalletModal ticket={walletTicket} onClose={() => setWalletTicket(null)} />}
+      {walletOpen && walletTicket && <AppleWalletModal ticket={walletTicket} onClose={() => navigate(-1)} />}
 
       {/* Header */}
       <header className="sticky top-0 z-50" style={{ background: "#001a2c", paddingTop: "calc(env(safe-area-inset-top) + 20px)", paddingBottom: 20, paddingLeft: 20, paddingRight: 20 }}>
@@ -234,7 +245,7 @@ export default function TicketsPage() {
           </div>
         ) : (
           groups.map((group) => (
-            <TicketGroup key={group[0].order_number || group[0].id} group={group} onWallet={setWalletTicket} />
+            <TicketGroup key={group[0].order_number || group[0].id} group={group} onWallet={openWallet} />
           ))
         )}
       </div>
