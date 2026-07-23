@@ -23,9 +23,12 @@ const navItems = [
     id: "account",
     label: "Account",
     path: "/account",
-    imageOnly: true,
-    imageSrc: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/8772aa16d_IMG_4410.jpeg",
-    icon: () => null,
+    icon: (active) => (
+      <svg viewBox="0 0 24 24" width="33" height="33" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+        <circle cx="12" cy="8" r="4.2" />
+        <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8z" />
+      </svg>
+    ),
   },
   {
     id: "tickets",
@@ -146,6 +149,16 @@ export default function BottomNav() {
           display: flex;
           align-items: center;
           justify-content: center;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          transition: background-color 0.28s cubic-bezier(0.4, 0, 0.2, 1), transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @media (hover: hover) {
+          .tnav-item:not(.active):hover .tnav-icon-wrap {
+            background-color: rgba(0, 0, 0, 0.07);
+            transform: scale(1.06);
+          }
         }
         .tnav-label {
           font-size: 10px;
@@ -158,22 +171,6 @@ export default function BottomNav() {
         <div className="tnav-pill">
           {navItems.map((item) => {
             const active = isActive(item.path);
-            if (item.imageOnly) {
-              return (
-                <Link
-                  key={item.id}
-                  to={item.path}
-                  onClick={(e) => { handleAccountTap(e); }}
-                  className="tnav-item"
-                >
-                  <img
-                    src={item.imageSrc}
-                    alt={item.label}
-                    style={{ height: 44, width: "auto", objectFit: "contain", mixBlendMode: "multiply", pointerEvents: "none" }}
-                  />
-                </Link>
-              );
-            }
             return (
               <Link
                 key={item.id}
@@ -182,9 +179,9 @@ export default function BottomNav() {
                   if (item.id === "account") { handleAccountTap(e); return; }
                   handleNavTap(e, item);
                 }}
-                className="tnav-item"
+                className={`tnav-item${active ? " active" : ""}`}
               >
-                <div className={`tnav-icon-wrap${active ? " active" : ""}`}>
+                <div className="tnav-icon-wrap">
                   {item.icon(active)}
                 </div>
                 <span className="tnav-label" style={{ color: active ? ACTIVE_COLOR : INACTIVE_COLOR }}>
