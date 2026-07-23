@@ -23,12 +23,9 @@ const navItems = [
     id: "account",
     label: "Account",
     path: "/account",
-    icon: (active) => (
-      <svg viewBox="0 0 24 24" width="33" height="33" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <circle cx="12" cy="8" r="4.2" />
-        <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8z" />
-      </svg>
-    ),
+    imageOnly: true,
+    imageSrc: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/8772aa16d_IMG_4410.jpeg",
+    icon: () => null,
   },
   {
     id: "tickets",
@@ -139,7 +136,7 @@ export default function BottomNav() {
           flex-shrink: 0;
           box-sizing: border-box;
           -webkit-tap-highlight-color: transparent;
-          transition: background-color 0.15s ease, transform 0.15s ease;
+          transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.15s ease;
         }
         .tnav-item:active { transform: scale(0.92); }
         .tnav-item.active {
@@ -149,15 +146,10 @@ export default function BottomNav() {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          transition: background-color 0.28s cubic-bezier(0.4, 0, 0.2, 1), transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
         }
         @media (hover: hover) {
-          .tnav-item:not(.active):hover .tnav-icon-wrap {
+          .tnav-item:not(.active):hover {
             background-color: rgba(0, 0, 0, 0.07);
-            transform: scale(1.06);
           }
         }
         .tnav-label {
@@ -171,6 +163,22 @@ export default function BottomNav() {
         <div className="tnav-pill">
           {navItems.map((item) => {
             const active = isActive(item.path);
+            if (item.imageOnly) {
+              return (
+                <Link
+                  key={item.id}
+                  to={item.path}
+                  onClick={(e) => { handleAccountTap(e); }}
+                  className={`tnav-item${active ? " active" : ""}`}
+                >
+                  <img
+                    src={item.imageSrc}
+                    alt={item.label}
+                    style={{ height: 54, mixBlendMode: "multiply", pointerEvents: "none" }}
+                  />
+                </Link>
+              );
+            }
             return (
               <Link
                 key={item.id}
