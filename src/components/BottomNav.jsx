@@ -23,9 +23,11 @@ const navItems = [
     id: "account",
     label: "Account",
     path: "/account",
-    imageOnly: true,
-    imageSrc: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/8772aa16d_IMG_4410.jpeg",
-    icon: () => null,
+    icon: (active) => (
+      <svg viewBox="0 0 24 24" width="33" height="33" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+      </svg>
+    ),
   },
   {
     id: "tickets",
@@ -163,22 +165,6 @@ export default function BottomNav() {
         <div className="tnav-pill">
           {navItems.map((item) => {
             const active = isActive(item.path);
-            if (item.imageOnly) {
-              return (
-                <Link
-                  key={item.id}
-                  to={item.path}
-                  onClick={(e) => { handleAccountTap(e); }}
-                  className={`tnav-item${active ? " active" : ""}`}
-                >
-                  <img
-                    src={item.imageSrc}
-                    alt={item.label}
-                    style={{ height: 54, mixBlendMode: "multiply", pointerEvents: "none" }}
-                  />
-                </Link>
-              );
-            }
             return (
               <Link
                 key={item.id}
