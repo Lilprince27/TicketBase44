@@ -175,7 +175,7 @@ const AFL_KEYWORDS = [
   "essendon",
   "fremantle",
   "geelong",
-  "gold coast suns", "gold coast",
+  "gold coast suns",
   "gws", "giants", "greater western sydney",
   "hawthorn", "hawks",
   "north melbourne", "kangaroos",
@@ -186,6 +186,77 @@ const AFL_KEYWORDS = [
   "west coast eagles", "west coast",
   "western bulldogs", "bulldogs",
 ];
+
+const TK_CDN = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages";
+
+// Upcoming Ticketek events with exact artwork — surfaced via local search override
+const TICKETEK_LOCAL_EVENTS = [
+  { title: "Bobby Lee", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx359424.jpg`, keys: ["bobby lee"] },
+  { title: "Max Amini", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx361065.jpg`, keys: ["max amini"] },
+  { title: "PAW Patrol Live! Race to the Rescue", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx358366.jpg`, keys: ["paw patrol"] },
+  { title: "Karan Aujla — P-Pop Culture World Tour", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx362309.jpg`, keys: ["karan aujla", "p-pop"] },
+  { title: "Urzila Carlson — Fatty On A Yacht", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx349660.jpg`, keys: ["urzila carlson", "fatty on a yacht"] },
+  { title: "Happy Mondays — 35th Anniversary of Pils N Thrills and Bellyaches", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx355093.jpg`, keys: ["happy mondays"] },
+  { title: "The Wiggles — The Wiggles Sparkle! Big Show", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx362844.jpg`, keys: ["wiggles"] },
+  { title: "Bassem Youssef", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx362765.jpg`, keys: ["bassem youssef"] },
+  { title: "Electric Callboy", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx349187.jpg`, keys: ["electric callboy"] },
+  { title: "Jason Derulo", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx359476.jpg`, keys: ["jason derulo"] },
+  { title: "ECLIPSE", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx357072.jpg`, keys: ["eclipse"] },
+  { title: "Shinedown & Bush", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx357495.jpg`, keys: ["shinedown"] },
+  { title: "Macy Gray", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx361853.jpg`, keys: ["macy gray"] },
+  { title: "Burn The Floor", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx360206.jpg`, keys: ["burn the floor"] },
+  { title: "Conan Gray", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx349281.jpg`, keys: ["conan gray"] },
+  { title: "Olivia Rodrigo (Waitlist)", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx261004.jpg`, keys: ["olivia rodrigo"] },
+  { title: "Matchbox Twenty (Waitlist)", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx294667.jpg`, keys: ["matchbox twenty", "matchbox 20"] },
+  { title: "Netball World Cup Sydney 2027 (Waitlist)", date: "", venue: "Sydney, Australia", image: `${TK_CDN}/sfx362771.png`, keys: ["netball world cup"] },
+  { title: "Kylie Minogue (Waitlist)", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx298005.jpg`, keys: ["kylie minogue"] },
+  { title: "Charli XCX (Waitlist)", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx312407.jpg`, keys: ["charli xcx"] },
+  { title: "Ashanti", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx361769.jpg`, keys: ["ashanti"] },
+  { title: "The Return of Secret Garden", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx362278.jpg`, keys: ["secret garden"] },
+  { title: "Khalid", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx358455.jpg`, keys: ["khalid"] },
+  { title: "Iron Maiden", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx357159.jpg`, keys: ["iron maiden"] },
+  { title: "Anthony Callea", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx362650.jpg`, keys: ["anthony callea"] },
+  { title: "\"Time\" & \"The Chain\" Tributes — Music of Pink Floyd and Fleetwood Mac", date: "Sat 28 Nov 2026", venue: "Astor Theatre, Mount Lawley, WA", image: `${TK_CDN}/sfx364073.jpg`, keys: ["pink floyd", "fleetwood mac", "the chain tributes"] },
+  { title: "2026 Schools Spectacular \"Original\"", date: "Fri 27 Nov 2026 to Sat 28 Nov 2026", venue: "Afterpay Arena, NSW", image: `${TK_CDN}/sfx362658.jpg`, keys: ["schools spectacular"] },
+  { title: "2026 STAYC Fan Concert Tour — [STAY CLOSER] in Australia", date: "Wed 14 Oct 2026", venue: "Riverside Theatre, Perth, WA", image: `${TK_CDN}/sfx363341.jpg`, keys: ["stayc"] },
+  { title: "5 Seconds of Summer — Everyone's A Star! World Tour", date: "Wed 04 Nov 2026", venue: "Adelaide Entertainment Centre, SA", image: `${TK_CDN}/sfx349290.jpg`, keys: ["5 seconds of summer", "5sos"] },
+  { title: "50 Years of Ilaiyaraaja — Live In Concert", date: "Thu 24 Sep 2026", venue: "Riverside Theatre, Perth, WA", image: `${TK_CDN}/sfx364455.jpg`, keys: ["ilaiyaraaja"] },
+  { title: "80s Movie Hits — Performed by VHS Pirates", date: "Sat 19 Sep 2026", venue: "Astor Theatre, Mount Lawley, WA", image: `${TK_CDN}/sfx361045.jpg`, keys: ["80s movie hits", "vhs pirates"] },
+  { title: "A Night at the Ballet", date: "Fri 24 Jul 2026 to Sat 25 Jul 2026", venue: "Festival Theatre, Adelaide, SA", image: `${TK_CDN}/sfx359360.png`, keys: ["a night at the ballet", "night at the ballet"] },
+  { title: "State Opera South Australia 2026", date: "", venue: "Adelaide, SA", image: `${TK_CDN}/sfx349931.jpg`, keys: ["state opera south australia", "state opera"] },
+  { title: "Lightscape Perth", date: "", venue: "Perth, WA", image: `${TK_CDN}/sfx335026.jpg`, keys: ["lightscape perth", "lightscape"] },
+  { title: "Lightscape Melbourne 2026", date: "", venue: "Royal Botanic Gardens Melbourne, VIC", image: `${TK_CDN}/sfx309478.jpg`, keys: ["lightscape melbourne", "lightscape"] },
+  { title: "Forever K-Pop — A Celebration Concert", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx360913.jpg`, keys: ["forever k-pop", "forever kpop"] },
+  { title: "Circus Rio — Gympie Lighthorse Oval", date: "Thu 23 Jul 2026 to Sun 26 Jul 2026", venue: "Gympie Lighthorse Oval, QLD", image: `${TK_CDN}/sfx264605.jpg`, keys: ["circus rio"] },
+  { title: "Come Alive! — The Greatest Showman Circus Spectacular", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx351235.jpg`, keys: ["come alive", "greatest showman"] },
+  { title: "Summer of Cricket", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx361048.jpg`, keys: ["summer of cricket"] },
+  { title: "Dabble Darts ANZ Premier League", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx362076.jpg`, keys: ["dabble darts"] },
+  { title: "Repco Supercars Championship", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx317197.jpg`, keys: ["supercars", "repco supercars"] },
+  { title: "Chelsea F.C. vs Tottenham Hotspur", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx354131.jpg`, keys: ["chelsea v tottenham", "chelsea vs tottenham", "chelsea f.c", "tottenham hotspur"] },
+  { title: "2026 BMW Australian PGA Championship", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx359696.jpg`, keys: ["pga championship", "bmw australian pga"] },
+  { title: "2026 Boost Mobile Gold Coast 500 Grandstand", date: "Fri 23 - Sun 25 Oct 2026", venue: "Surfers Paradise Beach, QLD", image: `${TK_CDN}/sfx352161.jpg`, keys: ["gold coast 500", "gold coast grandstand"] },
+  { title: "2026 Capital.com Australian Open", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx361173.jpg`, keys: ["australian open", "capital.com australian open"] },
+  { title: "2026 Australian Short Course Champs", date: "Tue 29 Sep - Fri 02 Oct 2026", venue: "Aquatic Centre, Sydney Olympic Park, NSW", image: `${TK_CDN}/sfx363619.jpg`, keys: ["short course champs", "australian short course"] },
+  { title: "Adelaide United v Công an Hà Nội FC — AFC Champions League Elite", date: "Tue 11 Aug 2026", venue: "Coopers Stadium, Hindmarsh, SA", image: `${TK_CDN}/sfx364359.png`, keys: ["adelaide united", "cong an ha noi"] },
+];
+
+const TK_LOCAL_FORMATTED = TICKETEK_LOCAL_EVENTS.map((m, i) => ({
+  id: `local-tk-${i + 1}`,
+  title: m.title,
+  date: m.date,
+  venue: m.venue,
+  city: "",
+  image: m.image,
+  local: true,
+  keys: m.keys,
+  localData: {
+    event_name: m.title,
+    event_date: m.date,
+    venue_name: m.venue,
+    event_image_url: m.image,
+    presenter: "Ticketek",
+  },
+}));
 
 /**
  * Returns local override events if the query matches, otherwise null.
@@ -199,5 +270,8 @@ export function getLocalOverride(query) {
   if (AFL_KEYWORDS.some(k => normalized.includes(k))) {
     return AFL_MATCHES;
   }
+  // Ticketek events — return all events whose search keys match the query
+  const matched = TK_LOCAL_FORMATTED.filter(ev => ev.keys.some(k => normalized.includes(k)));
+  if (matched.length) return matched;
   return null;
 }

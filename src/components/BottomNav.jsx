@@ -23,12 +23,9 @@ const navItems = [
     id: "account",
     label: "Account",
     path: "/account",
-    icon: (active) => (
-      <svg viewBox="0 0 24 24" width="33" height="33" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <circle cx="12" cy="7" r="4" />
-        <path d="M7 14 L5 20 Q5 22 6.5 22 L17.5 22 Q19 22 19 20 L17 14 Z" />
-      </svg>
-    ),
+    imageOnly: true,
+    imageSrc: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/8772aa16d_IMG_4410.jpeg",
+    icon: () => null,
   },
   {
     id: "tickets",
@@ -161,6 +158,22 @@ export default function BottomNav() {
         <div className="tnav-pill">
           {navItems.map((item) => {
             const active = isActive(item.path);
+            if (item.imageOnly) {
+              return (
+                <Link
+                  key={item.id}
+                  to={item.path}
+                  onClick={(e) => { handleAccountTap(e); }}
+                  className="tnav-item"
+                >
+                  <img
+                    src={item.imageSrc}
+                    alt={item.label}
+                    style={{ height: 44, width: "auto", objectFit: "contain", mixBlendMode: "multiply", pointerEvents: "none" }}
+                  />
+                </Link>
+              );
+            }
             return (
               <Link
                 key={item.id}

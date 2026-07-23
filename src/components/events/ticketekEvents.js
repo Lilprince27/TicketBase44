@@ -2,30 +2,30 @@
 const CDN = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages";
 
 export const TICKETEK_FEATURED = [
-  { id: "jimmyeatworld", title: "Jimmy Eat World", subtitle: "Bleed American 25th Anniversary", image: `${CDN}/sfx363880.jpg`, venue: "Various venues, Australia" },
-  { id: "undertale", title: "UNDERTALE", subtitle: "The Determination Symphony", image: `${CDN}/sfx359173.jpg`, venue: "Various venues, Australia" },
-  { id: "dirtydancing", title: "Dirty Dancing In Concert", subtitle: "", image: `${CDN}/sfx362377.jpg`, venue: "Various venues, Australia" },
-  { id: "airsupply", title: "Air Supply", subtitle: "50th Anniversary Celebration", image: `${CDN}/sfx362230.jpg`, venue: "Various venues, Australia" },
+  { id: "bobbylee", title: "Bobby Lee", subtitle: "", image: `${CDN}/sfx359424.jpg`, venue: "Various venues, Australia" },
+  { id: "maxamini", title: "Max Amini", subtitle: "", image: `${CDN}/sfx361065.jpg`, venue: "Various venues, Australia" },
+  { id: "pawpatrol", title: "PAW Patrol Live!", subtitle: "Race to the Rescue", image: `${CDN}/sfx358366.jpg`, venue: "Various venues, Australia" },
+  { id: "karanaujla", title: "Karan Aujla", subtitle: "P-Pop Culture World Tour", image: `${CDN}/sfx362309.jpg`, venue: "Various venues, Australia" },
+  { id: "urzilacarlson", title: "Urzila Carlson", subtitle: "Fatty On A Yacht", image: `${CDN}/sfx349660.jpg`, venue: "Various venues, Australia" },
+  { id: "happymondays", title: "Happy Mondays", subtitle: "35th Anniversary of Pils N Thrills and Bellyaches", image: `${CDN}/sfx355093.jpg`, venue: "Various venues, Australia" },
   { id: "wiggles", title: "The Wiggles", subtitle: "The Wiggles Sparkle! Big Show", image: `${CDN}/sfx362844.jpg`, venue: "Various venues, Australia" },
-  { id: "brysontiller", title: "Bryson Tiller", subtitle: "", image: `${CDN}/sfx361701.jpg`, venue: "Various venues, Australia" },
-  { id: "humanleague", title: "The Human League", subtitle: "Generations - Greatest Hits Tour", image: `${CDN}/sfx355275.jpg`, venue: "Various venues, Australia" },
 ];
 
 export const TICKETEK_TRENDING = [
-  { id: "paulsmith", title: "Paul Smith", subtitle: "", image: `${CDN}/sfx357919.jpg`, venue: "Various venues, Australia" },
-  { id: "niallhoran", title: "Niall Horan", subtitle: "", image: `${CDN}/sfx362150.jpg`, venue: "Various venues, Australia" },
-  { id: "simpleminds", title: "Simple Minds", subtitle: "", image: `${CDN}/sfx362240.jpg`, venue: "Various venues, Australia" },
-  { id: "jungle", title: "Jungle", subtitle: "", image: `${CDN}/sfx358406.jpg`, venue: "Various venues, Australia" },
-  { id: "evanescence", title: "Evanescence", subtitle: "", image: `${CDN}/sfx362082.jpg`, venue: "Various venues, Australia" },
-  { id: "summerofcricket", title: "Summer of Cricket", subtitle: "", image: `${CDN}/sfx361049.jpg`, venue: "Various venues, Australia" },
-  { id: "wailers", title: "The Original Wailers featuring Al Anderson", subtitle: "One Love Tour", image: `${CDN}/sfx362052.jpg`, venue: "Various venues, Australia" },
-  { id: "script", title: "THE SCRIPT", subtitle: "", image: `${CDN}/sfx361265.jpg`, venue: "Various venues, Australia" },
+  { id: "bassemyoussef", title: "Bassem Youssef", subtitle: "", image: `${CDN}/sfx362765.jpg`, venue: "Various venues, Australia" },
+  { id: "electriccallboy", title: "Electric Callboy", subtitle: "", image: `${CDN}/sfx349187.jpg`, venue: "Various venues, Australia" },
+  { id: "jasonderulo", title: "Jason Derulo", subtitle: "", image: `${CDN}/sfx359476.jpg`, venue: "Various venues, Australia" },
+  { id: "eclipse", title: "ECLIPSE", subtitle: "", image: `${CDN}/sfx357072.jpg`, venue: "Various venues, Australia" },
+  { id: "shinedown", title: "Shinedown & Bush", subtitle: "", image: `${CDN}/sfx357495.jpg`, venue: "Various venues, Australia" },
+  { id: "macygray", title: "Macy Gray", subtitle: "", image: `${CDN}/sfx361853.jpg`, venue: "Various venues, Australia" },
+  { id: "burnthefloor", title: "Burn The Floor", subtitle: "", image: `${CDN}/sfx360206.jpg`, venue: "Various venues, Australia" },
+  { id: "conangray", title: "Conan Gray", subtitle: "", image: `${CDN}/sfx349281.jpg`, venue: "Various venues, Australia" },
 ];
 
 export const TICKETEK_WAITLISTS = [
-  { id: "flume", title: "Flume", subtitle: "Waitlist", image: `${CDN}/sfx251485.jpg`, venue: "Various venues, Australia" },
-  { id: "springsteen", title: "Bruce Springsteen", subtitle: "Waitlist", image: `${CDN}/sfx278752.jpg`, venue: "Various venues, Australia" },
+  { id: "oliviarodrigo", title: "Olivia Rodrigo", subtitle: "Waitlist", image: `${CDN}/sfx261004.jpg`, venue: "Various venues, Australia" },
+  { id: "matchboxtwenty", title: "Matchbox Twenty", subtitle: "Waitlist", image: `${CDN}/sfx294667.jpg`, venue: "Various venues, Australia" },
   { id: "netballwc", title: "Netball World Cup Sydney 2027", subtitle: "Waitlist", image: `${CDN}/sfx362771.png`, venue: "Sydney, Australia" },
-  { id: "lainey", title: "Lainey Wilson", subtitle: "Waitlist", image: `${CDN}/sfx363345.jpg`, venue: "Various venues, Australia" },
-  { id: "deltagoodrem", title: "Delta Goodrem", subtitle: "Waitlist", image: `${CDN}/sfx308411.jpg`, venue: "Various venues, Australia" },
+  { id: "kylieminogue", title: "Kylie Minogue", subtitle: "Waitlist", image: `${CDN}/sfx298005.jpg`, venue: "Various venues, Australia" },
+  { id: "charlixcx", title: "Charli XCX", subtitle: "Waitlist", image: `${CDN}/sfx312407.jpg`, venue: "Various venues, Australia" },
 ];
