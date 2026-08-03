@@ -107,8 +107,8 @@ export default function BottomNav() {
           z-index: 9999;
           display: flex;
           justify-content: center;
-          padding: 0 12px;
-          padding-bottom: calc(env(safe-area-inset-bottom) - 3px);
+          padding: 0 16px;
+          padding-bottom: calc(env(safe-area-inset-bottom) + 14px);
           pointer-events: none;
         }
         .tnav-pill {
@@ -116,10 +116,10 @@ export default function BottomNav() {
           align-items: center;
           background: #FFFFFF;
           border: 1px solid #ECECEC;
-          border-radius: 32px;
-          padding: 3px;
-          gap: 4px;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+          border-radius: 38px;
+          padding: 14px;
+          gap: 8px;
+          box-shadow: 0 12px 24px rgba(0,0,0,0.12);
           pointer-events: all;
         }
         .tnav-item {
@@ -127,8 +127,8 @@ export default function BottomNav() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 4px 16px;
-          border-radius: 26px;
+          padding: 8px 18px;
+          border-radius: 28px;
           text-decoration: none;
           cursor: pointer;
           border: none;
@@ -149,16 +149,16 @@ export default function BottomNav() {
         .tnav-item.active::before {
           content: "";
           position: absolute;
-          inset: 4px 6px;
-          background: #F1F1F1;
-          border-radius: 22px;
+          inset: 5px;
+          background: #E8EBF3;
+          border-radius: 24px;
           z-index: -1;
         }
         .tnav-icon-wrap {
           display: flex;
           align-items: center;
           justify-content: center;
-          height: 32px;
+          height: 36px;
         }
         @media (hover: hover) {
           .tnav-item:not(.active):hover {
