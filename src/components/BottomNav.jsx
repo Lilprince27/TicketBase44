@@ -23,8 +23,9 @@ const navItems = [
     label: "Account",
     path: "/account",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="34" height="34" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+      <svg viewBox="0 0 64 64" width="38" height="38" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+        <circle cx="32" cy="20" r="11" />
+        <path d="M18 39 C18 33, 23 30, 32 30 C41 30, 46 33, 46 39 L46 45 C46 48, 44 50, 41 50 L23 50 C20 50, 18 48, 18 45 Z" />
       </svg>
     ),
   },
@@ -145,7 +146,7 @@ export default function BottomNav() {
           display: flex;
           align-items: center;
           justify-content: center;
-          height: 34px;
+          height: 38px;
         }
         @media (hover: hover) {
           .tnav-item:not(.active):hover {
