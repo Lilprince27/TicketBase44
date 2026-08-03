@@ -23,10 +23,13 @@ const navItems = [
     label: "Account",
     path: "/account",
     icon: (active) => (
-      <svg viewBox="0 0 64 64" width="38" height="38" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <circle cx="32" cy="20" r="11" />
-        <path d="M18 39 C18 33, 23 30, 32 30 C41 30, 46 33, 46 39 L46 45 C46 48, 44 50, 41 50 L23 50 C20 50, 18 48, 18 45 Z" />
-      </svg>
+      <img
+        src="https://media.base44.com/images/public/6a29092b3d99cb9d297711be/56dc90a72_DA642D77-939B-4D4F-A52F-6B42A64843B8.png"
+        width="38"
+        height="38"
+        alt="Account"
+        style={{ mixBlendMode: "multiply", display: "block" }}
+      />
     ),
   },
   {
