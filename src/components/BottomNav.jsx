@@ -110,7 +110,7 @@ export default function BottomNav() {
           display: flex;
           justify-content: center;
           padding: 0 12px;
-          padding-bottom: calc(env(safe-area-inset-bottom) + 4px);
+          padding-bottom: calc(env(safe-area-inset-bottom) - 3px);
           pointer-events: none;
         }
         .tnav-pill {
@@ -119,7 +119,7 @@ export default function BottomNav() {
           background: #FFFFFF;
           border: 1px solid #ECECEC;
           border-radius: 32px;
-          padding: 4px;
+          padding: 3px;
           gap: 4px;
           box-shadow: 0 8px 24px rgba(0,0,0,0.10);
           pointer-events: all;
@@ -129,7 +129,7 @@ export default function BottomNav() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 3px 16px;
+          padding: 4px 16px;
           border-radius: 26px;
           text-decoration: none;
           cursor: pointer;
@@ -144,7 +144,17 @@ export default function BottomNav() {
         }
         .tnav-item:active { transform: scale(0.94); }
         .tnav-item.active {
+          background: transparent;
+          position: relative;
+          isolation: isolate;
+        }
+        .tnav-item.active::before {
+          content: "";
+          position: absolute;
+          inset: 4px 6px;
           background: #F1F1F1;
+          border-radius: 22px;
+          z-index: -1;
         }
         .tnav-icon-wrap {
           display: flex;
@@ -162,6 +172,7 @@ export default function BottomNav() {
           font-weight: 500;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
           letter-spacing: 0.1px;
+          line-height: 1.1;
           transition: color 0.25s ease;
         }
       `}</style>
