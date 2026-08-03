@@ -107,9 +107,13 @@ export default function BottomNav() {
           z-index: 9999;
           display: flex;
           justify-content: center;
-          padding: 0 14px;
+          padding: 10px 14px;
           padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
           pointer-events: none;
+          background: rgba(255, 255, 255, 0.82);
+          -webkit-backdrop-filter: saturate(180%) blur(20px);
+          backdrop-filter: saturate(180%) blur(20px);
+          border-top: 1px solid #E0E0E0;
         }
         .tnav-pill {
           display: flex;
