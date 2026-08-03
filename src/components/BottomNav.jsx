@@ -25,8 +25,8 @@ const navItems = [
     icon: (active) => (
       <img
         src="https://media.base44.com/images/public/6a29092b3d99cb9d297711be/56dc90a72_DA642D77-939B-4D4F-A52F-6B42A64843B8.png"
-        width="30"
-        height="30"
+        width="32"
+        height="32"
         alt="Account"
         style={{ mixBlendMode: "multiply", display: "block" }}
       />
@@ -37,7 +37,7 @@ const navItems = [
     label: "Tickets",
     path: "/tickets",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="30" height="30" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+      <svg viewBox="0 0 24 24" width="28" height="28" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
         <path transform="rotate(-45 12 12)" d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
       </svg>
     ),
@@ -110,38 +110,33 @@ export default function BottomNav() {
           display: flex;
           justify-content: center;
           padding: 0 12px;
-          padding-bottom: calc(env(safe-area-inset-bottom) + 6px);
+          padding-bottom: calc(env(safe-area-inset-bottom) + 4px);
           pointer-events: none;
         }
         .tnav-pill {
           display: flex;
           align-items: center;
-          justify-content: space-between;
           background: #FFFFFF;
           border: 1px solid #ECECEC;
-          border-radius: 36px;
-          padding: 6px;
-          gap: 0;
-          box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+          border-radius: 32px;
+          padding: 4px;
+          gap: 4px;
+          box-shadow: 0 8px 24px rgba(0,0,0,0.10);
           pointer-events: all;
-          height: 74px;
-          width: 88vw;
-          max-width: 420px;
-          box-sizing: border-box;
         }
         .tnav-item {
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 0 14px;
-          border-radius: 30px;
+          padding: 3px 16px;
+          border-radius: 26px;
           text-decoration: none;
           cursor: pointer;
           border: none;
           background: transparent;
           gap: 3px;
-          height: 60px;
+          width: 84px;
           flex-shrink: 0;
           box-sizing: border-box;
           -webkit-tap-highlight-color: transparent;
@@ -149,14 +144,13 @@ export default function BottomNav() {
         }
         .tnav-item:active { transform: scale(0.94); }
         .tnav-item.active {
-          background: #F2F2F2;
-          width: 118px;
+          background: #F1F1F1;
         }
         .tnav-icon-wrap {
           display: flex;
           align-items: center;
           justify-content: center;
-          height: 30px;
+          height: 32px;
         }
         @media (hover: hover) {
           .tnav-item:not(.active):hover {
