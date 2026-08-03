@@ -26,7 +26,7 @@ const navItems = [
       <img
         src="https://media.base44.com/images/public/6a29092b3d99cb9d297711be/350de300c_47218F83-6EEA-4C87-8F4C-CE116550CBC5.png"
         alt="Account"
-        style={{ width: 38, height: 38, objectFit: "contain", mixBlendMode: "multiply", display: "block", flexShrink: 0 }}
+        style={{ width: 46, height: 46, objectFit: "contain", mixBlendMode: "multiply", display: "block", flexShrink: 0 }}
       />
     ),
   },
