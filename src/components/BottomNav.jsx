@@ -107,23 +107,25 @@ export default function BottomNav() {
           z-index: 9999;
           display: flex;
           justify-content: center;
-          padding: 6px 14px;
-          padding-bottom: calc(env(safe-area-inset-bottom) + 2px);
+          padding: 0 14px;
+          padding-bottom: calc(env(safe-area-inset-bottom) + 6px);
           pointer-events: none;
-          background: rgba(255, 255, 255, 0.62);
-          -webkit-backdrop-filter: saturate(160%) blur(18px);
-          backdrop-filter: saturate(160%) blur(18px);
-          border-top: 1px solid rgba(220, 220, 220, 0.6);
+          background: transparent;
+          border: none;
+          -webkit-backdrop-filter: none;
+          backdrop-filter: none;
         }
         .tnav-pill {
           display: flex;
           align-items: center;
-          background: #FFFFFF;
-          border: 1px solid #ECECEC;
+          background: rgba(255, 255, 255, 0.34);
+          -webkit-backdrop-filter: saturate(150%) blur(22px);
+          backdrop-filter: saturate(150%) blur(22px);
+          border: 1px solid rgba(255, 255, 255, 0.4);
           border-radius: 34px;
           padding: 6px;
           gap: 4px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
           pointer-events: all;
         }
         .tnav-item {
