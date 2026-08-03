@@ -13,7 +13,7 @@ const navItems = [
     label: "Events",
     path: "/",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="28" height="28" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+      <svg viewBox="0 0 24 24" width="34" height="34" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
         <path d="M12 3L2 12h3v8h5v-6h4v6h5v-8h3z" />
       </svg>
     ),
@@ -23,9 +23,8 @@ const navItems = [
     label: "Account",
     path: "/account",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="28" height="28" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <circle cx="12" cy="7.5" r="3.6" />
-        <path d="M5 17.5C5 14.46 8.13 13 12 13s7 1.46 7 4.5V20H5z" />
+      <svg viewBox="0 0 24 24" width="34" height="34" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
       </svg>
     ),
   },
@@ -34,7 +33,7 @@ const navItems = [
     label: "Tickets",
     path: "/tickets",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="28" height="28" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+      <svg viewBox="0 0 24 24" width="34" height="34" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
         <path transform="rotate(-45 12 12)" d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
       </svg>
     ),
@@ -146,7 +145,7 @@ export default function BottomNav() {
           display: flex;
           align-items: center;
           justify-content: center;
-          height: 28px;
+          height: 34px;
         }
         @media (hover: hover) {
           .tnav-item:not(.active):hover {
