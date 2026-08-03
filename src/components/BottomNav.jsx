@@ -107,8 +107,8 @@ export default function BottomNav() {
           z-index: 9999;
           display: flex;
           justify-content: center;
-          padding: 0 16px;
-          padding-bottom: calc(env(safe-area-inset-bottom) + 14px);
+          padding: 0 14px;
+          padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
           pointer-events: none;
         }
         .tnav-pill {
@@ -116,10 +116,10 @@ export default function BottomNav() {
           align-items: center;
           background: #FFFFFF;
           border: 1px solid #ECECEC;
-          border-radius: 38px;
-          padding: 14px;
-          gap: 8px;
-          box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+          border-radius: 34px;
+          padding: 6px;
+          gap: 4px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
           pointer-events: all;
         }
         .tnav-item {
@@ -127,14 +127,14 @@ export default function BottomNav() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 8px 18px;
-          border-radius: 28px;
+          padding: 4px 14px;
+          border-radius: 24px;
           text-decoration: none;
           cursor: pointer;
           border: none;
           background: transparent;
-          gap: 3px;
-          width: 84px;
+          gap: 2px;
+          width: 72px;
           flex-shrink: 0;
           box-sizing: border-box;
           -webkit-tap-highlight-color: transparent;
@@ -149,16 +149,16 @@ export default function BottomNav() {
         .tnav-item.active::before {
           content: "";
           position: absolute;
-          inset: 5px;
-          background: #E8EBF3;
-          border-radius: 24px;
+          inset: 3px;
+          background: #EBEBEB;
+          border-radius: 20px;
           z-index: -1;
         }
         .tnav-icon-wrap {
           display: flex;
           align-items: center;
           justify-content: center;
-          height: 36px;
+          height: 32px;
         }
         @media (hover: hover) {
           .tnav-item:not(.active):hover {
@@ -166,7 +166,7 @@ export default function BottomNav() {
           }
         }
         .tnav-label {
-          font-size: 15px;
+          font-size: 13px;
           font-weight: 500;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
           letter-spacing: 0.1px;
