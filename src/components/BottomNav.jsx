@@ -13,9 +13,8 @@ const navItems = [
     label: "Events",
     path: "/",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="33" height="33" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+      <svg viewBox="0 0 24 24" width="28" height="28" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
         <path d="M12 3L2 12h3v8h5v-6h4v6h5v-8h3z" />
-        <rect x="16" y="4" width="3" height="4.5" />
       </svg>
     ),
   },
@@ -24,9 +23,9 @@ const navItems = [
     label: "Account",
     path: "/account",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="33" height="33" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <circle cx="12" cy="7.5" r="3.5" />
-        <path d="M5 17C5 14.2 8.5 13 12 13C15.5 13 19 14.2 19 17V20H5Z" />
+      <svg viewBox="0 0 24 24" width="28" height="28" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+        <circle cx="12" cy="7.5" r="3.6" />
+        <path d="M5 17.5C5 14.46 8.13 13 12 13s7 1.46 7 4.5V20H5z" />
       </svg>
     ),
   },
@@ -35,7 +34,7 @@ const navItems = [
     label: "Tickets",
     path: "/tickets",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="33" height="33" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+      <svg viewBox="0 0 24 24" width="28" height="28" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
         <path transform="rotate(-45 12 12)" d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
       </svg>
     ),
@@ -107,20 +106,18 @@ export default function BottomNav() {
           z-index: 9999;
           display: flex;
           justify-content: center;
-          align-items: flex-end;
-          padding-bottom: max(env(safe-area-inset-bottom) - 16px, 0px);
+          padding: 0 16px;
+          padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
           pointer-events: none;
         }
         .tnav-pill {
           display: flex;
           align-items: center;
-          background: rgba(239, 239, 239, 0.92);
-          backdrop-filter: blur(20px) saturate(180%);
-          -webkit-backdrop-filter: blur(20px) saturate(180%);
-          border-radius: 100px;
-          padding: 5px 7px;
+          background: #FFFFFF;
+          border-radius: 32px;
+          padding: 6px;
           gap: 2px;
-          box-shadow: 0 1px 10px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.04);
+          box-shadow: 0 8px 30px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.06);
           pointer-events: all;
         }
         .tnav-item {
@@ -128,31 +125,32 @@ export default function BottomNav() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 6px 18px;
-          border-radius: 20px;
+          padding: 8px 18px;
+          border-radius: 24px;
           text-decoration: none;
           cursor: pointer;
           border: none;
           background: transparent;
-          gap: 2px;
+          gap: 3px;
           width: 76px;
           flex-shrink: 0;
           box-sizing: border-box;
           -webkit-tap-highlight-color: transparent;
           transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.15s ease;
         }
-        .tnav-item:active { transform: scale(0.92); }
+        .tnav-item:active { transform: scale(0.94); }
         .tnav-item.active {
-          background: rgba(0, 0, 0, 0.06);
+          background: #EEEEEE;
         }
         .tnav-icon-wrap {
           display: flex;
           align-items: center;
           justify-content: center;
+          height: 28px;
         }
         @media (hover: hover) {
           .tnav-item:not(.active):hover {
-            background-color: rgba(0, 0, 0, 0.07);
+            background-color: rgba(0, 0, 0, 0.05);
           }
         }
         .tnav-label {
@@ -160,6 +158,7 @@ export default function BottomNav() {
           font-weight: 600;
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
           letter-spacing: 0.1px;
+          transition: color 0.25s ease;
         }
       `}</style>
       <div className="tnav-wrap">
