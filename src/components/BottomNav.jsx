@@ -110,10 +110,10 @@ export default function BottomNav() {
           padding: 6px 14px;
           padding-bottom: calc(env(safe-area-inset-bottom) + 2px);
           pointer-events: none;
-          background: rgba(255, 255, 255, 0.82);
-          -webkit-backdrop-filter: saturate(180%) blur(20px);
-          backdrop-filter: saturate(180%) blur(20px);
-          border-top: 1px solid #E0E0E0;
+          background: rgba(255, 255, 255, 0.62);
+          -webkit-backdrop-filter: saturate(160%) blur(18px);
+          backdrop-filter: saturate(160%) blur(18px);
+          border-top: 1px solid rgba(220, 220, 220, 0.6);
         }
         .tnav-pill {
           display: flex;
