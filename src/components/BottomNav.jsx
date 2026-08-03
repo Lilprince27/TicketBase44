@@ -24,11 +24,9 @@ const navItems = [
     path: "/account",
     icon: (active) => (
       <img
-        src="https://media.base44.com/images/public/6a29092b3d99cb9d297711be/56dc90a72_DA642D77-939B-4D4F-A52F-6B42A64843B8.png"
-        width="32"
-        height="32"
+        src="https://media.base44.com/images/public/6a29092b3d99cb9d297711be/350de300c_47218F83-6EEA-4C87-8F4C-CE116550CBC5.png"
         alt="Account"
-        style={{ mixBlendMode: "multiply", display: "block" }}
+        style={{ width: 38, height: 38, objectFit: "contain", mixBlendMode: "multiply", display: "block", flexShrink: 0 }}
       />
     ),
   },
