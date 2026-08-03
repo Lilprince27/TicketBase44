@@ -110,7 +110,7 @@ export default function BottomNav() {
           display: flex;
           justify-content: center;
           padding: 0 12px;
-          padding-bottom: calc(env(safe-area-inset-bottom) + 10px);
+          padding-bottom: calc(env(safe-area-inset-bottom) + 4px);
           pointer-events: none;
         }
         .tnav-pill {
@@ -118,8 +118,8 @@ export default function BottomNav() {
           align-items: center;
           background: #FFFFFF;
           border: 1px solid #ECECEC;
-          border-radius: 36px;
-          padding: 5px;
+          border-radius: 32px;
+          padding: 4px;
           gap: 4px;
           box-shadow: 0 8px 24px rgba(0,0,0,0.10);
           pointer-events: all;
@@ -129,14 +129,14 @@ export default function BottomNav() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 5px 16px;
+          padding: 3px 16px;
           border-radius: 26px;
           text-decoration: none;
           cursor: pointer;
           border: none;
           background: transparent;
           gap: 3px;
-          width: 88px;
+          width: 84px;
           flex-shrink: 0;
           box-sizing: border-box;
           -webkit-tap-highlight-color: transparent;
