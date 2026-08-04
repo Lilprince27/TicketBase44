@@ -121,8 +121,8 @@ export default function BottomNav() {
           background: #FFFFFF;
           border: 1px solid #ECECEC;
           border-radius: 40px;
-          padding: 6px 40px;
-          gap: 10px;
+          padding: 6px 4px;
+          gap: 16px;
           box-shadow: 0 4px 12px rgba(0,0,0,0.08);
           pointer-events: all;
         }
@@ -131,14 +131,14 @@ export default function BottomNav() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 4px 14px;
+          padding: 4px 10px;
           border-radius: 24px;
           text-decoration: none;
           cursor: pointer;
           border: none;
           background: transparent;
           gap: 2px;
-          width: 72px;
+          width: 84px;
           flex-shrink: 0;
           box-sizing: border-box;
           -webkit-tap-highlight-color: transparent;
