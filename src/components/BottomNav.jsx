@@ -107,8 +107,8 @@ export default function BottomNav() {
           z-index: 9999;
           display: flex;
           justify-content: center;
-          padding: 4px 14px;
-          padding-bottom: env(safe-area-inset-bottom);
+          padding: 2px 14px;
+          padding-bottom: max(2px, calc(env(safe-area-inset-bottom) - 8px));
           pointer-events: none;
           background: rgba(255, 255, 255, 0.92);
           -webkit-backdrop-filter: saturate(140%) blur(10px);
@@ -120,9 +120,9 @@ export default function BottomNav() {
           align-items: center;
           background: #FFFFFF;
           border: 1px solid #ECECEC;
-          border-radius: 34px;
-          padding: 6px;
-          gap: 4px;
+          border-radius: 36px;
+          padding: 6px 14px;
+          gap: 6px;
           box-shadow: 0 4px 12px rgba(0,0,0,0.08);
           pointer-events: all;
         }
