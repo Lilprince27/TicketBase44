@@ -120,9 +120,9 @@ export default function BottomNav() {
           align-items: center;
           background: #FFFFFF;
           border: 1px solid #ECECEC;
-          border-radius: 36px;
-          padding: 6px 14px;
-          gap: 6px;
+          border-radius: 38px;
+          padding: 6px 26px;
+          gap: 8px;
           box-shadow: 0 4px 12px rgba(0,0,0,0.08);
           pointer-events: all;
         }
