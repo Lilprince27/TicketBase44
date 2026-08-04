@@ -26,7 +26,7 @@ const navItems = [
       <img
         src="https://media.base44.com/images/public/6a29092b3d99cb9d297711be/350de300c_47218F83-6EEA-4C87-8F4C-CE116550CBC5.png"
         alt="Account"
-        style={{ width: 46, height: 46, objectFit: "contain", mixBlendMode: "multiply", display: "block", flexShrink: 0 }}
+        style={{ width: 51, height: 51, objectFit: "contain", mixBlendMode: "multiply", display: "block", flexShrink: 0 }}
       />
     ),
   },
@@ -35,7 +35,7 @@ const navItems = [
     label: "Tickets",
     path: "/tickets",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="28" height="28" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
+      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
         <path transform="rotate(-45 12 12)" d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
       </svg>
     ),
