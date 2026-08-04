@@ -107,13 +107,13 @@ export default function BottomNav() {
           z-index: 9999;
           display: flex;
           justify-content: center;
-          padding: 6px 14px;
-          padding-bottom: calc(env(safe-area-inset-bottom) + 2px);
+          padding: 4px 14px;
+          padding-bottom: env(safe-area-inset-bottom);
           pointer-events: none;
-          background: rgba(255, 255, 255, 0.62);
-          -webkit-backdrop-filter: saturate(160%) blur(18px);
-          backdrop-filter: saturate(160%) blur(18px);
-          border-top: 1px solid rgba(220, 220, 220, 0.6);
+          background: rgba(255, 255, 255, 0.92);
+          -webkit-backdrop-filter: saturate(140%) blur(10px);
+          backdrop-filter: saturate(140%) blur(10px);
+          border-top: 1px solid rgba(235, 235, 235, 0.5);
         }
         .tnav-pill {
           display: flex;
