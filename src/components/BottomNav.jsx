@@ -35,13 +35,9 @@ const navItems = [
     label: "Tickets",
     path: "/tickets",
     icon: (active) => (
-      <svg viewBox="0 0 30 30" width="30" height="30" style={{ display: "block", flexShrink: 0 }} aria-label="Tickets">
-        <g transform="rotate(-35 15 15)">
-          <path
-            fill="#000000"
-            fillRule="evenodd"
-            d="M 8 7 H 22 A 3 3 0 0 1 25 10 V 20 A 3 3 0 0 1 22 23 H 8 A 3 3 0 0 1 5 20 V 10 A 3 3 0 0 1 8 7 Z M 5 15 m -2 0 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0 M 25 15 m -2 0 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0"
-          />
+      <svg viewBox="0 0 24 24" width="30" height="30" fill="#000000" style={{ display: "block", flexShrink: 0 }} aria-label="Tickets">
+        <g transform="rotate(-35 12 12)">
+          <path d="M5.2 7.3 H18.8 A1.4 1.4 0 0 1 20.2 8.7 V10.2 A1.8 1.8 0 0 0 18.4 12 A1.8 1.8 0 0 0 20.2 13.8 V15.3 A1.4 1.4 0 0 1 18.8 16.7 H5.2 A1.4 1.4 0 0 1 3.8 15.3 V13.8 A1.8 1.8 0 0 0 5.6 12 A1.8 1.8 0 0 0 3.8 10.2 V8.7 A1.4 1.4 0 0 1 5.2 7.3 Z" />
         </g>
       </svg>
     ),
