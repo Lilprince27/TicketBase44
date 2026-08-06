@@ -15,6 +15,21 @@ export default function UserApprovalPanel() {
 
   useEffect(() => { load(); }, []);
 
+  const sendStatusEmail = async (record, status) => {
+    const name = record.full_name || record.user_email.split("@")[0];
+    const subject = status === "approved"
+      ? "Your Ticketek access has been approved ✅"
+      : "Update on your Ticketek access request";
+    const body = status === "approved"
+      ? `Hi ${name},\n\nGreat news! Your Ticketek account has been approved by our admin team. You can now log in and start using the app to manage your tickets.\n\nIf you have any questions, feel free to reach out.\n\n— Ticketek Team`
+      : `Hi ${name},\n\nWe're writing to let you know that your Ticketek access request has been declined. If you believe this was an error or would like to appeal, please contact our admin team.\n\n— Ticketek Team`;
+    try {
+      await base44.integrations.Core.SendEmail({ to: record.user_email, subject, body });
+    } catch (e) {
+      console.warn("Approval email failed:", e);
+    }
+  };
+
   const handleApprove = async (record) => {
     const me = await base44.auth.me();
     await base44.entities.UserApproval.update(record.id, {
@@ -22,6 +37,7 @@ export default function UserApprovalPanel() {
       approved_by: me.email,
       approved_date: new Date().toISOString(),
     });
+    await sendStatusEmail(record, "approved");
     load();
   };
 
@@ -33,6 +49,7 @@ export default function UserApprovalPanel() {
       approved_by: me.email,
       approved_date: new Date().toISOString(),
     });
+    await sendStatusEmail(record, "rejected");
     load();
   };
 
