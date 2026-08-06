@@ -35,8 +35,8 @@ const navItems = [
     label: "Tickets",
     path: "/tickets",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="24" height="24" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR}>
-        <path d="M22 10V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v4c1.1 0 2 .9 2 2s-.9 2-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2z" />
+      <svg viewBox="0 0 24 24" width="26" height="26" fill={active ? ACTIVE_COLOR : INACTIVE_COLOR} style={{ transform: "rotate(45deg)" }}>
+        <path d="M2 6 H10 a2 2 0 0 0 4 0 H22 V10 a2 2 0 0 0 0 4 V18 H14 a2 2 0 0 0 -4 0 H2 V14 a2 2 0 0 0 0 -4 Z" />
       </svg>
     ),
   },
