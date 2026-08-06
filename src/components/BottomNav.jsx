@@ -35,11 +35,15 @@ const navItems = [
     label: "Tickets",
     path: "/tickets",
     icon: (active) => (
-      <img
-        src="https://media.base44.com/images/public/6a29092b3d99cb9d297711be/df8815034_IMG_5149.jpeg"
-        alt="Tickets"
-        style={{ width: 44, height: "auto", objectFit: "contain", mixBlendMode: "multiply", display: "block", flexShrink: 0 }}
-      />
+      <svg viewBox="0 0 30 30" width="30" height="30" style={{ display: "block", flexShrink: 0 }} aria-label="Tickets">
+        <g transform="rotate(-35 15 15)">
+          <path
+            fill="#000000"
+            fillRule="evenodd"
+            d="M 8 7 H 22 A 3 3 0 0 1 25 10 V 20 A 3 3 0 0 1 22 23 H 8 A 3 3 0 0 1 5 20 V 10 A 3 3 0 0 1 8 7 Z M 5 15 m -2 0 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0 M 25 15 m -2 0 a 2 2 0 1 0 4 0 a 2 2 0 1 0 -4 0"
+          />
+        </g>
+      </svg>
     ),
   },
 ];
