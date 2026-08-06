@@ -38,7 +38,7 @@ const navItems = [
     label: "Tickets",
     path: "/tickets",
     icon: (active) => (
-      <svg viewBox="0 0 24 24" width="33" height="33" fill="#000000" className="tnav-ticket" style={{ display: "block", flexShrink: 0 }} aria-label="Tickets">
+      <svg viewBox="0 0 24 24" width="36.3" height="36.3" fill="#000000" className="tnav-ticket" style={{ display: "block", flexShrink: 0 }} aria-label="Tickets">
         <g transform="rotate(-35 12 12)">
           <path d="M5.2 7.3 H18.8 A1.4 1.4 0 0 1 20.2 8.7 V10.2 A1.8 1.8 0 0 0 18.4 12 A1.8 1.8 0 0 0 20.2 13.8 V15.3 A1.4 1.4 0 0 1 18.8 16.7 H5.2 A1.4 1.4 0 0 1 3.8 15.3 V13.8 A1.8 1.8 0 0 0 5.6 12 A1.8 1.8 0 0 0 3.8 10.2 V8.7 A1.4 1.4 0 0 1 5.2 7.3 Z" />
         </g>
