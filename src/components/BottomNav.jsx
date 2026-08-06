@@ -38,7 +38,7 @@ const navItems = [
       <img
         src="https://media.base44.com/images/public/6a29092b3d99cb9d297711be/df8815034_IMG_5149.jpeg"
         alt="Tickets"
-        style={{ width: 44, height: 44, objectFit: "contain", mixBlendMode: "multiply", display: "block", flexShrink: 0 }}
+        style={{ width: 44, height: "auto", objectFit: "contain", mixBlendMode: "multiply", display: "block", flexShrink: 0 }}
       />
     ),
   },
