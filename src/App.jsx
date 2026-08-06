@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { Suspense, lazy, useState, useEffect } from 'react';
 import PageNotFound from './lib/PageNotFound';
 import SplashScreen from './components/SplashScreen';
@@ -25,6 +25,7 @@ const TicketDetailPage = lazy(() => import('./pages/TicketDetailPage.jsx'));
 const CreateTicketPage = lazy(() => import('./pages/CreateTicketPage.jsx'));
 const SubscriptionPage = lazy(() => import('./pages/SubscriptionPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const SharedTicketPage = lazy(() => import('./pages/SharedTicketPage'));
 
 const PageLoader = () => (
   <div className="fixed inset-0 flex items-center justify-center">
@@ -306,12 +307,24 @@ const AuthenticatedApp = () => {
 };
 
 
+function AppShell() {
+  const location = useLocation();
+  if (location.pathname.startsWith("/shared-ticket")) {
+    return (
+      <Routes>
+        <Route path="/shared-ticket/:token" element={<Suspense fallback={<PageLoader />}><SharedTicketPage /></Suspense>} />
+      </Routes>
+    );
+  }
+  return <AuthenticatedApp />;
+}
+
 function App() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
         <Router>
-          <AuthenticatedApp />
+          <AppShell />
         </Router>
         <Toaster />
       </QueryClientProvider>

@@ -3,6 +3,7 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import AppleWalletModal from "../components/tickets/AppleWalletModal";
 import ShareModal from "../components/tickets/ShareModal";
+import SendTicketModal from "../components/tickets/SendTicketModal";
 
 
 const isAndroid = () => /android/i.test(navigator.userAgent);
@@ -16,6 +17,7 @@ export default function TicketDetailPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const showWallet = searchParams.get('modal') === 'wallet';
   const showShare = searchParams.get('modal') === 'share';
+  const showSend = searchParams.get('modal') === 'send';
 
   useEffect(() => {
     base44.entities.HideSettings.list().then(list => {
@@ -55,6 +57,7 @@ export default function TicketDetailPage() {
     <div style={{ margin: "0 auto", backgroundColor: "#f2f2f2", minHeight: "100vh", fontFamily: "-apple-system, system-ui, sans-serif", color: "#000", maxWidth: 500 }}>
       {showWallet && <AppleWalletModal ticket={ticket} onClose={() => navigate(-1)} />}
       {showShare && <ShareModal ticket={ticket} onClose={() => navigate(-1)} onTransferred={() => navigate("/tickets", { replace: true })} />}
+      {showSend && <SendTicketModal ticket={ticket} onClose={() => navigate(-1)} />}
 
       {/* Header */}
       <div style={{ position: "sticky", top: 0, zIndex: 100, background: "white", height: 55, display: "flex", alignItems: "center", borderBottom: "1px solid #ddd" }}>
@@ -171,6 +174,17 @@ export default function TicketDetailPage() {
             Share ticket
           </button>
         )}
+
+        {/* Send to any email - secure link + PDF (no transfer, no registration required) */}
+        <button
+          onClick={() => setSearchParams({ modal: 'send' })}
+          style={{ backgroundColor: "#003057", color: "white", width: "100%", border: "none", padding: "12px", fontSize: 17, borderRadius: 4, fontWeight: 600, marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, cursor: "pointer" }}
+        >
+          <svg style={{ width: 26, height: 26 }} viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/>
+          </svg>
+          Send to email
+        </button>
 
         {/* Wallet button - switches between Apple/Google based on OS */}
         {!hideSettings.hide_wallet_button && (

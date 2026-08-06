@@ -1,0 +1,66 @@
+{
+  "name": "SharedTicket",
+  "type": "object",
+  "properties": {
+    "share_token": {
+      "type": "string",
+      "title": "Share Token"
+    },
+    "ticket_snapshot": {
+      "type": "string",
+      "title": "Ticket Data (JSON)"
+    },
+    "owner_email": {
+      "type": "string",
+      "title": "Owner Email"
+    },
+    "event_image": {
+      "type": "string",
+      "title": "Event Image URL"
+    }
+  },
+  "required": [
+    "share_token",
+    "ticket_snapshot",
+    "owner_email"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "data.owner_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "read": {},
+    "update": {
+      "$or": [
+        {
+          "data.owner_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.owner_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}
