@@ -25,6 +25,17 @@ export default function UserApprovalPanel() {
     load();
   };
 
+  const handleReject = async (record) => {
+    if (!window.confirm(`Reject ${record.full_name || record.user_email}? They will be blocked from accessing the app.`)) return;
+    const me = await base44.auth.me();
+    await base44.entities.UserApproval.update(record.id, {
+      status: "rejected",
+      approved_by: me.email,
+      approved_date: new Date().toISOString(),
+    });
+    load();
+  };
+
   const handleDeleteAndLogout = async (record) => {
     if (!window.confirm(`Delete and logout ${record.full_name || record.user_email}? This removes their profile, tickets, subscriptions, and approval. This cannot be undone.`)) return;
     const email = record.user_email;
@@ -51,7 +62,7 @@ export default function UserApprovalPanel() {
     <div className="border border-gray-200 rounded-xl p-5 mt-6">
       <h3 className="text-base font-bold text-gray-800 mb-4">User Approvals</h3>
       <div className="flex gap-2 mb-4">
-        {["pending", "approved"].map(tab => (
+        {["pending", "approved", "rejected"].map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -80,13 +91,39 @@ export default function UserApprovalPanel() {
                 <div className="text-xs text-gray-400">{record.created_date ? new Date(record.created_date).toLocaleDateString() : ""}</div>
               </div>
               {activeTab === "pending" ? (
-                <button
-                  onClick={() => handleApprove(record)}
-                  className="px-3 py-2 rounded-lg text-white text-xs font-bold border-none cursor-pointer"
-                  style={{ backgroundColor: "#418029" }}
-                >
-                  Approve
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleApprove(record)}
+                    className="px-3 py-2 rounded-lg text-white text-xs font-bold border-none cursor-pointer"
+                    style={{ backgroundColor: "#418029" }}
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => handleReject(record)}
+                    className="px-3 py-2 rounded-lg text-white text-xs font-bold border-none cursor-pointer"
+                    style={{ backgroundColor: "#dc2626" }}
+                  >
+                    Reject
+                  </button>
+                </div>
+              ) : activeTab === "rejected" ? (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleApprove(record)}
+                    className="px-3 py-2 rounded-lg text-white text-xs font-bold border-none cursor-pointer"
+                    style={{ backgroundColor: "#418029" }}
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => handleDeleteAndLogout(record)}
+                    className="px-3 py-2 rounded-lg text-white text-xs font-bold border-none cursor-pointer"
+                    style={{ backgroundColor: "#dc2626" }}
+                  >
+                    Delete
+                  </button>
+                </div>
               ) : (
                 <button
                   onClick={() => handleDeleteAndLogout(record)}

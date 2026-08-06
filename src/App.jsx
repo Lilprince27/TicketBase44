@@ -182,6 +182,32 @@ const AuthenticatedApp = () => {
     return <MaintenanceFeeScreen />;
   }
 
+  if (approvalStatus === 'rejected') {
+    return (
+      <div className="fixed inset-0 bg-white flex flex-col items-center justify-center px-6 text-center">
+        <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-5">
+          <svg className="w-8 h-8 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+        </div>
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Access Denied</h2>
+        <p className="text-gray-500 mb-6">Your registration has been declined. Please contact admin if you believe this is an error.</p>
+        <a href="https://wa.me/2347026855490" target="_blank" rel="noopener noreferrer"
+          className="w-full max-w-xs py-4 rounded-xl text-white font-bold mb-3 flex items-center justify-center gap-2 no-underline"
+          style={{ backgroundColor: "#25d366" }}>
+          Contact Admin on WhatsApp
+        </a>
+        <button
+          onClick={() => base44.auth.logout()}
+          className="w-full max-w-xs py-4 rounded-xl font-bold border-2 bg-white cursor-pointer"
+          style={{ color: "#003057", borderColor: "#003057" }}
+        >
+          Log Out
+        </button>
+      </div>
+    );
+  }
+
   if (approvalStatus === 'pending') {
     return <WaitingApproval user={authUser} onRefresh={refreshApproval} />;
   }

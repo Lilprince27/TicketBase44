@@ -15,7 +15,8 @@
       "title": "Status",
       "enum": [
         "pending",
-        "approved"
+        "approved",
+        "rejected"
       ],
       "default": "pending"
     },
