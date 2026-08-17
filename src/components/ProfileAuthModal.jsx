@@ -24,6 +24,8 @@ const KEYS = [
   { d: "9", sub: "WXYZ" },
 ];
 
+const NAVY = "#003057";
+
 export default function ProfileAuthModal({ email, onClose, onSuccess }) {
   const [code, setCode] = useState("");
   const [generatedCode, setGeneratedCode] = useState("");
@@ -99,24 +101,27 @@ export default function ProfileAuthModal({ email, onClose, onSuccess }) {
 
   return (
     <>
-      {/* Push-notification style banner with the code */}
+      {/* Push-notification style banner — Ticketek navy logo color */}
       {showNotif && (
         <div
           className="fixed top-0 left-0 right-0 z-[3000] flex justify-center px-3"
           style={{ paddingTop: "calc(env(safe-area-inset-top) + 12px)" }}
           onClick={() => setShowNotif(false)}
         >
-          <div className="bg-card text-card-foreground rounded-2xl shadow-2xl px-4 py-3 w-full max-w-[500px] flex items-start gap-3 border border-border animate-[notifslide_0.3s_ease-out]">
+          <div
+            className="rounded-2xl shadow-2xl px-4 py-3 w-full max-w-[500px] flex items-start gap-3 border"
+            style={{ backgroundColor: NAVY, borderColor: "rgba(255,255,255,0.1)", color: "#fff" }}
+          >
             <div
               className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: "#007AFF" }}
+              style={{ backgroundColor: "#fff" }}
             >
-              <span className="text-white font-bold text-xl leading-none" style={{ fontStyle: "italic" }}>t</span>
+              <span className="font-bold text-xl leading-none" style={{ fontStyle: "italic", color: NAVY }}>t</span>
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
                 <span className="font-semibold text-sm">Ticketek</span>
-                <span className="text-xs text-muted-foreground">now</span>
+                <span className="text-xs" style={{ color: "rgba(255,255,255,0.6)" }}>now</span>
               </div>
               <p className="text-sm mt-0.5 leading-snug">
                 Your verification code is{" "}
@@ -127,47 +132,47 @@ export default function ProfileAuthModal({ email, onClose, onSuccess }) {
         </div>
       )}
 
-      {/* Authentication sheet */}
+      {/* Authentication sheet — white background per design */}
       <div
         className="fixed inset-0 z-[2000] flex items-end justify-center bg-black/50"
         style={{ backdropFilter: "blur(2px)", WebkitBackdropFilter: "blur(2px)" }}
         onClick={onClose}
       >
         <div
-          className="bg-card text-card-foreground w-full max-w-[500px] rounded-t-3xl shadow-2xl flex flex-col"
-          style={{ maxHeight: "92vh", paddingBottom: "env(safe-area-inset-bottom)" }}
+          className="bg-white w-full max-w-[500px] rounded-t-3xl shadow-2xl flex flex-col"
+          style={{ maxHeight: "92vh", color: "#1A1A1A", paddingBottom: "env(safe-area-inset-bottom)" }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Drag handle */}
           <div className="flex justify-center pt-2 pb-1">
-            <div className="w-10 h-1.5 rounded-full bg-muted-foreground/30" />
+            <div className="w-10 h-1.5 rounded-full" style={{ backgroundColor: "#E0E0E0" }} />
           </div>
 
           {/* Header */}
           <div className="flex items-center justify-between px-5 pt-3 pb-1">
-            <h2 className="text-xl font-bold text-foreground">Authenticate your account</h2>
+            <h2 className="text-xl font-bold" style={{ color: "#1A1A1A" }}>Authenticate your account</h2>
             <button
               onClick={onClose}
               className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: "hsl(var(--muted))" }}
+              style={{ backgroundColor: "#EBEBEB" }}
               aria-label="Close"
             >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="hsl(var(--muted-foreground))" strokeWidth="2" strokeLinecap="round">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#555" strokeWidth="2" strokeLinecap="round">
                 <path d="M1 1L13 13M13 1L1 13" />
               </svg>
             </button>
           </div>
 
           {/* Instructions */}
-          <p className="px-5 pt-2 pb-4 text-sm text-muted-foreground leading-relaxed">
+          <p className="px-5 pt-2 pb-4 text-sm leading-relaxed" style={{ color: "#4A4A4A" }}>
             We have sent a One Time Passcode to your email {maskEmail(email)}. Enter the code below.
           </p>
 
           {/* Input field */}
           <div className="px-5">
             <div
-              className={`flex items-center gap-2 rounded-xl border bg-background px-4 py-4 transition-all ${shake ? "animate-[shake_0.4s]" : ""}`}
-              style={{ borderColor: error ? "hsl(var(--destructive))" : "hsl(var(--border))" }}
+              className={`flex items-center gap-2 rounded-xl px-4 py-4 transition-all ${shake ? "animate-[shake_0.4s]" : ""}`}
+              style={{ backgroundColor: "#fff", border: `2px solid ${error ? "#dc2626" : "#333"}` }}
             >
               <input
                 type="text"
@@ -175,22 +180,23 @@ export default function ProfileAuthModal({ email, onClose, onSuccess }) {
                 value={code}
                 readOnly
                 placeholder="One Time Passcode"
-                className="flex-1 bg-transparent outline-none text-base font-medium tracking-[0.3em] text-foreground placeholder:tracking-normal placeholder:font-normal placeholder:text-muted-foreground/60"
+                className="flex-1 bg-transparent outline-none text-base font-medium tracking-[0.3em]"
+                style={{ color: "#1A1A1A" }}
               />
               {error && (
-                <span className="text-xs font-semibold text-destructive whitespace-nowrap">Invalid code</span>
+                <span className="text-xs font-semibold whitespace-nowrap" style={{ color: "#dc2626" }}>Invalid code</span>
               )}
             </div>
           </div>
 
           {/* Resend footer */}
-          <p className="px-5 pt-3 pb-4 text-xs text-muted-foreground leading-relaxed">
+          <p className="px-5 pt-3 pb-4 text-xs leading-relaxed" style={{ color: "#666" }}>
             It may take a few minutes for you to receive the code. Haven't received it?{" "}
             <button
               onClick={handleResend}
               disabled={resendTimer > 0}
-              className="underline font-semibold text-foreground disabled:opacity-50 disabled:no-underline"
-              style={{ cursor: resendTimer > 0 ? "default" : "pointer" }}
+              className="underline font-semibold disabled:opacity-50 disabled:no-underline"
+              style={{ color: NAVY, cursor: resendTimer > 0 ? "default" : "pointer" }}
             >
               {resendTimer > 0 ? `Resend code (${resendTimer}s)` : "Resend code"}
             </button>
@@ -203,8 +209,8 @@ export default function ProfileAuthModal({ email, onClose, onSuccess }) {
               disabled={!ready}
               className="w-full py-4 rounded-full font-bold text-base border-none transition-all"
               style={{
-                backgroundColor: ready ? "#003057" : "hsl(var(--muted))",
-                color: ready ? "#fff" : "hsl(var(--muted-foreground))",
+                backgroundColor: ready ? NAVY : "#F2F2F2",
+                color: ready ? "#fff" : "#BDBDBD",
                 cursor: ready ? "pointer" : "default",
               }}
             >
@@ -213,31 +219,34 @@ export default function ProfileAuthModal({ email, onClose, onSuccess }) {
           </div>
 
           {/* Numeric keypad */}
-          <div className="bg-muted/60 px-3 py-3 mt-auto">
+          <div className="px-3 py-3 mt-auto" style={{ backgroundColor: "#E5E5E5" }}>
             <div className="grid grid-cols-3 gap-2">
               {KEYS.map((k) => (
                 <button
                   key={k.d}
                   onClick={() => handleKey(k.d)}
-                  className="bg-card rounded-xl py-3 flex flex-col items-center justify-center active:scale-95 transition-transform border border-border/50"
+                  className="rounded-xl py-3 flex flex-col items-center justify-center active:scale-95 transition-transform"
+                  style={{ backgroundColor: "#fff", border: "1px solid rgba(0,0,0,0.05)" }}
                 >
-                  <span className="text-2xl font-semibold text-foreground leading-none">{k.d}</span>
-                  {k.sub && <span className="text-[9px] font-semibold text-muted-foreground tracking-wider mt-1">{k.sub}</span>}
+                  <span className="text-2xl font-semibold leading-none" style={{ color: "#1A1A1A" }}>{k.d}</span>
+                  {k.sub && <span className="text-[9px] font-semibold tracking-wider mt-1" style={{ color: "#999" }}>{k.sub}</span>}
                 </button>
               ))}
               <div />
               <button
                 onClick={() => handleKey("0")}
-                className="bg-card rounded-xl py-3 flex flex-col items-center justify-center active:scale-95 transition-transform border border-border/50"
+                className="rounded-xl py-3 flex flex-col items-center justify-center active:scale-95 transition-transform"
+                style={{ backgroundColor: "#fff", border: "1px solid rgba(0,0,0,0.05)" }}
               >
-                <span className="text-2xl font-semibold text-foreground leading-none">0</span>
+                <span className="text-2xl font-semibold leading-none" style={{ color: "#1A1A1A" }}>0</span>
               </button>
               <button
                 onClick={handleBackspace}
-                className="bg-card rounded-xl py-3 flex items-center justify-center active:scale-95 transition-transform border border-border/50"
+                className="rounded-xl py-3 flex items-center justify-center active:scale-95 transition-transform"
+                style={{ backgroundColor: "#fff", border: "1px solid rgba(0,0,0,0.05)" }}
                 aria-label="Backspace"
               >
-                <svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="hsl(var(--foreground))" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="26" height="20" viewBox="0 0 26 20" fill="none" stroke="#1A1A1A" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 2L2 10L9 18H22A2 2 0 0024 16V4A2 2 0 0022 2H9Z" />
                   <path d="M13 7L19 13M19 7L13 13" />
                 </svg>
