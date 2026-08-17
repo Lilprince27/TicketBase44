@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import OrderHistorySheet from "../components/tickets/OrderHistorySheet";
+import ProfileAuthModal from "../components/ProfileAuthModal";
 import { getCustomerId } from "../lib/customerId";
 
 export default function AccountPage() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [showProfileAuth, setShowProfileAuth] = useState(false);
   const orderSheetOpen = searchParams.get('sheet') === 'order-history';
 
   useEffect(() => { base44.auth.me().then(setUser); }, []);
@@ -34,7 +36,7 @@ export default function AccountPage() {
         <MenuItem
           icon={<ProfileIcon />}
           label="Profile"
-          onClick={() => navigate("/profile")}
+          onClick={() => setShowProfileAuth(true)}
         />
         <MenuItem
           icon={<TicketIcon />}
@@ -109,6 +111,16 @@ export default function AccountPage() {
       </div>
 
       {orderSheetOpen && <OrderHistorySheet user={user} onClose={() => navigate(-1)} />}
+      {showProfileAuth && (
+        <ProfileAuthModal
+          email={user?.email}
+          onClose={() => setShowProfileAuth(false)}
+          onSuccess={() => {
+            setShowProfileAuth(false);
+            navigate("/profile");
+          }}
+        />
+      )}
     </div>
   );
 }
