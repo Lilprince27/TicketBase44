@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import TicketekLogo from "./TicketekLogo";
 
 function generateCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -101,31 +102,28 @@ export default function ProfileAuthModal({ email, onClose, onSuccess }) {
 
   return (
     <>
-      {/* Push-notification style banner — Ticketek navy logo color */}
+      {/* Push-notification style banner — black, Ticketek star logo */}
       {showNotif && (
         <div
-          className="fixed top-0 left-0 right-0 z-[3000] flex justify-center px-3"
-          style={{ paddingTop: "calc(env(safe-area-inset-top) + 12px)" }}
+          className="fixed top-0 left-0 right-0 z-[10001] flex justify-center px-3"
+          style={{ paddingTop: "calc(env(safe-area-inset-top) + 10px)" }}
           onClick={() => setShowNotif(false)}
         >
           <div
-            className="rounded-2xl shadow-2xl px-4 py-3 w-full max-w-[500px] flex items-start gap-3 border"
-            style={{ backgroundColor: NAVY, borderColor: "rgba(255,255,255,0.1)", color: "#fff" }}
+            className="rounded-xl shadow-2xl px-3 py-2 w-full max-w-[420px] flex items-center gap-2.5 border"
+            style={{ backgroundColor: "#000", borderColor: "rgba(255,255,255,0.12)", color: "#fff" }}
           >
-            <div
-              className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ backgroundColor: "#fff" }}
-            >
-              <span className="font-bold text-xl leading-none" style={{ fontStyle: "italic", color: NAVY }}>t</span>
+            <div className="flex items-center justify-center flex-shrink-0" style={{ width: 28, height: 28 }}>
+              <TicketekLogo size={26} variant="white" />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-sm">Ticketek</span>
-                <span className="text-xs" style={{ color: "rgba(255,255,255,0.6)" }}>now</span>
+                <span className="font-semibold text-xs">Ticketek</span>
+                <span className="text-[10px]" style={{ color: "rgba(255,255,255,0.55)" }}>now</span>
               </div>
-              <p className="text-sm mt-0.5 leading-snug">
+              <p className="text-xs mt-0.5 leading-snug">
                 Your verification code is{" "}
-                <strong className="font-bold tracking-[0.15em]">{generatedCode}</strong>. Don't share this code with anyone.
+                <strong className="font-bold tracking-[0.12em]">{generatedCode}</strong>. Don't share this code with anyone.
               </p>
             </div>
           </div>
@@ -134,7 +132,7 @@ export default function ProfileAuthModal({ email, onClose, onSuccess }) {
 
       {/* Authentication sheet — white background per design */}
       <div
-        className="fixed inset-0 z-[2000] flex items-end justify-center bg-black/50"
+        className="fixed inset-0 z-[10000] flex items-end justify-center bg-black/50"
         style={{ backdropFilter: "blur(2px)", WebkitBackdropFilter: "blur(2px)" }}
         onClick={onClose}
       >
