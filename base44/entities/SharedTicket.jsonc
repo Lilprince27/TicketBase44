@@ -17,6 +17,14 @@
     "event_image": {
       "type": "string",
       "title": "Event Image URL"
+    },
+    "accepted_by": {
+      "type": "string",
+      "title": "Accepted By (recipient email)"
+    },
+    "accepted_date": {
+      "type": "string",
+      "title": "Accepted Date"
     }
   },
   "required": [
@@ -37,7 +45,7 @@
         }
       ]
     },
-    "read": {},
+    "read": true,
     "update": {
       "$or": [
         {
