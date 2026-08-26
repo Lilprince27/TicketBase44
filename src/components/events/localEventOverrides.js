@@ -8,6 +8,7 @@
 const OLIVIA_DEAN_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/2433af8ed_IMG_4074.jpeg";
 const NOAH_KAHAN_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/47e6fd2a8_IMG_5079.jpeg";
 const DANIEL_CAESAR_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/7da5b30fc_IMG_5611.jpeg";
+const HILARY_DUFF_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/9f021eb3f_IMG_5974.jpeg";
 
 export const LOCAL_EVENT_OVERRIDES = {
   "olivia dean": [
@@ -219,6 +220,72 @@ export const LOCAL_EVENT_OVERRIDES = {
         venue_name: "Qudos Bank Arena",
         event_image_url: NOAH_KAHAN_IMAGE,
         presenter: "Live Nation",
+      },
+    },
+  ],
+  "hilary duff": [
+    {
+      id: "local-hilary-duff-1",
+      title: "Hilary Duff",
+      date: "Thu 22 Oct 2026 7:00pm",
+      venue: "Brisbane Entertainment Centre",
+      city: "Brisbane",
+      image: HILARY_DUFF_IMAGE,
+      local: true,
+      localData: {
+        event_name: "Hilary Duff",
+        event_date: "Thu 22 Oct 2026 7:00pm",
+        venue_name: "Brisbane Entertainment Centre",
+        event_image_url: HILARY_DUFF_IMAGE,
+        presenter: "Frontier Touring",
+      },
+    },
+    {
+      id: "local-hilary-duff-2",
+      title: "Hilary Duff",
+      date: "Sat 24 Oct 2026 7:00pm",
+      venue: "Afterpay Arena",
+      city: "Sydney Olympic Park",
+      image: HILARY_DUFF_IMAGE,
+      local: true,
+      localData: {
+        event_name: "Hilary Duff",
+        event_date: "Sat 24 Oct 2026 7:00pm",
+        venue_name: "Afterpay Arena",
+        event_image_url: HILARY_DUFF_IMAGE,
+        presenter: "Frontier Touring",
+      },
+    },
+    {
+      id: "local-hilary-duff-3",
+      title: "Hilary Duff",
+      date: "Mon 26 Oct 2026 - Tue 27 Oct 2026 7:00pm",
+      venue: "Rod Laver Arena",
+      city: "Melbourne",
+      image: HILARY_DUFF_IMAGE,
+      local: true,
+      localData: {
+        event_name: "Hilary Duff",
+        event_date: "Mon 26 Oct 2026 - Tue 27 Oct 2026 7:00pm",
+        venue_name: "Rod Laver Arena",
+        event_image_url: HILARY_DUFF_IMAGE,
+        presenter: "Frontier Touring",
+      },
+    },
+    {
+      id: "local-hilary-duff-4",
+      title: "Hilary Duff",
+      date: "Thu 29 Oct 2026 7:00pm",
+      venue: "RAC Arena",
+      city: "Perth",
+      image: HILARY_DUFF_IMAGE,
+      local: true,
+      localData: {
+        event_name: "Hilary Duff",
+        event_date: "Thu 29 Oct 2026 7:00pm",
+        venue_name: "RAC Arena",
+        event_image_url: HILARY_DUFF_IMAGE,
+        presenter: "Frontier Touring",
       },
     },
   ],
