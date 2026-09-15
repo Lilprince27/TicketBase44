@@ -37,6 +37,18 @@
         "type": "string"
       },
       "title": "Dismissed Notification IDs"
+    },
+    "telegram_user_id": {
+      "type": "string",
+      "title": "Telegram User ID"
+    },
+    "telegram_chat_id": {
+      "type": "string",
+      "title": "Telegram Chat ID"
+    },
+    "telegram_username": {
+      "type": "string",
+      "title": "Telegram Username"
     }
   },
   "required": [
