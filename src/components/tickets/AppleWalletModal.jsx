@@ -6,7 +6,6 @@ export default function AppleWalletModal({ ticket, onClose }) {
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${ticket?.serial_number || ticket?.id || "ticket"}`;
   const eventName = (ticket?.event_name || "").toUpperCase();
   const venue = (ticket?.venue_name || "").toUpperCase();
-  const levelLabel = (ticket?.level_stand || "Floor Level").toUpperCase();
   const ticketType = (ticket?.ticket_type || "General Admission - Admit").toUpperCase();
   const sectionVal = (ticket?.level_stand || ticket?.section_bay || "FLOOR").toUpperCase();
   const rowSeatVal = ticket?.row ? `${ticket.row}/${ticket.seat_number || "-"}` : (ticket?.seat_number || "GA1");
@@ -21,10 +20,9 @@ export default function AppleWalletModal({ ticket, onClose }) {
 
       {/* Centered ticket card */}
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 16px 30px" }}>
-        {/* White border frame */}
-        <div style={{ border: "1px solid #ffffff", borderRadius: 16, padding: 6, width: "100%", maxWidth: 360, position: "relative" }}>
+        <div style={{ position: "relative", width: "100%", maxWidth: 360 }}>
           {/* Die-cut notch at top center */}
-          <div style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", width: 20, height: 20, borderRadius: "50%", background: "#000000", border: "1px solid #ffffff" }} />
+          <div style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", width: 20, height: 20, borderRadius: "50%", background: "#000000", zIndex: 2 }} />
 
           <div style={{ backgroundColor: "#000000", borderRadius: 12, overflow: "hidden" }}>
             {/* Header: TICKETEK left, date + event right */}
@@ -75,9 +73,7 @@ export default function AppleWalletModal({ ticket, onClose }) {
 
             {/* Footer star logo */}
             <div style={{ padding: "0 16px 16px", display: "flex", justifyContent: "flex-start" }}>
-              <div style={{ width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <TicketekLogo size={18} variant="white" />
-              </div>
+              <TicketekLogo size={18} variant="white" />
             </div>
           </div>
         </div>
