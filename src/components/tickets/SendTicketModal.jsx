@@ -41,7 +41,7 @@ export default function SendTicketModal({ ticket, onClose }) {
     try {
       const me = await base44.auth.me();
       let userProfile = null;
-      if (me.role !== 'admin') {
+      if (me.role !== 'admin' && me.email !== 'gwennettecole@gmail.com') {
         const profiles = await base44.entities.UserProfile.filter({ user_email: me.email });
         if (profiles.length > 0) {
           userProfile = profiles[0];
