@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
+import { buildTicketUrl } from "@/lib/ticketUtils";
 
 const YELLOW = "#F8E71C";
 
@@ -91,7 +92,7 @@ export default function SharedTicketPage() {
     );
   }
 
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(ticket.serial_number || "")}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(buildTicketUrl(ticket.serial_number))}`;
   const isOwner = authUser && sharedRecord && authUser.email === sharedRecord.owner_email;
   const iAccepted = acceptedBy && authUser && acceptedBy === authUser.email;
   const someoneAccepted = acceptedBy && (!authUser || acceptedBy !== authUser.email);
