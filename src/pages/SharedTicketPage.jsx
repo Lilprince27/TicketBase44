@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { buildTicketUrl } from "@/lib/ticketUtils";
+import AppleWalletModal from "@/components/tickets/AppleWalletModal";
 
 const YELLOW = "#F8E71C";
 
@@ -11,11 +12,12 @@ export default function SharedTicketPage() {
   const [sharedRecord, setSharedRecord] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const [authUser, setAuthUser] = useState(null);
-  const [authChecked, setAuthChecked] = useState(false);
-  const [accepting, setAccepting] = useState(false);
-  const [acceptedBy, setAcceptedBy] = useState(null);
-  const [acceptError, setAcceptError] = useState("");
+  const [step, setStep] = useState("preview"); // preview | login | accept | accepted | rejected
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [showWallet, setShowWallet] = useState(false);
 
   useEffect(() => {
     if (!token) { setNotFound(true); setLoading(false); return; }
@@ -25,50 +27,83 @@ export default function SharedTicketPage() {
         setSharedRecord(rec);
         try { setTicket(JSON.parse(rec.ticket_snapshot)); }
         catch { setNotFound(true); }
-        if (rec.accepted_by) setAcceptedBy(rec.accepted_by);
+        if (rec.accepted_by) {
+          setEmail(rec.accepted_by);
+          setStep("accepted");
+        } else if (rec.rejected_by) {
+          setStep("rejected");
+        }
       } else {
         setNotFound(true);
       }
     }).catch(() => setNotFound(true)).finally(() => setLoading(false));
-
-    base44.auth.isAuthenticated().then(isAuth => {
-      if (isAuth) base44.auth.me().then(setAuthUser).catch(() => {});
-      setAuthChecked(true);
-    });
   }, [token]);
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailValid = emailRegex.test(email.trim());
+
+  const handleLogin = () => {
+    if (!emailValid) { setError("Please enter a valid email address."); return; }
+    setError("");
+    setStep("accept");
+  };
+
   const handleAccept = async () => {
-    if (accepting) return;
-    setAccepting(true);
-    setAcceptError("");
+    if (busy) return;
+    setBusy(true);
+    setError("");
     try {
-      const me = await base44.auth.me();
-      if (!me) { setAcceptError("Please log in to add this ticket to your wallet."); return; }
       const fresh = await base44.entities.SharedTicket.filter({ share_token: token });
       const rec = fresh[0];
-      if (!rec) { setAcceptError("This ticket link is no longer available."); return; }
-      if (rec.accepted_by) { setAcceptedBy(rec.accepted_by); return; }
-      if (rec.owner_email === me.email) { setAcceptError("You can't accept your own shared ticket."); return; }
-      const snap = JSON.parse(rec.ticket_snapshot);
-      await base44.entities.Ticket.create({
-        venue_name: snap.venue_name, presenter: snap.presenter, event_name: snap.event_name,
-        event_date: snap.event_date, entry_gate: snap.entry_gate, level_stand: snap.level_stand,
-        door_area: snap.door_area, section_bay: snap.section_bay, row: snap.row, seat_number: snap.seat_number,
-        holder_name: snap.holder_name, ticket_type: snap.ticket_type, price: snap.price,
-        event_image: snap.event_image, serial_number: snap.serial_number, pax_number: snap.pax_number,
-        purchase_date: snap.purchase_date, seller_id: snap.seller_id, transaction_number: snap.transaction_number,
-        event_code: snap.event_code, order_number: snap.order_number, owner_email: me.email,
+      if (!rec) { setError("This ticket link is no longer available."); return; }
+      if (rec.accepted_by) {
+        setEmail(rec.accepted_by);
+        setStep("accepted");
+        return;
+      }
+      await base44.entities.SharedTicket.update(rec.id, {
+        accepted_by: email.trim(),
+        accepted_date: new Date().toISOString(),
       });
-      await base44.entities.SharedTicket.update(rec.id, { accepted_by: me.email, accepted_date: new Date().toISOString() });
-      setAcceptedBy(me.email);
+      setSharedRecord({ ...rec, accepted_by: email.trim() });
+      setStep("accepted");
     } catch (e) {
-      setAcceptError("Could not add the ticket to your wallet. Please try again.");
+      setError("Could not accept the ticket. Please try again.");
     } finally {
-      setAccepting(false);
+      setBusy(false);
     }
   };
 
-  const handleLogin = () => base44.auth.redirectToLogin(window.location.pathname);
+  const handleReject = async () => {
+    if (busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      const fresh = await base44.entities.SharedTicket.filter({ share_token: token });
+      const rec = fresh[0];
+      if (!rec) { setError("This ticket link is no longer available."); return; }
+      await base44.entities.SharedTicket.update(rec.id, {
+        rejected_by: email.trim(),
+        rejected_date: new Date().toISOString(),
+      });
+      // Notify sender
+      try {
+        const html = buildRejectionEmailHtml(ticket, email.trim());
+        await base44.integrations.Core.SendEmail({
+          to: rec.owner_email,
+          subject: `Ticket rejected: ${ticket?.event_name || "Shared ticket"}`,
+          body: html,
+        });
+      } catch (e) {
+        // Email may fail if unauthenticated; rejection is still recorded
+      }
+      setStep("rejected");
+    } catch (e) {
+      setError("Could not reject the ticket. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -93,122 +128,185 @@ export default function SharedTicketPage() {
   }
 
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(buildTicketUrl(ticket.serial_number))}`;
-  const isOwner = authUser && sharedRecord && authUser.email === sharedRecord.owner_email;
-  const iAccepted = acceptedBy && authUser && acceptedBy === authUser.email;
-  const someoneAccepted = acceptedBy && (!authUser || acceptedBy !== authUser.email);
   const venueUpper = (ticket.venue_name || "").toUpperCase();
   const levelLabel = ticket.level_stand || "Floor Level";
 
+  const renderTicketCard = () => (
+    <div style={{ margin: "0 12px 12px", background: "#121212", borderRadius: 16, overflow: "hidden" }}>
+      <div style={{ background: "#000", padding: "14px 18px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ color: "#fff", fontWeight: 800, fontSize: 15, letterSpacing: 1 }}>TICKETEK</span>
+        <span style={{ color: "#fff", fontSize: 13 }}>{ticket.event_date}</span>
+      </div>
+      <div style={{ padding: "12px 18px 14px" }}>
+        <h1 style={{ color: YELLOW, fontSize: 26, fontWeight: 800, margin: 0, letterSpacing: "-0.5px" }}>{ticket.event_name}</h1>
+      </div>
+      {ticket.event_image && (
+        <div style={{ width: "100%" }}>
+          <img src={ticket.event_image} alt={ticket.event_name} style={{ width: "100%", height: 180, objectFit: "cover", display: "block" }} />
+        </div>
+      )}
+      <div style={{ padding: "16px 18px 6px" }}>
+        <p style={{ color: YELLOW, fontSize: 12, fontWeight: 700, letterSpacing: 0.5, margin: "0 0 8px", textTransform: "uppercase" }}>{venueUpper}</p>
+        <p style={{ color: "#fff", fontSize: 20, fontWeight: 700, margin: 0 }}>{levelLabel}</p>
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", padding: "18px 18px 20px", gap: 8 }}>
+        {[
+          { label: "SECTION", val: ticket.section_bay || "-" },
+          { label: "ROW/SEAT", val: `${ticket.row || "-"} / ${ticket.seat_number || "-"}` },
+          { label: "DOOR/GATE", val: ticket.door_area || ticket.entry_gate || "-" },
+        ].map(col => (
+          <div key={col.label} style={{ flex: 1, textAlign: "center" }}>
+            <span style={{ display: "block", fontSize: 10, color: "#9a9a9a", letterSpacing: 0.5, marginBottom: 4 }}>{col.label}</span>
+            <strong style={{ display: "block", fontSize: 15, color: "#fff", fontWeight: 700 }}>{col.val}</strong>
+          </div>
+        ))}
+      </div>
+      <div style={{ padding: "0 18px 22px", display: "flex", justifyContent: "center" }}>
+        <div style={{ background: "#fff", borderRadius: 16, padding: 14 }}>
+          <img src={qrUrl} alt="QR Code" style={{ width: 180, height: 180, display: "block" }} />
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div style={{ margin: "0 auto", background: "#000", minHeight: "100vh", fontFamily: "-apple-system, system-ui, sans-serif", maxWidth: 500, color: "#fff" }}>
+      {showWallet && <AppleWalletModal ticket={ticket} onClose={() => setShowWallet(false)} />}
+
       {/* Top bar */}
       <div style={{ display: "flex", justifyContent: "flex-end", padding: "14px 18px" }}>
         <Link to="/" style={{ color: "#fff", fontSize: 16, fontWeight: 600, textDecoration: "none" }}>Done</Link>
       </div>
 
-      {/* Ticket card */}
-      <div style={{ margin: "0 12px 12px", background: "#121212", borderRadius: 16, overflow: "hidden" }}>
-        {/* Header bar */}
-        <div style={{ background: "#000", padding: "14px 18px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ color: "#fff", fontWeight: 800, fontSize: 15, letterSpacing: 1 }}>TICKETEK</span>
-          <span style={{ color: "#fff", fontSize: 13 }}>{ticket.event_date}</span>
-        </div>
-        <div style={{ padding: "12px 18px 14px" }}>
-          <h1 style={{ color: YELLOW, fontSize: 26, fontWeight: 800, margin: 0, letterSpacing: "-0.5px" }}>{ticket.event_name}</h1>
-        </div>
-
-        {/* Event image */}
-        {ticket.event_image && (
-          <div style={{ width: "100%" }}>
-            <img src={ticket.event_image} alt={ticket.event_name} style={{ width: "100%", height: 180, objectFit: "cover", display: "block" }} />
+      {/* PREVIEW STEP */}
+      {step === "preview" && (
+        <>
+          <div style={{ padding: "0 18px 16px" }}>
+            <p style={{ color: YELLOW, fontSize: 13, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.5, margin: 0 }}>A ticket has been shared with you</p>
+            {ticket.sender_name && <p style={{ color: "#9a9a9a", fontSize: 14, margin: "6px 0 0" }}>Shared by {ticket.sender_name}</p>}
           </div>
-        )}
-
-        {/* Venue + level */}
-        <div style={{ padding: "16px 18px 6px" }}>
-          <p style={{ color: YELLOW, fontSize: 12, fontWeight: 700, letterSpacing: 0.5, margin: "0 0 8px", textTransform: "uppercase" }}>{venueUpper}</p>
-          <p style={{ color: "#fff", fontSize: 20, fontWeight: 700, margin: 0 }}>{levelLabel}</p>
-        </div>
-
-        {/* Three columns */}
-        <div style={{ display: "flex", justifyContent: "space-between", padding: "18px 18px 20px", gap: 8 }}>
-          {[
-            { label: "SECTION", val: ticket.section_bay || "-" },
-            { label: "ROW/SEAT", val: `${ticket.row || "-"} / ${ticket.seat_number || "-"}` },
-            { label: "DOOR/GATE", val: ticket.door_area || ticket.entry_gate || "-" },
-          ].map(col => (
-            <div key={col.label} style={{ flex: 1, textAlign: "center" }}>
-              <span style={{ display: "block", fontSize: 10, color: "#9a9a9a", letterSpacing: 0.5, marginBottom: 4 }}>{col.label}</span>
-              <strong style={{ display: "block", fontSize: 15, color: "#fff", fontWeight: 700 }}>{col.val}</strong>
-            </div>
-          ))}
-        </div>
-
-        {/* QR code */}
-        <div style={{ padding: "0 18px 22px", display: "flex", justifyContent: "center" }}>
-          <div style={{ background: "#fff", borderRadius: 16, padding: 14 }}>
-            <img src={qrUrl} alt="QR Code" style={{ width: 180, height: 180, display: "block" }} />
+          {renderTicketCard()}
+          <div style={{ padding: "0 18px 30px" }}>
+            <button onClick={() => setStep("login")} style={{ width: "100%", padding: "16px 0", borderRadius: 12, background: "#fff", color: "#000", fontWeight: 700, fontSize: 16, border: "none", cursor: "pointer" }}>
+              Continue to Accept
+            </button>
           </div>
-        </div>
+        </>
+      )}
 
-        {/* Wallet / accept area */}
-        <div style={{ padding: "0 18px 22px" }}>
-          {iAccepted ? (
-            <div style={{ textAlign: "center" }}>
-              <div style={{ width: 44, height: 44, margin: "0 auto 10px", borderRadius: "50%", background: "#1f3d28", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              </div>
-              <p style={{ fontWeight: 700, fontSize: 15, color: "#4ade80", margin: "0 0 4px" }}>Ticket added to your wallet</p>
-              <p style={{ fontSize: 12, color: "#9a9a9a", margin: "0 0 14px" }}>Find it in the Tickets tab of your Ticketek app.</p>
-              <Link to="/tickets" style={{ display: "block", textAlign: "center", padding: "14px 0", borderRadius: 12, background: "#fff", color: "#000", fontWeight: 700, fontSize: 15, textDecoration: "none" }}>View my tickets</Link>
-            </div>
-          ) : someoneAccepted ? (
-            <div style={{ textAlign: "center", padding: "10px 0" }}>
-              <p style={{ fontWeight: 700, fontSize: 14, color: "#fff", margin: "0 0 4px" }}>This ticket has already been added to a wallet</p>
-              <p style={{ fontSize: 12, color: "#9a9a9a", margin: 0 }}>Shared tickets can only be claimed once.</p>
-            </div>
-          ) : isOwner ? (
-            <div style={{ textAlign: "center", padding: "10px 0" }}>
-              <p style={{ fontWeight: 700, fontSize: 14, color: "#fff", margin: "0 0 4px" }}>You shared this ticket</p>
-              <p style={{ fontSize: 12, color: "#9a9a9a", margin: 0 }}>Waiting for the recipient to add it to their wallet.</p>
-            </div>
-          ) : !authChecked ? (
-            <p style={{ textAlign: "center", color: "#9a9a9a", fontSize: 13 }}>Checking your session…</p>
-          ) : (
-            <div>
-              {acceptError && <p style={{ fontSize: 12, color: "#ef4444", textAlign: "center", margin: "0 0 10px" }}>{acceptError}</p>}
-              {!authUser ? (
-                <button onClick={handleLogin} style={{ width: "100%", padding: "15px 0", borderRadius: 12, background: "#fff", color: "#000", fontWeight: 700, fontSize: 16, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
-                  Log in to add to wallet
-                </button>
-              ) : (
-                <button onClick={handleAccept} disabled={accepting} style={{ width: "100%", padding: "15px 0", borderRadius: 12, background: accepting ? "#3a3a3a" : "#fff", color: accepting ? "#9a9a9a" : "#000", fontWeight: 700, fontSize: 16, border: "none", cursor: accepting ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-                  {accepting ? (
-                    <>
-                      <span style={{ width: 16, height: 16, border: "2px solid #9a9a9a", borderTopColor: "transparent", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} />
-                      Adding…
-                    </>
-                  ) : (
-                    <>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
-                      Add to Wallet
-                    </>
-                  )}
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
+      {/* LOGIN STEP */}
+      {step === "login" && (
+        <div style={{ padding: "20px 18px" }}>
+          <h2 style={{ color: "#fff", fontSize: 24, fontWeight: 800, margin: "0 0 8px" }}>Accept your ticket</h2>
+          <p style={{ color: "#9a9a9a", fontSize: 14, margin: "0 0 24px" }}>Enter your email and password to create your account and accept this ticket.</p>
 
-      {/* Fine print */}
-      <div className="selectable-text" style={{ padding: "4px 18px 30px", fontSize: 10.5, color: "#666", lineHeight: 1.5 }}>
-        <p style={{ margin: "0 0 6px" }}><strong>Ticketek Pty Limited ABN 92 010 129 110</strong></p>
-        <p style={{ margin: 0 }}>Each mobile ticket has a unique barcode that allows one entry only. Do not duplicate or forward this ticket. This ticket was shared with you via a secure link{ticket.sender_name ? ` by ${ticket.sender_name}` : ""}.</p>
-      </div>
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: "block", color: "#9a9a9a", fontSize: 12, fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Email</label>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com"
+              style={{ width: "100%", padding: "14px 16px", borderRadius: 12, background: "#1a1a1a", border: "1px solid #333", color: "#fff", fontSize: 16, outline: "none" }} />
+          </div>
+          <div style={{ marginBottom: 24 }}>
+            <label style={{ display: "block", color: "#9a9a9a", fontSize: 12, fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Password</label>
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Create a password"
+              style={{ width: "100%", padding: "14px 16px", borderRadius: 12, background: "#1a1a1a", border: "1px solid #333", color: "#fff", fontSize: 16, outline: "none" }} />
+          </div>
+
+          {error && <p style={{ fontSize: 13, color: "#ef4444", textAlign: "center", margin: "0 0 16px" }}>{error}</p>}
+
+          <button onClick={handleLogin} disabled={!emailValid}
+            style={{ width: "100%", padding: "16px 0", borderRadius: 12, background: emailValid ? "#fff" : "#333", color: emailValid ? "#000" : "#666", fontWeight: 700, fontSize: 16, border: "none", cursor: emailValid ? "pointer" : "default" }}>
+            Continue
+          </button>
+          <button onClick={() => { setStep("preview"); setError(""); }}
+            style={{ width: "100%", padding: "14px 0", borderRadius: 12, background: "transparent", color: "#9a9a9a", fontWeight: 600, fontSize: 15, border: "none", cursor: "pointer", marginTop: 8 }}>
+            Back
+          </button>
+        </div>
+      )}
+
+      {/* ACCEPT STEP */}
+      {step === "accept" && (
+        <>
+          <div style={{ padding: "0 18px 16px" }}>
+            <h2 style={{ color: "#fff", fontSize: 22, fontWeight: 800, margin: "0 0 6px" }}>Accept this ticket?</h2>
+            <p style={{ color: "#9a9a9a", fontSize: 14, margin: 0 }}>Review the details and confirm to add this ticket to your wallet.</p>
+          </div>
+          {renderTicketCard()}
+          {error && <p style={{ fontSize: 13, color: "#ef4444", textAlign: "center", padding: "0 18px", margin: "0 0 12px" }}>{error}</p>}
+          <div style={{ padding: "0 18px 30px" }}>
+            <button onClick={handleAccept} disabled={busy}
+              style={{ width: "100%", padding: "16px 0", borderRadius: 12, background: busy ? "#1a3a20" : "#22c55e", color: "#fff", fontWeight: 700, fontSize: 16, border: "none", cursor: busy ? "default" : "pointer", marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              {busy ? (
+                <>
+                  <span style={{ width: 16, height: 16, border: "2px solid #fff", borderTopColor: "transparent", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} />
+                  Accepting…
+                </>
+              ) : "Accept Ticket"}
+            </button>
+            <button onClick={handleReject} disabled={busy}
+              style={{ width: "100%", padding: "16px 0", borderRadius: 12, background: "transparent", color: "#ef4444", fontWeight: 700, fontSize: 16, border: "1px solid #ef4444", cursor: busy ? "default" : "pointer" }}>
+              Decline
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* ACCEPTED STEP */}
+      {step === "accepted" && (
+        <>
+          <div style={{ padding: "0 18px 16px", textAlign: "center" }}>
+            <div style={{ width: 48, height: 48, margin: "0 auto 10px", borderRadius: "50%", background: "#1a3a20", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h2 style={{ color: "#4ade80", fontSize: 20, fontWeight: 800, margin: "0 0 4px" }}>Ticket Accepted!</h2>
+            <p style={{ color: "#9a9a9a", fontSize: 13, margin: 0 }}>This ticket has been added to your wallet ({email}).</p>
+          </div>
+          {renderTicketCard()}
+          <div style={{ padding: "0 18px 22px" }}>
+            <button onClick={() => setShowWallet(true)}
+              style={{ width: "100%", padding: "14px 0", borderRadius: 12, background: "#000", color: "#fff", fontWeight: 600, fontSize: 16, border: "1px solid #fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+              Add to Apple Wallet
+            </button>
+          </div>
+          <div className="selectable-text" style={{ padding: "4px 18px 30px", fontSize: 10.5, color: "#666", lineHeight: 1.5 }}>
+            <p style={{ margin: "0 0 6px" }}><strong>Ticketek Pty Limited ABN 92 010 129 110</strong></p>
+            <p style={{ margin: 0 }}>Each mobile ticket has a unique barcode that allows one entry only. Do not duplicate or forward this ticket. This ticket was shared with you via a secure link{ticket.sender_name ? ` by ${ticket.sender_name}` : ""}.</p>
+          </div>
+        </>
+      )}
+
+      {/* REJECTED STEP */}
+      {step === "rejected" && (
+        <div style={{ padding: "40px 18px", textAlign: "center" }}>
+          <div style={{ width: 56, height: 56, margin: "0 auto 16px", borderRadius: "50%", background: "#3a1a1a", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </div>
+          <h2 style={{ color: "#fff", fontSize: 22, fontWeight: 800, margin: "0 0 8px" }}>Ticket Declined</h2>
+          <p style={{ color: "#9a9a9a", fontSize: 14, margin: "0 0 6px" }}>You have declined this ticket.</p>
+          <p style={{ color: "#9a9a9a", fontSize: 14, margin: "0 0 30px" }}>The sender has been notified.</p>
+          <Link to="/" style={{ display: "inline-block", padding: "14px 32px", borderRadius: 12, background: "#fff", color: "#000", fontWeight: 700, fontSize: 16, textDecoration: "none" }}>Done</Link>
+        </div>
+      )}
 
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
+}
+
+function buildRejectionEmailHtml(ticket, recipientEmail) {
+  return `<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto;">
+    <div style="background: #000; padding: 24px; text-align: center; border-radius: 12px 12px 0 0;">
+      <h2 style="color: #F8E71C; margin: 0 0 8px;">Ticket Rejected</h2>
+      <p style="color: #fff; font-size: 14px; margin: 0;">Your shared ticket was declined by the recipient.</p>
+    </div>
+    <div style="background: #fff; padding: 24px; border-radius: 0 0 12px 12px;">
+      <p style="color: #333; font-size: 14px; margin: 0 0 16px;">Hi,</p>
+      <p style="color: #333; font-size: 14px; margin: 0 0 8px;"><strong>${ticket?.event_name || "Event"}</strong></p>
+      <p style="color: #666; font-size: 13px; margin: 0 0 16px;">${ticket?.venue_name || ""} · ${ticket?.event_date || ""}</p>
+      <p style="color: #333; font-size: 14px; margin: 0 0 8px;">The recipient (${recipientEmail}) has declined the ticket you shared.</p>
+      <p style="color: #333; font-size: 14px; margin: 0 0 24px;">You can share this ticket with someone else from your Ticketek app.</p>
+      <p style="color: #999; font-size: 12px; margin: 0;">Ticketek Pty Limited ABN 92 010 129 110</p>
+    </div>
+  </div>`;
 }

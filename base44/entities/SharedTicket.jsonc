@@ -25,6 +25,14 @@
     "accepted_date": {
       "type": "string",
       "title": "Accepted Date"
+    },
+    "rejected_by": {
+      "type": "string",
+      "title": "Rejected By (recipient email)"
+    },
+    "rejected_date": {
+      "type": "string",
+      "title": "Rejected Date"
     }
   },
   "required": [
@@ -46,23 +54,7 @@
       ]
     },
     "read": true,
-    "update": {
-      "$or": [
-        {
-          "data.owner_email": "{{user.email}}"
-        },
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        },
-        {
-          "user_condition": {
-            "role": "user"
-          }
-        }
-      ]
-    },
+    "update": true,
     "delete": {
       "$or": [
         {
