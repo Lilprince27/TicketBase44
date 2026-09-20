@@ -18,6 +18,15 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const checkAppState = async () => {
+    // Shared ticket pages are fully public — skip auth check entirely to prevent
+    // the SDK from redirecting to the platform's built-in login page
+    if (window.location.pathname.startsWith('/shared-ticket')) {
+      setIsLoadingPublicSettings(false);
+      setIsLoadingAuth(false);
+      setIsAuthenticated(false);
+      return;
+    }
+
     try {
       setIsLoadingPublicSettings(true);
       setAuthError(null);
