@@ -19,12 +19,26 @@ export default function Login() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
+  const [countdown, setCountdown] = useState(600);
 
   useEffect(() => {
     base44.auth.isAuthenticated().then(authed => {
       if (authed) window.location.href = nextUrl;
     });
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountdown(prev => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatTime = (secs) => {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${m}:${String(s).padStart(2, "0")}`;
+  };
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const emailValid = emailRegex.test(email.trim());
@@ -89,6 +103,8 @@ export default function Login() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#fff", color: "#000", fontFamily: "-apple-system, system-ui, sans-serif" }}>
+      {/* Yellow top strip */}
+      <div style={{ background: "#EFC44B", height: 6 }} />
       {/* Navy header */}
       <div style={{ background: TK_NAVY, padding: "14px 18px 12px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
@@ -115,6 +131,11 @@ export default function Login() {
             </div>
           </div>
         </Link>
+      </div>
+
+      {/* Yellow timer banner */}
+      <div style={{ background: "#EFC44B", padding: "10px 18px", textAlign: "center" }}>
+        <span style={{ fontSize: 14, fontWeight: 600, color: "#001f2d" }}>Time remaining {formatTime(countdown)}</span>
       </div>
 
       {/* Form area */}
