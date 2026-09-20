@@ -1,9 +1,10 @@
 import TicketekLogo from "../TicketekLogo";
+import { buildTicketUrl } from "@/lib/ticketUtils";
 
 const YELLOW = "#FFD700";
 
 export default function AppleWalletModal({ ticket, onClose }) {
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${ticket?.serial_number || ticket?.id || "ticket"}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(buildTicketUrl(ticket?.serial_number))}`;
   const eventName = (ticket?.event_name || "").toUpperCase();
   const venue = (ticket?.venue_name || "").toUpperCase();
   const ticketType = (ticket?.ticket_type || "General Admission - Admit").toUpperCase();

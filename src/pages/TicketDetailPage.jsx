@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import AppleWalletModal from "../components/tickets/AppleWalletModal";
 import ShareModal from "../components/tickets/ShareModal";
 import SendTicketModal from "../components/tickets/SendTicketModal";
+import { buildTicketUrl } from "@/lib/ticketUtils";
 
 
 const isAndroid = () => /android/i.test(navigator.userAgent);
@@ -51,7 +52,7 @@ export default function TicketDetailPage() {
     );
   }
 
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${ticket.serial_number}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(buildTicketUrl(ticket.serial_number))}`;
 
   return (
     <div style={{ margin: "0 auto", backgroundColor: "#f2f2f2", minHeight: "100vh", fontFamily: "-apple-system, system-ui, sans-serif", color: "#000", maxWidth: 500 }}>

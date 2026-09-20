@@ -39,6 +39,14 @@ export function generateEventCode(venueName, eventDate, eventName) {
   return `${venueShort}${dateClean}${artistShort}`;
 }
 
+// Build a Ticketek verification URL from a ticket's serial number.
+// Encoding a URL (not a bare number) in the QR makes iOS open it in a browser
+// instead of misinterpreting it as a phone number.
+export function buildTicketUrl(serialNumber) {
+  const serial = (serialNumber || "").trim() || "0";
+  return `https://www.ticketek.com.au/t/${serial}`;
+}
+
 export function generateOrderNumber() {
   const year = new Date().getFullYear().toString().slice(-2);
   const num = Math.floor(10000000 + Math.random() * 90000000).toString();
