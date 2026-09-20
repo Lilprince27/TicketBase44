@@ -8,9 +8,25 @@ const FALLBACK_IMG = "https://images.unsplash.com/photo-1540575467063-178a50c2df
 function formatDate(dateStr) {
   if (!dateStr) return "";
   const d = new Date(dateStr);
-  return d.toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short", year: "numeric" }) +
-    (d.getHours() || d.getMinutes() ? ` ${d.toLocaleTimeString("en-AU", { hour: "numeric", minute: "2-digit" })}` : "");
+  const hasTime = dateStr.includes("T");
+  // Use UTC to avoid timezone shifts — Ticketmaster returns local event time as UTC
+  const datePart = d.toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short", year: "numeric", timeZone: hasTime ? "UTC" : undefined });
+  if (hasTime) {
+    let h = d.getUTCHours();
+    const m = d.getUTCMinutes();
+    const ampm = h >= 12 ? "pm" : "am";
+    h = h % 12 || 12;
+    const timePart = `${h}:${String(m).padStart(2, "0")}${ampm}`;
+    return `${datePart} · ${timePart}`;
+  }
+  return datePart;
 }
+
+// Venue name replacements — venues that have been renamed
+const VENUE_NAME_REPLACEMENTS = {
+  "qudos bank arena": "Afterpay Arena, formerly known as Qudos Bank Arena",
+  "afterpay arena": "Afterpay Arena, formerly known as Qudos Bank Arena",
+};
 
 /**
  * Pick the best image from a Ticketmaster event's image array.
@@ -159,8 +175,11 @@ export default function EventNameSearch({ onSelect, onClear, currentValue }) {
       // Extract presenter/promoter name
       const presenter = e.promoter?.name || e._embedded?.attractions?.[0]?.name || "";
       // Build full venue name: "Marvel Stadium, Docklands, VIC"
+      // Apply venue name replacements for renamed venues
+      const venueNameRaw = venue?.name || "";
+      const venueNameReplaced = VENUE_NAME_REPLACEMENTS[venueNameRaw.toLowerCase()] || venueNameRaw;
       const venueParts = [
-        venue?.name,
+        venueNameReplaced,
         venue?.city?.name,
         venue?.state?.stateCode,
       ].filter(Boolean);
