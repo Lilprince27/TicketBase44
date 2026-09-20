@@ -124,8 +124,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const navigateToLogin = () => {
-    // Use the SDK's redirectToLogin method
-    base44.auth.redirectToLogin(window.location.href);
+    // Redirect to the custom Ticketek-style login page
+    const currentPath = window.location.pathname + window.location.search;
+    window.location.href = `/login?next=${encodeURIComponent(currentPath)}`;
   };
 
   return (

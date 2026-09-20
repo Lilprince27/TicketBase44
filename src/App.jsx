@@ -26,6 +26,7 @@ const CreateTicketPage = lazy(() => import('./pages/CreateTicketPage.jsx'));
 const SubscriptionPage = lazy(() => import('./pages/SubscriptionPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const SharedTicketPage = lazy(() => import('./pages/SharedTicketPage'));
+const LoginPage = lazy(() => import('./pages/Login'));
 
 const PageLoader = () => (
   <div className="fixed inset-0 flex items-center justify-center">
@@ -346,6 +347,13 @@ function AppShell() {
       <Routes>
         <Route path="/shared-ticket/:token" element={<Suspense fallback={<PageLoader />}><SharedTicketPage /></Suspense>} />
       </Routes>
+    );
+  }
+  if (location.pathname === "/login") {
+    return (
+      <Suspense fallback={<PageLoader />}>
+        <LoginPage />
+      </Suspense>
     );
   }
   return <AuthenticatedApp />;
