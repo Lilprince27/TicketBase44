@@ -428,8 +428,13 @@ export function getLocalOverride(query) {
   for (const [key, events] of Object.entries(LOCAL_EVENT_OVERRIDES)) {
     if (normalized.includes(key)) return events;
   }
-  // AFL — return the full upcoming match list when "afl" or any team name is searched
+  // AFL — filter matches by search term (team name, "grand final", etc.)
   if (AFL_KEYWORDS.some(k => normalized.includes(k))) {
+    const filtered = AFL_MATCHES.filter(m =>
+      m.title.toLowerCase().includes(normalized) ||
+      (m.round || "").toLowerCase().includes(normalized)
+    );
+    if (filtered.length > 0) return filtered;
     return AFL_MATCHES;
   }
   // Ticketek events — return all events whose search keys match the query

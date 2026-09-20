@@ -1,32 +1,32 @@
 /**
  * AFL Fixtures 2026-2029 — Full home-and-away seasons + finals.
  * All matches are generated programmatically from team and schedule data.
+ * Each match uses the home team's unique promotional image.
  * No external API is used — everything is local.
  */
 
 const GRAND_FINAL_2026_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/acf18530e_IMG_7336.webp";
 const FINALS_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/48b228ead_generated_image.png";
-const REGULAR_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/6df120aa2_generated_image.png";
 
 const TEAMS = [
-  { name: "Adelaide Crows", venue: "Adelaide Oval" },
-  { name: "Brisbane Lions", venue: "Gabba" },
-  { name: "Carlton", venue: "MCG" },
-  { name: "Collingwood", venue: "MCG" },
-  { name: "Essendon", venue: "MCG" },
-  { name: "Fremantle", venue: "Optus Stadium" },
-  { name: "Geelong Cats", venue: "GMHBA Stadium" },
-  { name: "Gold Coast SUNS", venue: "People First Stadium" },
-  { name: "GWS GIANTS", venue: "ENGIE Stadium" },
-  { name: "Hawthorn", venue: "MCG" },
-  { name: "Melbourne", venue: "MCG" },
-  { name: "North Melbourne", venue: "Marvel Stadium" },
-  { name: "Port Adelaide", venue: "Adelaide Oval" },
-  { name: "Richmond", venue: "MCG" },
-  { name: "St Kilda", venue: "Marvel Stadium" },
-  { name: "Sydney Swans", venue: "SCG" },
-  { name: "West Coast Eagles", venue: "Optus Stadium" },
-  { name: "Western Bulldogs", venue: "Marvel Stadium" },
+  { name: "Adelaide Crows", venue: "Adelaide Oval", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/349cb9465_generated_image.png" },
+  { name: "Brisbane Lions", venue: "Gabba", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/96392b79c_generated_image.png" },
+  { name: "Carlton", venue: "MCG", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/9dfa26c7c_generated_image.png" },
+  { name: "Collingwood", venue: "MCG", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/8d2ad953c_generated_image.png" },
+  { name: "Essendon", venue: "MCG", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/66b8ebf7d_generated_image.png" },
+  { name: "Fremantle", venue: "Optus Stadium", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/4be43193d_generated_image.png" },
+  { name: "Geelong Cats", venue: "GMHBA Stadium", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/9c47cfba2_generated_image.png" },
+  { name: "Gold Coast SUNS", venue: "People First Stadium", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/801148338_generated_image.png" },
+  { name: "GWS GIANTS", venue: "ENGIE Stadium", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/468669c87_generated_image.png" },
+  { name: "Hawthorn", venue: "MCG", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/199ab63f7_generated_image.png" },
+  { name: "Melbourne", venue: "MCG", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/755568e18_generated_image.png" },
+  { name: "North Melbourne", venue: "Marvel Stadium", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/d693eb2a2_generated_image.png" },
+  { name: "Port Adelaide", venue: "Adelaide Oval", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/939ccd4d2_generated_image.png" },
+  { name: "Richmond", venue: "MCG", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/252c0c2ee_generated_image.png" },
+  { name: "St Kilda", venue: "Marvel Stadium", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/010382e50_generated_image.png" },
+  { name: "Sydney Swans", venue: "SCG", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/4b9d42ca0_generated_image.png" },
+  { name: "West Coast Eagles", venue: "Optus Stadium", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/7a52a5d18_generated_image.png" },
+  { name: "Western Bulldogs", venue: "Marvel Stadium", img: "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/a8942c4b5_generated_image.png" },
 ];
 
 const VENUE_LOCATIONS = {
@@ -104,7 +104,7 @@ function generateSeason(year, startDateStr) {
         date: `${formatDate(matchDate)} · ${slot.time}`,
         venue: match.home.venue,
         round: `R${roundIdx + 1}`,
-        img: REGULAR_IMG,
+        img: match.home.img,
       });
     });
   });
@@ -180,6 +180,7 @@ export const AFL_MATCHES = ALL_FIXTURES.map((m, i) => ({
   city: VENUE_LOCATIONS[m.venue]?.split(", ")[0] || "",
   image: m.img,
   local: true,
+  round: m.round,
   localData: {
     event_name: m.title,
     event_date: m.date,
