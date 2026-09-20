@@ -5,6 +5,8 @@
  * short-circuit for specific known events.
  */
 
+import { getFormattedDbEvents, getNflOverride } from "./ticketekEventDatabase";
+
 const OLIVIA_DEAN_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/2433af8ed_IMG_4074.jpeg";
 const NOAH_KAHAN_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/47e6fd2a8_IMG_5079.jpeg";
 const DANIEL_CAESAR_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/7da5b30fc_IMG_5611.jpeg";
@@ -503,7 +505,7 @@ const TICKETEK_LOCAL_EVENTS = [
   { title: "Adelaide United v Công an Hà Nội FC — AFC Champions League Elite", date: "Tue 11 Aug 2026", venue: "Coopers Stadium, Hindmarsh, SA", image: `${TK_CDN}/sfx364359.png`, keys: ["adelaide united", "cong an ha noi"] },
 ];
 
-const TK_LOCAL_FORMATTED = TICKETEK_LOCAL_EVENTS.map((m, i) => ({
+const TK_LOCAL_FORMATTED = [...TICKETEK_LOCAL_EVENTS, ...getFormattedDbEvents()].map((m, i) => ({
   id: `local-tk-${i + 1}`,
   title: m.title,
   date: m.date,
@@ -526,6 +528,9 @@ const TK_LOCAL_FORMATTED = TICKETEK_LOCAL_EVENTS.map((m, i) => ({
  */
 export function getLocalOverride(query) {
   const normalized = query.trim().toLowerCase();
+  // NFL Melbourne Game
+  const nflResult = getNflOverride(query);
+  if (nflResult) return nflResult;
   for (const [key, events] of Object.entries(LOCAL_EVENT_OVERRIDES)) {
     if (normalized.includes(key)) return events;
   }
