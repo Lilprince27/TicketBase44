@@ -33,6 +33,17 @@ const PageLoader = () => (
   </div>
 );
 
+function LoginGate({ navigateToLogin }) {
+  useEffect(() => {
+    navigateToLogin();
+  }, [navigateToLogin]);
+  return (
+    <div className="fixed inset-0 flex items-center justify-center">
+      <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+    </div>
+  );
+}
+
 // Sync system dark mode to the <html> element
 function useDarkMode() {
   useEffect(() => {
@@ -58,7 +69,7 @@ const AuthenticatedApp = () => {
   const [showNameSetup, setShowNameSetup] = useState(false);
   const [showNotifPrompt, setShowNotifPrompt] = useState(false);
   const [maintenanceLocked, setMaintenanceLocked] = useState(false);
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (splashDone && !isLoadingAuth && !authError && !isLoadingPublicSettings) {
@@ -169,6 +180,27 @@ const AuthenticatedApp = () => {
       navigateToLogin();
       return null;
     }
+  }
+
+  // App is public — if user is not logged in, show Events only; gate other routes behind login
+  if (!isAuthenticated && !authError) {
+    return (
+      <>
+        <InstallPrompt />
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Suspense fallback={<PageLoader />}><EventsPage /></Suspense>} />
+            <Route path="/account" element={<LoginGate navigateToLogin={navigateToLogin} />} />
+            <Route path="/tickets" element={<LoginGate navigateToLogin={navigateToLogin} />} />
+            <Route path="/subscriptions" element={<LoginGate navigateToLogin={navigateToLogin} />} />
+            <Route path="/create-ticket" element={<LoginGate navigateToLogin={navigateToLogin} />} />
+            <Route path="/profile" element={<LoginGate navigateToLogin={navigateToLogin} />} />
+          </Route>
+          <Route path="/ticket-detail/:id" element={<LoginGate navigateToLogin={navigateToLogin} />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </>
+    );
   }
 
   if (checkingApproval) {
