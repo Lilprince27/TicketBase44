@@ -32,6 +32,8 @@ export default function SharedTicketPage() {
           setStep("accepted");
         } else if (rec.rejected_by) {
           setStep("rejected");
+        } else if (rec.recipient_email) {
+          setEmail(rec.recipient_email);
         }
       } else {
         setNotFound(true);
@@ -44,6 +46,10 @@ export default function SharedTicketPage() {
 
   const handleLogin = () => {
     if (!emailValid) { setError("Please enter a valid email address."); return; }
+    if (sharedRecord?.recipient_email && email.trim().toLowerCase() !== sharedRecord.recipient_email.trim().toLowerCase()) {
+      setError("This email does not match the email this ticket was sent to.");
+      return;
+    }
     setError("");
     setStep("accept");
   };
@@ -197,8 +203,8 @@ export default function SharedTicketPage() {
       {/* LOGIN STEP */}
       {step === "login" && (
         <div style={{ padding: "20px 18px" }}>
-          <h2 style={{ color: "#fff", fontSize: 24, fontWeight: 800, margin: "0 0 8px" }}>Accept your ticket</h2>
-          <p style={{ color: "#9a9a9a", fontSize: 14, margin: "0 0 24px" }}>Enter your email and password to create your account and accept this ticket.</p>
+          <h2 style={{ color: "#fff", fontSize: 24, fontWeight: 800, margin: "0 0 8px" }}>Log in to accept</h2>
+          <p style={{ color: "#9a9a9a", fontSize: 14, margin: "0 0 24px" }}>Enter the email this ticket was sent to and your password to continue.</p>
 
           <div style={{ marginBottom: 16 }}>
             <label style={{ display: "block", color: "#9a9a9a", fontSize: 12, fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Email</label>
@@ -207,7 +213,7 @@ export default function SharedTicketPage() {
           </div>
           <div style={{ marginBottom: 24 }}>
             <label style={{ display: "block", color: "#9a9a9a", fontSize: 12, fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Password</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Create a password"
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Your password"
               style={{ width: "100%", padding: "14px 16px", borderRadius: 12, background: "#1a1a1a", border: "1px solid #333", color: "#fff", fontSize: 16, outline: "none" }} />
           </div>
 
@@ -215,7 +221,7 @@ export default function SharedTicketPage() {
 
           <button onClick={handleLogin} disabled={!emailValid}
             style={{ width: "100%", padding: "16px 0", borderRadius: 12, background: emailValid ? "#fff" : "#333", color: emailValid ? "#000" : "#666", fontWeight: 700, fontSize: 16, border: "none", cursor: emailValid ? "pointer" : "default" }}>
-            Continue
+            Log in
           </button>
           <button onClick={() => { setStep("preview"); setError(""); }}
             style={{ width: "100%", padding: "14px 0", borderRadius: 12, background: "transparent", color: "#9a9a9a", fontWeight: 600, fontSize: 15, border: "none", cursor: "pointer", marginTop: 8 }}>

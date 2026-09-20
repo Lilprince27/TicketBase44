@@ -14,6 +14,10 @@
       "type": "string",
       "title": "Owner Email"
     },
+    "recipient_email": {
+      "type": "string",
+      "title": "Recipient Email"
+    },
     "event_image": {
       "type": "string",
       "title": "Event Image URL"

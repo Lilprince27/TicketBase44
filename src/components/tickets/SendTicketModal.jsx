@@ -57,6 +57,7 @@ export default function SendTicketModal({ ticket, onClose }) {
         ticket_snapshot: snapshot,
         owner_email: me.email,
         event_image: ticket.event_image || "",
+        recipient_email: email.trim(),
       });
 
       const seatLabel = ticket.seat_number ? "Seat:" : "Admission:";
