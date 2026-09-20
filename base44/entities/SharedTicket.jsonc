@@ -37,6 +37,10 @@
     "rejected_date": {
       "type": "string",
       "title": "Rejected Date"
+    },
+    "claimed_date": {
+      "type": "string",
+      "title": "Claimed Date (when ticket was added to recipient wallet)"
     }
   },
   "required": [

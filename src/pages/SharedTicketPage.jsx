@@ -378,7 +378,7 @@ export default function SharedTicketPage() {
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
             <h2 style={{ color: "#4ade80", fontSize: 20, fontWeight: 800, margin: "0 0 4px" }}>Ticket Accepted!</h2>
-            <p style={{ color: "#9a9a9a", fontSize: 13, margin: 0 }}>This ticket has been added to your wallet ({email}).</p>
+            <p style={{ color: "#9a9a9a", fontSize: 13, margin: 0 }}>Add it to your Apple Wallet below, or sign up with {email} to save it to your Ticketek wallet.</p>
           </div>
           {renderTicketCard()}
           <div style={{ padding: "0 18px 22px" }}>

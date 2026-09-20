@@ -148,6 +148,21 @@ const AuthenticatedApp = () => {
           setApprovalStatus('pending');
         } else {
           setApprovalStatus(records[0].status);
+          // Auto-claim accepted shared tickets into the user's wallet
+          if (records[0].status === 'approved') {
+            try {
+              const shares = await base44.entities.SharedTicket.filter({ accepted_by: me.email });
+              for (const share of shares) {
+                if (share.claimed_date) continue;
+                const ticketData = JSON.parse(share.ticket_snapshot);
+                await base44.entities.Ticket.create({
+                  ...ticketData,
+                  owner_email: me.email,
+                });
+                await base44.entities.SharedTicket.update(share.id, { claimed_date: new Date().toISOString() });
+              }
+            } catch (e) {}
+          }
         }
         setCheckingApproval(false);
       }
