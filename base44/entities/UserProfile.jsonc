@@ -49,6 +49,16 @@
     "telegram_username": {
       "type": "string",
       "title": "Telegram Username"
+    },
+    "email_transfer_quota": {
+      "type": "number",
+      "title": "Email Transfer Quota",
+      "default": 0
+    },
+    "email_transfer_used": {
+      "type": "number",
+      "title": "Email Transfers Used",
+      "default": 0
     }
   },
   "required": [

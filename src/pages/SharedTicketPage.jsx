@@ -71,6 +71,30 @@ export default function SharedTicketPage() {
         accepted_by: email.trim(),
         accepted_date: new Date().toISOString(),
       });
+
+      // Notify the sender that their ticket was accepted
+      try {
+        const html = buildAcceptanceEmailHtml(ticket, email.trim(), rec.owner_email);
+        await base44.integrations.Core.SendEmail({
+          to: rec.owner_email,
+          subject: `Ticket accepted: ${ticket?.event_name || "Shared ticket"}`,
+          body: html,
+        });
+      } catch (e) {}
+
+      // Create history record
+      try {
+        await base44.entities.TicketHistory.create({
+          ticket_id: rec.id,
+          ticket_name: ticket?.event_name || "Shared ticket",
+          owner_email: rec.owner_email,
+          action: "accepted",
+          actor_email: email.trim(),
+          recipient_email: email.trim(),
+          details: `Ticket accepted by ${email.trim()}`,
+        });
+      } catch (e) {}
+
       setSharedRecord({ ...rec, accepted_by: email.trim() });
       setStep("accepted");
     } catch (e) {
@@ -92,6 +116,20 @@ export default function SharedTicketPage() {
         rejected_by: email.trim(),
         rejected_date: new Date().toISOString(),
       });
+
+      // Create history record
+      try {
+        await base44.entities.TicketHistory.create({
+          ticket_id: rec.id,
+          ticket_name: ticket?.event_name || "Shared ticket",
+          owner_email: rec.owner_email,
+          action: "rejected",
+          actor_email: email.trim(),
+          recipient_email: email.trim(),
+          details: `Ticket declined by ${email.trim()}`,
+        });
+      } catch (e) {}
+
       // Notify sender
       try {
         const html = buildRejectionEmailHtml(ticket, email.trim());
@@ -298,6 +336,23 @@ export default function SharedTicketPage() {
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
+}
+
+function buildAcceptanceEmailHtml(ticket, recipientEmail, senderEmail) {
+  return `<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto;">
+    <div style="background: #000; padding: 24px; text-align: center; border-radius: 12px 12px 0 0;">
+      <h2 style="color: #4ade80; margin: 0 0 8px;">Ticket Accepted!</h2>
+      <p style="color: #fff; font-size: 14px; margin: 0;">Your shared ticket has been accepted by the recipient.</p>
+    </div>
+    <div style="background: #fff; padding: 24px; border-radius: 0 0 12px 12px;">
+      <p style="color: #333; font-size: 14px; margin: 0 0 16px;">Hi,</p>
+      <p style="color: #333; font-size: 14px; margin: 0 0 8px;"><strong>${ticket?.event_name || "Event"}</strong></p>
+      <p style="color: #666; font-size: 13px; margin: 0 0 16px;">${ticket?.venue_name || ""} · ${ticket?.event_date || ""}</p>
+      <p style="color: #333; font-size: 14px; margin: 0 0 8px;">Good news! The recipient (${recipientEmail}) has accepted the ticket you shared.</p>
+      <p style="color: #333; font-size: 14px; margin: 0 0 24px;">The ticket has been added to their wallet.</p>
+      <p style="color: #999; font-size: 12px; margin: 0;">Ticketek Pty Limited ABN 92 010 129 110</p>
+    </div>
+  </div>`;
 }
 
 function buildRejectionEmailHtml(ticket, recipientEmail) {

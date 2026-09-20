@@ -1,0 +1,77 @@
+{
+  "name": "TicketHistory",
+  "type": "object",
+  "properties": {
+    "ticket_id": {
+      "type": "string",
+      "title": "Ticket ID"
+    },
+    "ticket_name": {
+      "type": "string",
+      "title": "Event/Ticket Name"
+    },
+    "owner_email": {
+      "type": "string",
+      "title": "Owner Email"
+    },
+    "action": {
+      "type": "string",
+      "title": "Action",
+      "enum": [
+        "created",
+        "transferred",
+        "sent",
+        "accepted",
+        "rejected"
+      ]
+    },
+    "actor_email": {
+      "type": "string",
+      "title": "Actor Email"
+    },
+    "recipient_email": {
+      "type": "string",
+      "title": "Recipient Email"
+    },
+    "details": {
+      "type": "string",
+      "title": "Details"
+    }
+  },
+  "required": [
+    "ticket_name",
+    "owner_email",
+    "action"
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "data.owner_email": "{{user.email}}"
+        },
+        {
+          "data.actor_email": "{{user.email}}"
+        },
+        {
+          "data.recipient_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

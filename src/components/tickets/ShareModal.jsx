@@ -38,8 +38,22 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
     setTransferring(true);
     setError("");
     try {
+      const me = await base44.auth.me();
       // Transfer ticket ownership to recipient
       await base44.entities.Ticket.update(ticket.id, { owner_email: email.trim() });
+
+      // Create history record
+      try {
+        await base44.entities.TicketHistory.create({
+          ticket_id: ticket.id,
+          ticket_name: ticket.event_name,
+          owner_email: me.email,
+          action: "transferred",
+          actor_email: me.email,
+          recipient_email: email.trim(),
+          details: `Transferred to ${email.trim()}`,
+        });
+      } catch (e) {}
 
       // Send premium notification email to recipient
       const emailHtml = buildTransferEmailHtml({
