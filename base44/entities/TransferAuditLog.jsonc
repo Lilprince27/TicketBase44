@@ -1,0 +1,64 @@
+{
+  "name": "TransferAuditLog",
+  "type": "object",
+  "properties": {
+    "transfer_id": {
+      "type": "string",
+      "title": "Transfer Record ID"
+    },
+    "secure_token": {
+      "type": "string",
+      "title": "Transfer Token (for lookup)"
+    },
+    "action": {
+      "type": "string",
+      "title": "Action",
+      "enum": [
+        "created",
+        "accepted",
+        "declined",
+        "cancelled",
+        "expired",
+        "resend"
+      ]
+    },
+    "actor_email": {
+      "type": "string",
+      "title": "Actor Email"
+    },
+    "metadata": {
+      "type": "string",
+      "title": "Metadata (JSON)"
+    }
+  },
+  "required": [
+    "transfer_id",
+    "secure_token",
+    "action"
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "data.actor_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

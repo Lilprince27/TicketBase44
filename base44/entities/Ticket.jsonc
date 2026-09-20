@@ -110,6 +110,20 @@
         "type": "string"
       },
       "title": "Add Ons"
+    },
+    "transfer_status": {
+      "type": "string",
+      "title": "Transfer Status",
+      "enum": [
+        "active",
+        "transferred",
+        "pending_transfer"
+      ],
+      "default": "active"
+    },
+    "active_transfer_id": {
+      "type": "string",
+      "title": "Active Transfer Record ID"
     }
   },
   "required": [

@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import AppleWalletModal from "../components/tickets/AppleWalletModal";
 import ShareModal from "../components/tickets/ShareModal";
 import SendTicketModal from "../components/tickets/SendTicketModal";
+import TransferTicketModal from "../components/tickets/TransferTicketModal";
 import { buildTicketUrl } from "@/lib/ticketUtils";
 
 
@@ -19,11 +20,14 @@ export default function TicketDetailPage() {
   const showWallet = searchParams.get('modal') === 'wallet';
   const showShare = searchParams.get('modal') === 'share';
   const showSend = searchParams.get('modal') === 'send';
+  const showTransfer = searchParams.get('modal') === 'transfer';
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     base44.entities.HideSettings.list().then(list => {
       if (list.length > 0) setHideSettings(list[0]);
     }).catch(() => {});
+    base44.auth.me().then(setCurrentUser).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -187,6 +191,24 @@ export default function TicketDetailPage() {
           Send to email
         </button>
 
+        {/* Transfer ticket - moves ownership to recipient */}
+        {ticket.transfer_status !== "transferred" && (
+          <button
+            onClick={() => setSearchParams({ modal: 'transfer' })}
+            style={{ backgroundColor: "#4e783e", color: "white", width: "100%", border: "none", padding: "12px", fontSize: 17, borderRadius: 4, fontWeight: 600, marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, cursor: "pointer" }}
+          >
+            <svg style={{ width: 24, height: 24 }} viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3"/>
+            </svg>
+            Transfer ticket
+          </button>
+        )}
+        {ticket.transfer_status === "transferred" && (
+          <div style={{ background: "#f0f0f0", borderRadius: 4, padding: "10px 12px", marginBottom: 10, textAlign: "center", fontSize: 14, color: "#666", fontWeight: 600 }}>
+            This ticket has been transferred
+          </div>
+        )}
+
         {/* Wallet button - switches between Apple/Google based on OS */}
         {!hideSettings.hide_wallet_button && (
           isAndroid() ? (
@@ -217,6 +239,9 @@ export default function TicketDetailPage() {
       </div>
 
 
+      {showTransfer && currentUser && (
+        <TransferTicketModal ticket={ticket} user={currentUser} onClose={() => navigate(-1)} />
+      )}
     </div>
   );
 }

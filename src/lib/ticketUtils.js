@@ -56,6 +56,19 @@ export function buildShareUrl(token) {
   return `${APP_BASE_URL}/shared-ticket/${token}`;
 }
 
+export function buildTransferUrl(token) {
+  return `${APP_BASE_URL}/transfer/${token}`;
+}
+
+export function generateSecureToken() {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let token = "";
+  for (let i = 0; i < 32; i++) {
+    token += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return token;
+}
+
 export function generateOrderNumber() {
   const year = new Date().getFullYear().toString().slice(-2);
   const num = Math.floor(10000000 + Math.random() * 90000000).toString();

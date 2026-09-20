@@ -15,6 +15,7 @@ import TicketTransferSettingsPanel from "../components/subscriptions/TicketTrans
 import HideSettingsPanel from "../components/subscriptions/HideSettingsPanel.jsx";
 import AdminAuthCodesPanel from "../components/subscriptions/AdminAuthCodesPanel.jsx";
 import AdminEmailTransferPanel from "../components/subscriptions/AdminEmailTransferPanel.jsx";
+import AdminTransferPanel from "../components/subscriptions/AdminTransferPanel.jsx";
 import TicketHistoryLog from "../components/tickets/TicketHistoryLog.jsx";
 
 export default function SubscriptionPage() {
@@ -230,6 +231,7 @@ export default function SubscriptionPage() {
         {isAdmin && <LifetimeSubscriptionPanel />}
         {isAdmin && <ProSubscriptionPanel />}
         {isAdmin && <AdminEmailTransferPanel />}
+        {isAdmin && <AdminTransferPanel />}
         <TicketTransferSettingsPanel />
         <HideSettingsPanel />
         <TicketHistoryLog userEmail={user?.email} />
