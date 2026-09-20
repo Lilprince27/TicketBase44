@@ -53,7 +53,7 @@ function TicketGroup({ group, onWallet }) {
         />
         <div style={{ flex: 1 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "space-between" }}>
-            <h2 style={{ fontSize: 16, margin: 0, fontWeight: 700 }}>{first.event_name}</h2>
+            <h2 style={{ fontSize: 16, margin: 0, fontWeight: 700, color: "#111" }}>{first.event_name}</h2>
             {/* Collapse toggle next to event name */}
             <button
               onClick={() => setExpanded(e => !e)}
@@ -62,7 +62,7 @@ function TicketGroup({ group, onWallet }) {
               {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
           </div>
-          <p style={{ fontSize: 13, margin: "2px 0", fontWeight: 600 }}>{first.event_date || "-"}</p>
+          <p style={{ fontSize: 13, margin: "2px 0", fontWeight: 600, color: "#111" }}>{first.event_date || "-"}</p>
           <p style={{ fontSize: 13, margin: 0, color: "#666" }}>{first.venue_name}</p>
           {first.add_ons && first.add_ons.length > 0 && first.add_ons.map((addon, i) => (
             <p key={i} style={{ fontSize: 11, margin: "2px 0 0", color: "#888" }}>Ticket includes {addon}</p>

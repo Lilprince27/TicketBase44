@@ -158,10 +158,17 @@ export default function EventNameSearch({ onSelect, onClear, currentValue }) {
       const image = pickBestImage(e.images);
       // Extract presenter/promoter name
       const presenter = e.promoter?.name || e._embedded?.attractions?.[0]?.name || "";
+      // Build full venue name: "Marvel Stadium, Docklands, VIC"
+      const venueParts = [
+        venue?.name,
+        venue?.city?.name,
+        venue?.state?.stateCode,
+      ].filter(Boolean);
+      const fullVenue = venueParts.length > 0 ? venueParts.join(", ") : (venue ? venue.name : event.venue);
       const data = {
         event_name: e.name || event.title,
         event_date: formatDate(e.dates?.start?.dateTime || e.dates?.start?.localDate),
-        venue_name: venue ? venue.name : event.venue,
+        venue_name: fullVenue,
         event_image_url: image,
         presenter: presenter,
       };

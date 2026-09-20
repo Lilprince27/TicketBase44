@@ -23,7 +23,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Olivia Dean",
         event_date: "Mon 5 Oct 2026 6:00pm",
-        venue_name: "Rod Laver Arena",
+        venue_name: "Rod Laver Arena, Melbourne, VIC",
         event_image_url: OLIVIA_DEAN_IMAGE,
         presenter: "Frontier Touring",
       },
@@ -39,7 +39,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Olivia Dean",
         event_date: "Tue 6 Oct 2026 6:00pm",
-        venue_name: "Rod Laver Arena",
+        venue_name: "Rod Laver Arena, Melbourne, VIC",
         event_image_url: OLIVIA_DEAN_IMAGE,
         presenter: "Frontier Touring",
       },
@@ -55,7 +55,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Olivia Dean",
         event_date: "Fri 9 Oct 2026 7:00pm",
-        venue_name: "Qudos Bank Arena",
+        venue_name: "Qudos Bank Arena, Sydney Olympic Park, NSW",
         event_image_url: OLIVIA_DEAN_IMAGE,
         presenter: "Frontier Touring",
       },
@@ -71,7 +71,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Olivia Dean",
         event_date: "Sat 10 Oct 2026 7:00pm",
-        venue_name: "Qudos Bank Arena",
+        venue_name: "Qudos Bank Arena, Sydney Olympic Park, NSW",
         event_image_url: OLIVIA_DEAN_IMAGE,
         presenter: "Frontier Touring",
       },
@@ -87,7 +87,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Olivia Dean",
         event_date: "Tue 13 Oct 2026 7:30pm",
-        venue_name: "Brisbane Entertainment Centre",
+        venue_name: "Brisbane Entertainment Centre, Brisbane, QLD",
         event_image_url: OLIVIA_DEAN_IMAGE,
         presenter: "Frontier Touring",
       },
@@ -105,7 +105,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Noah Kahan",
         event_date: "Fri 25 Sep 2026 7:30pm",
-        venue_name: "Rod Laver Arena",
+        venue_name: "Rod Laver Arena, Melbourne, VIC",
         event_image_url: NOAH_KAHAN_IMAGE,
         presenter: "Live Nation",
       },
@@ -121,7 +121,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Noah Kahan",
         event_date: "Sat 26 Sep 2026 7:30pm",
-        venue_name: "Rod Laver Arena",
+        venue_name: "Rod Laver Arena, Melbourne, VIC",
         event_image_url: NOAH_KAHAN_IMAGE,
         presenter: "Live Nation",
       },
@@ -137,7 +137,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Noah Kahan",
         event_date: "Mon 28 Sep 2026 7:30pm",
-        venue_name: "Rod Laver Arena",
+        venue_name: "Rod Laver Arena, Melbourne, VIC",
         event_image_url: NOAH_KAHAN_IMAGE,
         presenter: "Live Nation",
       },
@@ -153,7 +153,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Noah Kahan",
         event_date: "Tue 29 Sep 2026 7:30pm",
-        venue_name: "Rod Laver Arena",
+        venue_name: "Rod Laver Arena, Melbourne, VIC",
         event_image_url: NOAH_KAHAN_IMAGE,
         presenter: "Live Nation",
       },
@@ -169,7 +169,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Noah Kahan",
         event_date: "Fri 2 Oct 2026 8:00pm",
-        venue_name: "Qudos Bank Arena",
+        venue_name: "Qudos Bank Arena, Sydney Olympic Park, NSW",
         event_image_url: NOAH_KAHAN_IMAGE,
         presenter: "Live Nation",
       },
@@ -185,7 +185,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Noah Kahan",
         event_date: "Sat 3 Oct 2026 8:00pm",
-        venue_name: "Qudos Bank Arena",
+        venue_name: "Qudos Bank Arena, Sydney Olympic Park, NSW",
         event_image_url: NOAH_KAHAN_IMAGE,
         presenter: "Live Nation",
       },
@@ -201,7 +201,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Noah Kahan",
         event_date: "Mon 5 Oct 2026 8:00pm",
-        venue_name: "Qudos Bank Arena",
+        venue_name: "Qudos Bank Arena, Sydney Olympic Park, NSW",
         event_image_url: NOAH_KAHAN_IMAGE,
         presenter: "Live Nation",
       },
@@ -217,7 +217,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Noah Kahan",
         event_date: "Tue 6 Oct 2026 8:00pm",
-        venue_name: "Qudos Bank Arena",
+        venue_name: "Qudos Bank Arena, Sydney Olympic Park, NSW",
         event_image_url: NOAH_KAHAN_IMAGE,
         presenter: "Live Nation",
       },
@@ -235,7 +235,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Hilary Duff",
         event_date: "Thu 22 Oct 2026 7:00pm",
-        venue_name: "Brisbane Entertainment Centre",
+        venue_name: "Brisbane Entertainment Centre, Brisbane, QLD",
         event_image_url: HILARY_DUFF_IMAGE,
         presenter: "Frontier Touring",
       },
@@ -251,7 +251,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Hilary Duff",
         event_date: "Sat 24 Oct 2026 7:00pm",
-        venue_name: "Afterpay Arena",
+        venue_name: "Afterpay Arena, Sydney Olympic Park, NSW",
         event_image_url: HILARY_DUFF_IMAGE,
         presenter: "Frontier Touring",
       },
@@ -267,7 +267,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Hilary Duff",
         event_date: "Mon 26 Oct 2026 - Tue 27 Oct 2026 7:00pm",
-        venue_name: "Rod Laver Arena",
+        venue_name: "Rod Laver Arena, Melbourne, VIC",
         event_image_url: HILARY_DUFF_IMAGE,
         presenter: "Frontier Touring",
       },
@@ -283,7 +283,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Hilary Duff",
         event_date: "Thu 29 Oct 2026 7:00pm",
-        venue_name: "RAC Arena",
+        venue_name: "RAC Arena, Perth, WA",
         event_image_url: HILARY_DUFF_IMAGE,
         presenter: "Frontier Touring",
       },
@@ -301,7 +301,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Daniel Caesar",
         event_date: "Sun 8 Nov 2026 7:00pm",
-        venue_name: "Rod Laver Arena",
+        venue_name: "Rod Laver Arena, Melbourne, VIC",
         event_image_url: DANIEL_CAESAR_IMAGE,
         presenter: "Frontier Touring",
       },
@@ -317,7 +317,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Daniel Caesar",
         event_date: "Mon 9 Nov 2026 7:00pm",
-        venue_name: "Rod Laver Arena",
+        venue_name: "Rod Laver Arena, Melbourne, VIC",
         event_image_url: DANIEL_CAESAR_IMAGE,
         presenter: "Frontier Touring",
       },
@@ -333,7 +333,7 @@ export const LOCAL_EVENT_OVERRIDES = {
       localData: {
         event_name: "Daniel Caesar",
         event_date: "Thu 12 Nov 2026 8:00pm",
-        venue_name: "Brisbane Entertainment Centre",
+        venue_name: "Brisbane Entertainment Centre, Brisbane, QLD",
         event_image_url: DANIEL_CAESAR_IMAGE,
         presenter: "Frontier Touring",
       },
@@ -397,18 +397,32 @@ const AFL_FIXTURES = [
   { title: "West Coast Eagles vs Hawthorn", date: "Mon 24 Aug 2026 6:10pm", venue: "Optus Stadium" },
 ];
 
+const AFL_VENUE_LOCATIONS = {
+  "Adelaide Oval": "Adelaide, SA",
+  "MCG": "Melbourne, VIC",
+  "Optus Stadium": "Perth, WA",
+  "Marvel Stadium": "Docklands, VIC",
+  "Gabba": "Brisbane, QLD",
+  "SCG": "Sydney, NSW",
+  "GMHBA Stadium": "Geelong, VIC",
+  "ENGIE Stadium": "Sydney Olympic Park, NSW",
+  "People First Stadium": "Gold Coast, QLD",
+  "UTAS Stadium": "Launceston, TAS",
+  "Corroboree Group Oval Manuka": "Canberra, ACT",
+};
+
 export const AFL_MATCHES = AFL_FIXTURES.map((m, i) => ({
   id: `local-afl-${i + 1}`,
   title: m.title,
   date: m.date,
   venue: m.venue,
-  city: "",
+  city: AFL_VENUE_LOCATIONS[m.venue]?.split(", ")[0] || "",
   image: AFL_IMAGE,
   local: true,
   localData: {
     event_name: m.title,
     event_date: m.date,
-    venue_name: m.venue,
+    venue_name: AFL_VENUE_LOCATIONS[m.venue] ? `${m.venue}, ${AFL_VENUE_LOCATIONS[m.venue]}` : m.venue,
     event_image_url: AFL_IMAGE,
     presenter: "AFL",
   },
