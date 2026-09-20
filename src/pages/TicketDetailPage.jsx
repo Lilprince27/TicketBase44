@@ -180,35 +180,6 @@ export default function TicketDetailPage() {
           </button>
         )}
 
-        {/* Send to any email - secure link + PDF (no transfer, no registration required) */}
-        <button
-          onClick={() => setSearchParams({ modal: 'send' })}
-          style={{ backgroundColor: "#003057", color: "white", width: "100%", border: "none", padding: "12px", fontSize: 17, borderRadius: 4, fontWeight: 600, marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, cursor: "pointer" }}
-        >
-          <svg style={{ width: 26, height: 26 }} viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/>
-          </svg>
-          Send to email
-        </button>
-
-        {/* Transfer ticket - moves ownership to recipient */}
-        {ticket.transfer_status !== "transferred" && (
-          <button
-            onClick={() => setSearchParams({ modal: 'transfer' })}
-            style={{ backgroundColor: "#4e783e", color: "white", width: "100%", border: "none", padding: "12px", fontSize: 17, borderRadius: 4, fontWeight: 600, marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, cursor: "pointer" }}
-          >
-            <svg style={{ width: 24, height: 24 }} viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17 1l4 4-4 4M3 11V9a4 4 0 014-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 01-4 4H3"/>
-            </svg>
-            Transfer ticket
-          </button>
-        )}
-        {ticket.transfer_status === "transferred" && (
-          <div style={{ background: "#f0f0f0", borderRadius: 4, padding: "10px 12px", marginBottom: 10, textAlign: "center", fontSize: 14, color: "#666", fontWeight: 600 }}>
-            This ticket has been transferred
-          </div>
-        )}
-
         {/* Wallet button - switches between Apple/Google based on OS */}
         {!hideSettings.hide_wallet_button && (
           isAndroid() ? (

@@ -20,6 +20,7 @@ const ACTION_COLORS = {
 export default function TicketHistoryLog({ userEmail }) {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     if (!userEmail) return;
@@ -40,6 +41,19 @@ export default function TicketHistoryLog({ userEmail }) {
     }
     load();
   }, [userEmail]);
+
+  const handleDelete = async (id) => {
+    if (deletingId) return;
+    setDeletingId(id);
+    try {
+      await base44.entities.TicketHistory.delete(id);
+      setHistory(prev => prev.filter(h => h.id !== id));
+    } catch (e) {
+      // ignore
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -78,6 +92,20 @@ export default function TicketHistoryLog({ userEmail }) {
                 {h.details && <p className="text-xs text-gray-400 mt-0.5">{h.details}</p>}
                 <p className="text-xs text-gray-400 mt-0.5">{dateStr} · {timeStr}</p>
               </div>
+              <button
+                onClick={() => handleDelete(h.id)}
+                disabled={deletingId === h.id}
+                className="flex-shrink-0 mt-0.5 p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors disabled:opacity-40"
+                title="Delete from history"
+              >
+                {deletingId === h.id ? (
+                  <div className="w-3.5 h-3.5 border border-gray-300 border-t-gray-500 rounded-full animate-spin" />
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                )}
+              </button>
             </div>
           );
         })}
