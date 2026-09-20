@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { buildPurchaseConfirmationHtml } from "@/lib/purchaseConfirmationEmail";
+import { buildShareUrl } from "@/lib/ticketUtils";
 
 function makeToken() {
   const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -40,7 +41,7 @@ export default function SendTicketModal({ ticket, onClose }) {
     try {
       const me = await base44.auth.me();
       const token = makeToken();
-      const url = `${window.location.origin}/shared-ticket/${token}`;
+      const url = buildShareUrl(token);
       const recipientName = name.trim() || email.split("@")[0];
       const snapshot = JSON.stringify({
         event_name: ticket.event_name, venue_name: ticket.venue_name, presenter: ticket.presenter,

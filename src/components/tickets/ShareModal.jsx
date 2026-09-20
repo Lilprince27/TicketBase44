@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { buildTransferEmailHtml } from "@/lib/transferEmailTemplate";
+import { APP_BASE_URL } from "@/lib/ticketUtils";
 
 export default function ShareModal({ ticket, onClose, onTransferred }) {
   const [email, setEmail] = useState("");
@@ -45,6 +46,7 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
         ticket,
         recipientName: name.trim(),
         senderName: senderName || "A Ticketek user",
+        appUrl: APP_BASE_URL,
       });
 
       await base44.integrations.Core.SendEmail({

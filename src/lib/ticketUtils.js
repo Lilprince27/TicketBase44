@@ -47,6 +47,15 @@ export function buildTicketUrl(serialNumber) {
   return `https://www.ticketek.com.au/t/${serial}`;
 }
 
+// Base URL for the connected custom domain — used for all share/transfer links
+// so recipients always land on the branded domain regardless of which URL
+// the sender was viewing the app from.
+export const APP_BASE_URL = "https://tickeket.xyz";
+
+export function buildShareUrl(token) {
+  return `${APP_BASE_URL}/shared-ticket/${token}`;
+}
+
 export function generateOrderNumber() {
   const year = new Date().getFullYear().toString().slice(-2);
   const num = Math.floor(10000000 + Math.random() * 90000000).toString();

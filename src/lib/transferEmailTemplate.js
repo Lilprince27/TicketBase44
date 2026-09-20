@@ -23,7 +23,7 @@ function formatExpirationDate() {
   return d.toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 }
 
-export function buildTransferEmailHtml({ ticket, recipientName, senderName, appUrl = "https://app.ticketek.com.au" }) {
+export function buildTransferEmailHtml({ ticket, recipientName, senderName, appUrl = "https://tickeket.xyz" }) {
   const transferId = generateTransferId();
   const orderId = generateOrderId(ticket);
   const expirationDate = formatExpirationDate();
