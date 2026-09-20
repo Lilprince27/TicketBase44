@@ -3,8 +3,13 @@ import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { buildTicketUrl } from "@/lib/ticketUtils";
 import AppleWalletModal from "@/components/tickets/AppleWalletModal";
+import TicketekLogo from "@/components/TicketekLogo";
 
 const YELLOW = "#F8E71C";
+const TK_NAVY = "#001f2d";
+const TK_YELLOW = "#fecb3e";
+const TK_GREEN = "#4e783e";
+const TK_DARK_BLUE = "#002d5c";
 
 export default function SharedTicketPage() {
   const { token } = useParams();
@@ -18,6 +23,7 @@ export default function SharedTicketPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [showWallet, setShowWallet] = useState(false);
+  const [countdown, setCountdown] = useState(600); // 10 minutes in seconds
 
   useEffect(() => {
     if (!token) { setNotFound(true); setLoading(false); return; }
@@ -40,6 +46,20 @@ export default function SharedTicketPage() {
       }
     }).catch(() => setNotFound(true)).finally(() => setLoading(false));
   }, [token]);
+
+  useEffect(() => {
+    if (step !== "login") return;
+    const interval = setInterval(() => {
+      setCountdown(prev => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [step]);
+
+  const formatTime = (secs) => {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${m}:${String(s).padStart(2, "0")}`;
+  };
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const emailValid = emailRegex.test(email.trim());
@@ -238,33 +258,88 @@ export default function SharedTicketPage() {
         </>
       )}
 
-      {/* LOGIN STEP */}
+      {/* LOGIN STEP — Ticketek-style login page */}
       {step === "login" && (
-        <div style={{ padding: "20px 18px" }}>
-          <h2 style={{ color: "#fff", fontSize: 24, fontWeight: 800, margin: "0 0 8px" }}>Log in to accept</h2>
-          <p style={{ color: "#9a9a9a", fontSize: 14, margin: "0 0 24px" }}>Enter the email this ticket was sent to and your password to continue.</p>
-
-          <div style={{ marginBottom: 16 }}>
-            <label style={{ display: "block", color: "#9a9a9a", fontSize: 12, fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Email</label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com"
-              style={{ width: "100%", padding: "14px 16px", borderRadius: 12, background: "#1a1a1a", border: "1px solid #333", color: "#fff", fontSize: 16, outline: "none" }} />
+        <div style={{ minHeight: "100vh", background: "#fff", color: "#000", fontFamily: "-apple-system, system-ui, sans-serif" }}>
+          {/* Navy header */}
+          <div style={{ background: TK_NAVY, padding: "14px 18px 12px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+              <TicketekLogo size={24} variant="white" />
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.5">
+                  <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.5">
+                  <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+              </div>
+            </div>
+            {/* Search bar */}
+            <div style={{ display: "flex", alignItems: "center", background: "#fff", borderRadius: 4, overflow: "hidden" }}>
+              <input type="text" placeholder="Look up shows by artist, city, or venue..." readOnly
+                style={{ flex: 1, padding: "10px 14px", border: "none", outline: "none", fontSize: 14, color: "#333", background: "transparent" }} />
+              <button style={{ background: "#e9e9e9", border: "none", padding: "10px 14px", cursor: "default", display: "flex", alignItems: "center" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+              </button>
+            </div>
           </div>
-          <div style={{ marginBottom: 24 }}>
-            <label style={{ display: "block", color: "#9a9a9a", fontSize: 12, fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Password</label>
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Your password"
-              style={{ width: "100%", padding: "14px 16px", borderRadius: 12, background: "#1a1a1a", border: "1px solid #333", color: "#fff", fontSize: 16, outline: "none" }} />
+
+          {/* Yellow timer banner */}
+          <div style={{ background: TK_YELLOW, padding: "10px 18px", textAlign: "center" }}>
+            <span style={{ fontSize: 14, fontWeight: 600, color: "#000" }}>Time remaining {formatTime(countdown)}</span>
           </div>
 
-          {error && <p style={{ fontSize: 13, color: "#ef4444", textAlign: "center", margin: "0 0 16px" }}>{error}</p>}
+          {/* Sign in form */}
+          <div style={{ padding: "32px 24px 0" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 24 }}>
+              <h2 style={{ fontSize: 28, fontWeight: 700, color: "#000", margin: 0 }}>Sign in</h2>
+              <span style={{ fontSize: 13, color: "#666" }}>*Required</span>
+            </div>
 
-          <button onClick={handleLogin} disabled={!emailValid}
-            style={{ width: "100%", padding: "16px 0", borderRadius: 12, background: emailValid ? "#fff" : "#333", color: emailValid ? "#000" : "#666", fontWeight: 700, fontSize: 16, border: "none", cursor: emailValid ? "pointer" : "default" }}>
-            Log in
-          </button>
-          <button onClick={() => { setStep("preview"); setError(""); }}
-            style={{ width: "100%", padding: "14px 0", borderRadius: 12, background: "transparent", color: "#9a9a9a", fontWeight: 600, fontSize: 15, border: "none", cursor: "pointer", marginTop: 8 }}>
-            Back
-          </button>
+            {/* Email field */}
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: "block", fontSize: 14, fontWeight: 500, color: "#333", marginBottom: 6 }}>Email*</label>
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder=""
+                style={{ width: "100%", padding: "14px 16px", borderRadius: 4, border: "1px solid #ccc", color: "#000", fontSize: 16, outline: "none", boxSizing: "border-box" }} />
+            </div>
+
+            {/* Password field */}
+            <div style={{ marginBottom: 28 }}>
+              <label style={{ display: "block", fontSize: 14, fontWeight: 500, color: "#333", marginBottom: 6 }}>Password*</label>
+              <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder=""
+                style={{ width: "100%", padding: "14px 16px", borderRadius: 4, border: "1px solid #ccc", color: "#000", fontSize: 16, outline: "none", boxSizing: "border-box" }} />
+            </div>
+
+            {error && <p style={{ fontSize: 13, color: "#ef4444", textAlign: "center", margin: "0 0 16px" }}>{error}</p>}
+
+            {/* Sign in button */}
+            <button onClick={handleLogin} disabled={!emailValid}
+              style={{ width: "100%", padding: "16px 0", borderRadius: 4, background: emailValid ? TK_GREEN : "#9cb89a", color: "#fff", fontWeight: 700, fontSize: 17, border: "none", cursor: emailValid ? "pointer" : "default", letterSpacing: 0.5 }}>
+              Sign In
+            </button>
+
+            {/* Reset password link */}
+            <div style={{ textAlign: "center", marginTop: 20 }}>
+              <span style={{ color: TK_DARK_BLUE, fontSize: 15, fontWeight: 500, cursor: "pointer", textDecoration: "underline" }}>Reset Password</span>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div style={{ padding: "40px 24px 30px", textAlign: "center" }}>
+            <p style={{ fontSize: 12, color: "#666", lineHeight: 1.6, margin: 0 }}>
+              We treat your personal data with care. Please find our Privacy Policy here.
+            </p>
+          </div>
+
+          {/* Back link */}
+          <div style={{ padding: "0 24px 30px", textAlign: "center" }}>
+            <button onClick={() => { setStep("preview"); setError(""); }}
+              style={{ background: "transparent", color: TK_DARK_BLUE, fontSize: 14, fontWeight: 500, border: "none", cursor: "pointer" }}>
+              ← Back to ticket
+            </button>
+          </div>
         </div>
       )}
 
