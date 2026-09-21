@@ -5,7 +5,7 @@
  * No external API is used — everything is local.
  */
 
-const GRAND_FINAL_2026_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/acf18530e_IMG_7336.webp";
+const GRAND_FINAL_2026_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/802ed3aea_IMG_7358.jpeg";
 const FINALS_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/48b228ead_generated_image.png";
 
 const TEAMS = [
@@ -122,7 +122,7 @@ const FINALS_2026 = [
   { title: "Collingwood vs Geelong Cats", date: "Sat 12 Sep 2026 · 7:30pm", venue: "MCG", round: "Semi Final 2", img: FINALS_IMG },
   { title: "Fremantle vs Collingwood", date: "Fri 18 Sep 2026 · 7:50pm", venue: "Optus Stadium", round: "Preliminary Final 1", img: FINALS_IMG },
   { title: "Brisbane Lions vs Geelong Cats", date: "Sat 19 Sep 2026 · 4:35pm", venue: "Gabba", round: "Preliminary Final 2", img: FINALS_IMG },
-  { title: "Fremantle Dockers vs Brisbane Lions", date: "Sat 26 Sep 2026 · 2:30pm", venue: "MCG", round: "Grand Final", img: GRAND_FINAL_2026_IMG },
+  { title: "Toyota AFL Grand Final 2026", date: "Sat 26 Sep 2026 · 2:30pm", venue: "MCG", round: "Grand Final", img: GRAND_FINAL_2026_IMG },
 ];
 
 const FINALS_2027 = [
