@@ -7,6 +7,7 @@ import {
   generateSellerId, generatePurchaseDate, generateEventCode, generateOrderNumber,
 } from "../lib/ticketUtils";
 import EventNameSearch from "../components/events/EventNameSearch";
+import ExistingEventPicker from "../components/tickets/ExistingEventPicker";
 import { buildPurchaseConfirmationHtml } from "../lib/purchaseConfirmationEmail";
 
 const PRESENTERS = [
@@ -90,6 +91,7 @@ export default function CreateTicketPage() {
   const [importing, setImporting] = useState(false);
   const [importStatus, setImportStatus] = useState("");
   const importFileRef = useRef(null);
+  const [showExistingEventPicker, setShowExistingEventPicker] = useState(false);
 
   const urlParams = new URLSearchParams(window.location.search);
 
@@ -221,6 +223,24 @@ export default function CreateTicketPage() {
     setSelectedAddons(prev => prev.includes(item) ? prev.filter(a => a !== item) : [...prev, item]);
   };
 
+  const handleSelectExistingEvent = (evt) => {
+    setForm(prev => ({
+      ...prev,
+      event_name: evt.event_name || prev.event_name,
+      venue_name: evt.venue_name || prev.venue_name,
+      event_date: evt.event_date || prev.event_date,
+      presenter: evt.presenter || prev.presenter,
+      entry_gate: evt.entry_gate || prev.entry_gate,
+      level_stand: evt.level_stand || prev.level_stand,
+      door_area: evt.door_area || prev.door_area,
+      section_bay: evt.section_bay || prev.section_bay,
+      ticket_type: evt.ticket_type || prev.ticket_type,
+      price: evt.price || prev.price,
+    }));
+    if (evt.event_image) { setPrefilledImageUrl(evt.event_image); setImagePreview(evt.event_image); setImageFile(null); }
+    setShowExistingEventPicker(false);
+  };
+
   const sendConfirmationEmail = async (ticket, me, orderNumber, seatsList) => {
     const displayName = me.display_name || me.full_name || me.email || "";
     // Build seat display based on actual seat numbers
@@ -348,6 +368,16 @@ export default function CreateTicketPage() {
 
         {/* Section 1: Event Info */}
         <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4">1. Event Information</h3>
+
+        {/* Add to existing event */}
+        <button
+          type="button"
+          onClick={() => setShowExistingEventPicker(true)}
+          className="w-full py-3 rounded-lg border-2 border-dashed border-blue-300 text-blue-600 text-sm font-semibold mb-4 bg-blue-50/50 cursor-pointer flex items-center justify-center gap-2"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add to Existing Event
+        </button>
 
         {/* Venue Name */}
         <div className="mb-4">
@@ -679,6 +709,15 @@ export default function CreateTicketPage() {
             ))}
           </div>
         </div>
+      )}
+
+      {/* Existing Event Picker */}
+      {showExistingEventPicker && (
+        <ExistingEventPicker
+          userEmail={user?.email}
+          onSelect={handleSelectExistingEvent}
+          onClose={() => setShowExistingEventPicker(false)}
+        />
       )}
 
       {/* Compass Stand sub-sheet */}
