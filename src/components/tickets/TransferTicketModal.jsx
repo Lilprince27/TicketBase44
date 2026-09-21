@@ -90,25 +90,59 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
   };
 
   const handleCancelTransfer = async () => {
-    // Allow sender to cancel a pending transfer
+    // Allow sender to cancel a pending or accepted transfer
     try {
-      const transfers = await base44.entities.TicketTransfer.filter({
-        secure_token: transferUrl.split("/transfer/")[1],
-        status: "pending",
+      const token = transferUrl.split("/transfer/")[1];
+      const transfers = await base44.entities.TicketTransfer.filter({ secure_token: token });
+      const rec = transfers[0];
+      if (!rec) { onClose(); return; }
+      await base44.entities.TicketTransfer.update(rec.id, {
+        status: "cancelled",
+        cancelled_at: new Date().toISOString(),
       });
-      if (transfers.length > 0) {
-        await base44.entities.TicketTransfer.update(transfers[0].id, {
-          status: "cancelled",
-          cancelled_at: new Date().toISOString(),
-        });
-        await base44.entities.TransferAuditLog.create({
-          transfer_id: transfers[0].id,
-          secure_token: transfers[0].secure_token,
+      await base44.entities.TransferAuditLog.create({
+        transfer_id: rec.id,
+        secure_token: rec.secure_token,
+        action: "cancelled",
+        actor_email: user.email,
+        metadata: JSON.stringify({ previous_status: rec.status }),
+      });
+      try {
+        await base44.entities.TicketHistory.create({
+          ticket_name: ticket.event_name,
+          owner_email: user.email,
           action: "cancelled",
           actor_email: user.email,
-          metadata: "{}",
+          recipient_email: rec.recipient_email,
+          details: `Transfer cancelled by sender (was ${rec.status})`,
         });
-      }
+      } catch (e) {}
+      // Send cancellation email to recipient
+      try {
+        const html = `<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto;">
+          <div style="background: #001f2d; padding: 24px; text-align: center; border-radius: 12px 12px 0 0;">
+            <h2 style="color: #fff; margin: 0 0 8px;">Ticket Transfer Cancelled</h2>
+            <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin: 0;">The sender has cancelled this ticket transfer.</p>
+          </div>
+          <div style="background: #fff; padding: 24px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 12px 12px;">
+            <div style="background: #f8f9fa; border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+              <p style="color: #001f2d; font-size: 18px; font-weight: 700; margin: 0 0 8px;">${ticket.event_name || "Event"}</p>
+              <p style="color: #666; font-size: 14px; margin: 0 0 4px;"><strong>Date:</strong> ${ticket.event_date || "TBD"}</p>
+              <p style="color: #666; font-size: 14px; margin: 0;"><strong>Venue:</strong> ${ticket.venue_name || "TBD"}</p>
+            </div>
+            <p style="color: #333; font-size: 14px; margin: 0 0 16px; line-height: 1.5;">
+              The ticket transfer from ${user.email} has been cancelled. The transfer link is no longer valid.
+            </p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+            <p style="color: #999; font-size: 12px; margin: 0;">Ticketek Pty Limited ABN 92 010 129 110</p>
+          </div>
+        </div>`;
+        await base44.integrations.Core.SendEmail({
+          to: rec.recipient_email,
+          subject: `Ticket transfer cancelled: ${ticket.event_name || "Ticket"}`,
+          body: html,
+        });
+      } catch (e) {}
     } catch (e) {}
     onClose();
   };

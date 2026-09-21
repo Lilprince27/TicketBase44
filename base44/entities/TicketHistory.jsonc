@@ -22,7 +22,8 @@
         "transferred",
         "sent",
         "accepted",
-        "rejected"
+        "rejected",
+        "cancelled"
       ]
     },
     "actor_email": {

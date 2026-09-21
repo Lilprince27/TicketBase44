@@ -17,6 +17,7 @@ import AdminAuthCodesPanel from "../components/subscriptions/AdminAuthCodesPanel
 import AdminEmailTransferPanel from "../components/subscriptions/AdminEmailTransferPanel.jsx";
 import AdminTransferPanel from "../components/subscriptions/AdminTransferPanel.jsx";
 import TicketHistoryLog from "../components/tickets/TicketHistoryLog.jsx";
+import TransferHistoryLog from "../components/tickets/TransferHistoryLog.jsx";
 
 export default function SubscriptionPage() {
   const navigate = useNavigate();
@@ -234,6 +235,7 @@ export default function SubscriptionPage() {
         {isAdmin && <AdminTransferPanel />}
         <TicketTransferSettingsPanel />
         <HideSettingsPanel />
+        <TransferHistoryLog userEmail={user?.email} />
         <TicketHistoryLog userEmail={user?.email} />
 
       </div>

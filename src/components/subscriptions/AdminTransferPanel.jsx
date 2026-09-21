@@ -20,20 +20,44 @@ export default function AdminTransferPanel() {
     setLoading(false);
   };
 
-  const handleCancel = async (id) => {
-    if (!window.confirm("Cancel this pending transfer?")) return;
+  const handleCancel = async (transfer) => {
+    if (!window.confirm(`Cancel this transfer to ${transfer.recipient_email}? The recipient will be notified by email.`)) return;
     try {
-      await base44.entities.TicketTransfer.update(id, {
+      await base44.entities.TicketTransfer.update(transfer.id, {
         status: "cancelled",
         cancelled_at: new Date().toISOString(),
       });
       await base44.entities.TransferAuditLog.create({
-        transfer_id: id,
-        secure_token: "",
+        transfer_id: transfer.id,
+        secure_token: transfer.secure_token || "",
         action: "cancelled",
         actor_email: "admin",
-        metadata: "{}",
+        metadata: JSON.stringify({ previous_status: transfer.status }),
       });
+      try {
+        await base44.integrations.Core.SendEmail({
+          to: transfer.recipient_email,
+          subject: `Ticket transfer cancelled: ${transfer.event_name || "Ticket"}`,
+          body: `<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto;">
+            <div style="background: #001f2d; padding: 24px; text-align: center; border-radius: 12px 12px 0 0;">
+              <h2 style="color: #fff; margin: 0 0 8px;">Ticket Transfer Cancelled</h2>
+              <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin: 0;">This ticket transfer has been cancelled.</p>
+            </div>
+            <div style="background: #fff; padding: 24px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 12px 12px;">
+              <div style="background: #f8f9fa; border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+                <p style="color: #001f2d; font-size: 18px; font-weight: 700; margin: 0 0 8px;">${transfer.event_name || "Event"}</p>
+                <p style="color: #666; font-size: 14px; margin: 0 0 4px;"><strong>Date:</strong> ${transfer.event_date || "TBD"}</p>
+                <p style="color: #666; font-size: 14px; margin: 0;"><strong>Venue:</strong> ${transfer.venue_name || "TBD"}</p>
+              </div>
+              <p style="color: #333; font-size: 14px; margin: 0 0 16px; line-height: 1.5;">
+                The ticket transfer from ${transfer.sender_email} has been cancelled. The transfer link is no longer valid.
+              </p>
+              <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+              <p style="color: #999; font-size: 12px; margin: 0;">Ticketek Pty Limited ABN 92 010 129 110</p>
+            </div>
+          </div>`,
+        });
+      } catch (e) {}
       loadTransfers();
     } catch (e) { alert("Could not cancel transfer."); }
   };
@@ -113,10 +137,12 @@ export default function AdminTransferPanel() {
                 <p style={{ margin: "0 0 2px" }}><strong>Expires:</strong> {t.expires_at ? new Date(t.expires_at).toLocaleString() : "-"}</p>
                 {t.accepted_at && <p style={{ margin: "0 0 2px" }}><strong>Accepted:</strong> {new Date(t.accepted_at).toLocaleString()}</p>}
               </div>
-              {t.status === "pending" && (
+              {(t.status === "pending" || t.status === "accepted") && (
                 <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
-                  <button onClick={() => handleResend(t)} style={{ flex: 1, padding: "8px 0", borderRadius: 6, background: "#f0f4ff", color: TK_NAVY, fontWeight: 600, fontSize: 13, border: "none", cursor: "pointer" }}>Resend Email</button>
-                  <button onClick={() => handleCancel(t.id)} style={{ flex: 1, padding: "8px 0", borderRadius: 6, background: "transparent", color: "#ef4444", fontWeight: 600, fontSize: 13, border: "1px solid #ef4444", cursor: "pointer" }}>Cancel</button>
+                  {t.status === "pending" && (
+                    <button onClick={() => handleResend(t)} style={{ flex: 1, padding: "8px 0", borderRadius: 6, background: "#f0f4ff", color: TK_NAVY, fontWeight: 600, fontSize: 13, border: "none", cursor: "pointer" }}>Resend Email</button>
+                  )}
+                  <button onClick={() => handleCancel(t)} style={{ flex: 1, padding: "8px 0", borderRadius: 6, background: "transparent", color: "#ef4444", fontWeight: 600, fontSize: 13, border: "1px solid #ef4444", cursor: "pointer" }}>Cancel Transfer</button>
                 </div>
               )}
             </div>
