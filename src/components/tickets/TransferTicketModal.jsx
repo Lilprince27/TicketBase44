@@ -46,14 +46,7 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
         ticket_count: 1,
       });
 
-      // Mark ticket as pending transfer
-      try {
-        await base44.entities.Ticket.update(ticket.id, {
-          transfer_status: "pending_transfer",
-          active_transfer_id: transfer.id,
-        });
-      } catch (e) {}
-
+      // Note: sender's ticket stays in their wallet (transfer_status unchanged)
       // Create audit log
       try {
         await base44.entities.TransferAuditLog.create({
@@ -174,7 +167,7 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
                   <path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
                 <p style={{ fontSize: 14, color: "#333", margin: 0, lineHeight: 1.5 }}>
-                  <strong>Ownership of this ticket will move to {recipientEmail.trim()} after they accept the transfer.</strong> You will no longer be able to use this ticket for entry once it is accepted.
+                  <strong>A copy of this ticket will be sent to {recipientEmail.trim()}.</strong> Your ticket stays in your wallet — the recipient gets their own copy after they accept.
                 </p>
               </div>
             </div>
@@ -212,7 +205,7 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
             </div>
             <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111", margin: "0 0 8px" }}>Transfer Email Sent!</h3>
             <p style={{ fontSize: 14, color: "#666", margin: "0 0 20px", lineHeight: 1.5 }}>
-              We've sent a ticket transfer link to <strong>{recipientEmail.trim()}</strong>. The recipient has 48 hours to accept.
+              We've sent a ticket transfer link to <strong>{recipientEmail.trim()}</strong>. The recipient has 48 hours to accept. Your ticket stays in your wallet.
             </p>
             <div className="selectable-text" style={{ background: "#f8f9fa", borderRadius: 8, padding: 12, marginBottom: 20, fontSize: 12, color: "#999", wordBreak: "break-all" }}>
               {transferUrl}

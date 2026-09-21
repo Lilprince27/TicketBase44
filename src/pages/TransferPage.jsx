@@ -146,17 +146,7 @@ export default function TransferPage() {
         active_transfer_id: null,
       });
 
-      // Mark original ticket as transferred
-      try {
-        const originalTickets = await base44.entities.Ticket.filter({ id: ticketData.id || "" });
-        if (originalTickets.length > 0) {
-          await base44.entities.Ticket.update(originalTickets[0].id, {
-            transfer_status: "transferred",
-            active_transfer_id: null,
-          });
-        }
-      } catch (e) {}
-
+      // Sender retains their ticket — only mark the transfer as accepted
       // Mark transfer as accepted
       await base44.entities.TicketTransfer.update(rec.id, {
         status: "accepted",
@@ -198,7 +188,7 @@ export default function TransferPage() {
           <div style="background: #fff; padding: 24px; border-radius: 0 0 12px 12px; border: 1px solid #e0e0e0; border-top: none;">
             <p style="color: #333; font-size: 14px; margin: 0 0 8px;"><strong>${ticketData.event_name || "Event"}</strong></p>
             <p style="color: #666; font-size: 13px; margin: 0 0 16px;">${ticketData.venue_name || ""} · ${ticketData.event_date || ""}</p>
-            <p style="color: #333; font-size: 14px; margin: 0 0 24px;">The recipient (${me.email}) has accepted the ticket. It has been added to their account and is no longer under your control.</p>
+            <p style="color: #333; font-size: 14px; margin: 0 0 24px;">The recipient (${me.email}) has accepted a copy of the ticket. It has been added to their account. Your ticket remains in your wallet.</p>
             <p style="color: #999; font-size: 12px; margin: 0;">Ticketek Pty Limited ABN 92 010 129 110</p>
           </div>
         </div>`;
@@ -239,19 +229,7 @@ export default function TransferPage() {
           metadata: "{}",
         });
       } catch (e) {}
-      // Restore ticket to active
-      try {
-        const ticketData = JSON.parse(rec.ticket_snapshot);
-        if (ticketData.id) {
-          const origTickets = await base44.entities.Ticket.filter({ id: ticketData.id });
-          if (origTickets.length > 0) {
-            await base44.entities.Ticket.update(origTickets[0].id, {
-              transfer_status: "active",
-              active_transfer_id: null,
-            });
-          }
-        }
-      } catch (e) {}
+      // Sender's ticket was never modified, so nothing to restore
       setStep("declined");
     } catch (e) {
       setError("Could not decline the transfer.");
@@ -455,7 +433,7 @@ export default function TransferPage() {
               <div style={{ background: "#fff", width: "100%", maxWidth: 500, borderRadius: "20px 20px 0 0", padding: 28 }}
                 onClick={e => e.stopPropagation()}>
                 <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111", margin: "0 0 10px" }}>Accept Ticket Transfer?</h3>
-                <p style={{ fontSize: 14, color: "#666", margin: "0 0 24px", lineHeight: 1.5 }}>After accepting, these tickets will be added to your Ticketek account and the sender will no longer control the transferred tickets.</p>
+                <p style={{ fontSize: 14, color: "#666", margin: "0 0 24px", lineHeight: 1.5 }}>After accepting, a copy of these tickets will be added to your Ticketek account. The sender keeps their ticket.</p>
                 <div style={{ display: "flex", gap: 12 }}>
                   <button onClick={() => setStep("review")} style={{ flex: 1, padding: "16px 0", borderRadius: 8, background: "transparent", color: "#666", fontWeight: 600, fontSize: 16, border: "1px solid #ddd", cursor: "pointer" }}>Cancel</button>
                   <button onClick={handleConfirmAccept} disabled={busy} style={{ flex: 1, padding: "16px 0", borderRadius: 8, background: TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 16, border: "none", cursor: busy ? "default" : "pointer" }}>Accept Transfer</button>

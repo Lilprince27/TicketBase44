@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { buildTransferEmailHtml } from "@/lib/transferEmailTemplate";
-import { APP_BASE_URL } from "@/lib/ticketUtils";
+import { APP_BASE_URL, buildShareUrl, generateSecureToken } from "@/lib/ticketUtils";
 
 export default function ShareModal({ ticket, onClose, onTransferred }) {
   const [email, setEmail] = useState("");
@@ -39,8 +39,26 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
     setError("");
     try {
       const me = await base44.auth.me();
-      // Transfer ticket ownership to recipient
-      await base44.entities.Ticket.update(ticket.id, { owner_email: email.trim() });
+
+      // Create a secure accept-into-wallet link (sender keeps their ticket)
+      const token = generateSecureToken();
+      const url = buildShareUrl(token);
+      const snapshot = JSON.stringify({
+        event_name: ticket.event_name, venue_name: ticket.venue_name, presenter: ticket.presenter,
+        event_date: ticket.event_date, entry_gate: ticket.entry_gate, level_stand: ticket.level_stand,
+        door_area: ticket.door_area, section_bay: ticket.section_bay, row: ticket.row, seat_number: ticket.seat_number,
+        holder_name: ticket.holder_name, ticket_type: ticket.ticket_type, price: ticket.price,
+        serial_number: ticket.serial_number, order_number: ticket.order_number, event_code: ticket.event_code,
+        transaction_number: ticket.transaction_number, purchase_date: ticket.purchase_date, seller_id: ticket.seller_id,
+        pax_number: ticket.pax_number, event_image: ticket.event_image, sender_name: senderName,
+      });
+      await base44.entities.SharedTicket.create({
+        share_token: token,
+        ticket_snapshot: snapshot,
+        owner_email: me.email,
+        event_image: ticket.event_image || "",
+        recipient_email: email.trim(),
+      });
 
       // Create history record
       try {
@@ -51,16 +69,16 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
           action: "transferred",
           actor_email: me.email,
           recipient_email: email.trim(),
-          details: `Transferred to ${email.trim()}`,
+          details: `Shared to ${email.trim()} (sender retains ticket)`,
         });
       } catch (e) {}
 
-      // Send premium notification email to recipient
+      // Send premium notification email to recipient with accept link
       const emailHtml = buildTransferEmailHtml({
         ticket,
         recipientName: name.trim(),
         senderName: senderName || "A Ticketek user",
-        appUrl: APP_BASE_URL,
+        appUrl: url,
       });
 
       await base44.integrations.Core.SendEmail({
@@ -171,8 +189,8 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
               <polyline points="20 6 9 17 4 12" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">Ticket Transferred!</h3>
-          <p className="text-sm text-gray-500">The ticket has been sent to {email.trim()}.</p>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">Ticket Sent!</h3>
+          <p className="text-sm text-gray-500">An accept link has been sent to {email.trim()}. Your ticket stays in your wallet.</p>
         </div>
       </div>
     );
@@ -207,7 +225,7 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
         {error && <p className="text-sm text-red-500 text-center mb-3">{error}</p>}
 
         <p className="text-sm text-gray-400 text-center my-5 px-2">
-          The ticket will be transferred to the recipient. You will no longer have access to it.
+          A secure accept link will be emailed to the recipient. Your ticket stays in your wallet.
         </p>
 
         <div className="flex gap-3">
