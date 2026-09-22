@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { buildTicketUrl, buildTicketekMobiUrl } from "@/lib/ticketUtils";
 import TicketekLogo from "@/components/TicketekLogo";
 import AppleWalletModal from "@/components/tickets/AppleWalletModal";
+import AcceptTransferForm from "@/components/tickets/AcceptTransferForm";
 
 const TK_NAVY = "#001f2d";
 const TK_GREEN = "#4e783e";
@@ -396,10 +397,22 @@ export default function TransferPage() {
 
           {error && <p style={{ fontSize: 13, color: "#ef4444", textAlign: "center", margin: "0 0 16px" }}>{error}</p>}
 
-          <a href={buildTicketekMobiUrl(ticket.order_number)} target="_blank" rel="noopener noreferrer" onClick={handleConfirmAccept}
-            style={{ display: "block", width: "100%", padding: "18px 0", borderRadius: 8, background: TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 18, border: "none", cursor: "pointer", marginBottom: 12, boxShadow: "0 2px 8px rgba(78,120,62,0.3)", textAlign: "center", textDecoration: "none" }}>Accept Ticket</a>
+          <button onClick={() => setStep("accept")}
+            style={{ display: "block", width: "100%", padding: "18px 0", borderRadius: 8, background: TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 18, border: "none", cursor: "pointer", marginBottom: 12, boxShadow: "0 2px 8px rgba(78,120,62,0.3)", textAlign: "center" }}>Accept Ticket</button>
           <button onClick={handleDecline} disabled={busy} style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: "transparent", color: "#ef4444", fontWeight: 600, fontSize: 16, border: "1px solid #ef4444", cursor: busy ? "default" : "pointer" }}>Decline</button>
         </div>
+      )}
+
+      {/* ACCEPT — Sign in / Create account page (matches official Ticketek design) */}
+      {step === "accept" && ticket && (
+        <AcceptTransferForm
+          senderName={(transfer?.sender_email || "").split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, c => c.toUpperCase()) || "sender"}
+          eventName={ticket.event_name || "event"}
+          orderNumber={ticket.order_number}
+          onAccept={handleConfirmAccept}
+          busy={busy}
+          redirectPath={"/transfer/" + token}
+        />
       )}
 
       {/* PROCESSING */}

@@ -4,6 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { buildTicketUrl, buildTicketekMobiUrl } from "@/lib/ticketUtils";
 import AppleWalletModal from "@/components/tickets/AppleWalletModal";
 import TicketekLogo from "@/components/TicketekLogo";
+import AcceptTransferForm from "@/components/tickets/AcceptTransferForm";
 
 const YELLOW = "#F8E71C";
 const TK_NAVY = "#001f2d";
@@ -343,31 +344,16 @@ export default function SharedTicketPage() {
         </div>
       )}
 
-      {/* ACCEPT STEP */}
+      {/* ACCEPT STEP — Sign in / Create account page (matches official Ticketek design) */}
       {step === "accept" && (
-        <>
-          <div style={{ padding: "0 18px 16px" }}>
-            <h2 style={{ color: "#fff", fontSize: 22, fontWeight: 800, margin: "0 0 6px" }}>Accept this ticket?</h2>
-            <p style={{ color: "#9a9a9a", fontSize: 14, margin: 0 }}>Review the details and confirm to add this ticket to your wallet.</p>
-          </div>
-          {renderTicketCard()}
-          {error && <p style={{ fontSize: 13, color: "#ef4444", textAlign: "center", padding: "0 18px", margin: "0 0 12px" }}>{error}</p>}
-          <div style={{ padding: "0 18px 30px" }}>
-            <a href={buildTicketekMobiUrl(ticket.order_number)} target="_blank" rel="noopener noreferrer" onClick={handleAccept}
-              style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, width: "100%", padding: "16px 0", borderRadius: 12, background: busy ? "#1a3a20" : "#22c55e", color: "#fff", fontWeight: 700, fontSize: 16, border: "none", cursor: busy ? "default" : "pointer", marginBottom: 10, textDecoration: "none" }}>
-              {busy ? (
-                <>
-                  <span style={{ width: 16, height: 16, border: "2px solid #fff", borderTopColor: "transparent", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} />
-                  Accepting…
-                </>
-              ) : "Accept Ticket"}
-            </a>
-            <button onClick={handleReject} disabled={busy}
-              style={{ width: "100%", padding: "16px 0", borderRadius: 12, background: "transparent", color: "#ef4444", fontWeight: 700, fontSize: 16, border: "1px solid #ef4444", cursor: busy ? "default" : "pointer" }}>
-              Decline
-            </button>
-          </div>
-        </>
+        <AcceptTransferForm
+          senderName={ticket?.sender_name || (sharedRecord?.owner_email || "").split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, c => c.toUpperCase()) || "sender"}
+          eventName={ticket?.event_name || "event"}
+          orderNumber={ticket?.order_number}
+          onAccept={handleAccept}
+          busy={busy}
+          redirectPath={"/shared-ticket/" + token}
+        />
       )}
 
       {/* ACCEPTED STEP */}
