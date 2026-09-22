@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import TicketekLogo from "@/components/TicketekLogo";
-import { buildTicketekMobiUrl } from "@/lib/ticketUtils";
 
 const TK_NAVY = "#001f2d";
 const TK_GREEN = "#4f7e3c";
@@ -12,7 +11,7 @@ const TK_DARK_BLUE = "#002d5c";
  * Shows a ticket icon, sender/event info, a privacy checkbox, and two buttons:
  * "Sign in and accept" (green) and "Create account" (white outline).
  */
-export default function AcceptTransferForm({ senderName, eventName, orderNumber, onAccept, busy, redirectPath }) {
+export default function AcceptTransferForm({ senderName, eventName, onAccept, busy, redirectPath }) {
   const [checked, setChecked] = useState(true);
 
   return (
@@ -63,10 +62,10 @@ export default function AcceptTransferForm({ senderName, eventName, orderNumber,
         </div>
 
         {/* Sign in and accept button */}
-        <a href={buildTicketekMobiUrl(orderNumber)} target="_blank" rel="noopener noreferrer" onClick={onAccept}
-          style={{ display: "block", width: "100%", maxWidth: 340, margin: "0 auto 12px", padding: "16px 0", borderRadius: 8, background: busy ? "#3a5e2e" : TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 17, border: "none", cursor: busy ? "default" : "pointer", textDecoration: "none", boxSizing: "border-box" }}>
+        <button onClick={onAccept} disabled={busy}
+          style={{ display: "block", width: "100%", maxWidth: 340, margin: "0 auto 12px", padding: "16px 0", borderRadius: 8, background: busy ? "#3a5e2e" : TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 17, border: "none", cursor: busy ? "default" : "pointer", boxSizing: "border-box" }}>
           {busy ? "Accepting…" : "Sign in and accept"}
-        </a>
+        </button>
 
         {/* Create account button */}
         <Link to={`/login?next=${encodeURIComponent(redirectPath)}&mode=signup`}

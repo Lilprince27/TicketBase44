@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { buildTicketUrl, buildTicketekMobiUrl } from "@/lib/ticketUtils";
+import { buildTicketUrl } from "@/lib/ticketUtils";
 import TicketekLogo from "@/components/TicketekLogo";
 import AppleWalletModal from "@/components/tickets/AppleWalletModal";
 import AcceptTransferForm from "@/components/tickets/AcceptTransferForm";
+import TransferTicketDetail from "@/components/tickets/TransferTicketDetail";
 
 const TK_NAVY = "#001f2d";
 const TK_GREEN = "#4e783e";
@@ -90,8 +91,8 @@ export default function TransferPage() {
       if (rec.status === "declined") { setStep("declined"); setLoading(false); return; }
       if (rec.status === "cancelled") { setStep("invalid"); setLoading(false); return; }
 
-      // No login required — go straight to review
-      setStep("review");
+      // No login required — go straight to acceptance form (skip review)
+      setStep("accept");
       setLoading(false);
     } catch (e) {
       setStep("invalid");
@@ -170,8 +171,9 @@ export default function TransferPage() {
         });
       } catch (e) {}
 
-      setAcceptedTickets([ticketData]);
-      setTimeout(() => setStep("accepted"), 1800);
+ setAcceptedTickets([ticketData]);
+      setTicket(ticketData);
+      setTimeout(() => setStep("ticket_detail"), 1500);
     } catch (e) {
       setError(e.message || "Could not accept the transfer. Please try again.");
       setStep("review");
@@ -425,30 +427,9 @@ export default function TransferPage() {
         </div>
       )}
 
-      {/* ACCEPTED */}
-      {step === "accepted" && ticket && (
-        <div style={{ padding: 24 }}>
-          <div style={{ textAlign: "center", marginBottom: 20 }}>
-            <div style={{ width: 64, height: 64, margin: "0 auto 12px", borderRadius: "50%", background: "#e8f5e9", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4caf50" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <h2 style={{ fontSize: 24, fontWeight: 700, color: "#111", margin: "0 0 6px" }}>Transfer Accepted</h2>
-            <p style={{ fontSize: 14, color: "#666", margin: 0 }}>You have successfully accepted your tickets.</p>
-          </div>
-
-          {acceptedTickets.map((t, i) => (
-            <div key={t.id || i}>
-              {renderTicketCard(t)}
-              <a href={buildTicketekMobiUrl(t.order_number)} target="_blank" rel="noopener noreferrer"
-                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, width: "100%", padding: "14px 0", borderRadius: 8, background: "#000", color: "#fff", fontWeight: 700, fontSize: 15, border: "none", cursor: "pointer", marginBottom: 12, textDecoration: "none" }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
-                Add to Wallet
-              </a>
-            </div>
-          ))}
-
-          <Link to="/tickets" style={{ display: "block", width: "100%", padding: "16px 0", borderRadius: 8, background: "transparent", color: TK_NAVY, fontWeight: 700, fontSize: 16, textAlign: "center", textDecoration: "none", border: "2px solid " + TK_NAVY, marginTop: 12 }}>Go to My Tickets</Link>
-        </div>
+      {/* TICKET DETAIL — full ticket view after acceptance, with only Apple Wallet button */}
+      {step === "ticket_detail" && ticket && (
+        <TransferTicketDetail ticket={ticket} onBack={() => navigate("/")} />
       )}
 
       {/* DECLINED */}
