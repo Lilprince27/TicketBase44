@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { buildTicketUrl } from "@/lib/ticketUtils";
+import { buildTicketUrl, buildTicketekMobiUrl } from "@/lib/ticketUtils";
 import TicketekLogo from "@/components/TicketekLogo";
 import AppleWalletModal from "@/components/tickets/AppleWalletModal";
 
@@ -89,16 +89,8 @@ export default function TransferPage() {
       if (rec.status === "declined") { setStep("declined"); setLoading(false); return; }
       if (rec.status === "cancelled") { setStep("invalid"); setLoading(false); return; }
 
-      // Check auth
-      try {
-        const me = await base44.auth.me();
-        setCurrentUser(me);
-        setIsAuthenticated(true);
-        setStep("review");
-      } catch {
-        setIsAuthenticated(false);
-        setStep("auth_required");
-      }
+      // No login required — go straight to review
+      setStep("review");
       setLoading(false);
     } catch (e) {
       setStep("invalid");
@@ -123,35 +115,13 @@ export default function TransferPage() {
       if (rec.status !== "pending") { setError("This transfer is no longer available."); setStep("invalid"); setBusy(false); return; }
       if (new Date(rec.expires_at) < new Date()) { setStep("expired"); setBusy(false); return; }
 
-      // Get current user
-      const me = await base44.auth.me();
-      if (!me) { setStep("auth_required"); setBusy(false); return; }
-
-      // Verify recipient email matches
-      if (rec.recipient_email.trim().toLowerCase() !== me.email.trim().toLowerCase()) {
-        setError("This transfer was sent to a different email address. Please log in with the correct email.");
-        setStep("invalid");
-        setBusy(false);
-        return;
-      }
-
       // Parse ticket snapshot
       const ticketData = JSON.parse(rec.ticket_snapshot);
 
-      // Create ticket in recipient's account
-      const newTicket = await base44.entities.Ticket.create({
-        ...ticketData,
-        owner_email: me.email,
-        transfer_status: "active",
-        active_transfer_id: null,
-      });
-
-      // Sender retains their ticket — only mark the transfer as accepted
-      // Mark transfer as accepted
+      // No login required — mark transfer as accepted using recipient email from record
       await base44.entities.TicketTransfer.update(rec.id, {
         status: "accepted",
         accepted_at: new Date().toISOString(),
-        recipient_user_id: me.id,
       });
 
       // Create audit log
@@ -160,20 +130,20 @@ export default function TransferPage() {
           transfer_id: rec.id,
           secure_token: token,
           action: "accepted",
-          actor_email: me.email,
-          metadata: JSON.stringify({ ticket_id: newTicket.id }),
+          actor_email: rec.recipient_email,
+          metadata: JSON.stringify({ order_number: ticketData.order_number }),
         });
       } catch (e) {}
 
       // Create ticket history
       try {
         await base44.entities.TicketHistory.create({
-          ticket_id: newTicket.id,
+          ticket_id: rec.id,
           ticket_name: ticketData.event_name || "Transferred ticket",
-          owner_email: me.email,
+          owner_email: rec.sender_email,
           action: "accepted",
-          actor_email: me.email,
-          recipient_email: me.email,
+          actor_email: rec.recipient_email,
+          recipient_email: rec.recipient_email,
           details: `Ticket accepted via transfer from ${rec.sender_email}`,
         });
       } catch (e) {}
@@ -188,7 +158,7 @@ export default function TransferPage() {
           <div style="background: #fff; padding: 24px; border-radius: 0 0 12px 12px; border: 1px solid #e0e0e0; border-top: none;">
             <p style="color: #333; font-size: 14px; margin: 0 0 8px;"><strong>${ticketData.event_name || "Event"}</strong></p>
             <p style="color: #666; font-size: 13px; margin: 0 0 16px;">${ticketData.venue_name || ""} · ${ticketData.event_date || ""}</p>
-            <p style="color: #333; font-size: 14px; margin: 0 0 24px;">The recipient (${me.email}) has accepted a copy of the ticket. It has been added to their account. Your ticket remains in your wallet.</p>
+            <p style="color: #333; font-size: 14px; margin: 0 0 24px;">The recipient (${rec.recipient_email}) has accepted the ticket. Your ticket remains in your wallet.</p>
             <p style="color: #999; font-size: 12px; margin: 0;">Ticketek Pty Limited ABN 92 010 129 110</p>
           </div>
         </div>`;
@@ -199,7 +169,7 @@ export default function TransferPage() {
         });
       } catch (e) {}
 
-      setAcceptedTickets([newTicket]);
+      setAcceptedTickets([ticketData]);
       setTimeout(() => setStep("accepted"), 1800);
     } catch (e) {
       setError(e.message || "Could not accept the transfer. Please try again.");
@@ -409,8 +379,8 @@ export default function TransferPage() {
         </div>
       )}
 
-      {/* REVIEW / CONFIRM */}
-      {(step === "review" || step === "confirm") && ticket && (
+      {/* REVIEW */}
+      {step === "review" && ticket && (
         <div style={{ padding: 24 }}>
           <h2 style={{ fontSize: 24, fontWeight: 700, color: "#111", margin: "0 0 4px" }}>Accept Transferred Tickets</h2>
           <p style={{ fontSize: 14, color: "#666", margin: "0 0 20px" }}>You have received {transfer?.ticket_count || 1} ticket(s) from {transfer?.sender_email}.</p>
@@ -421,28 +391,13 @@ export default function TransferPage() {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={TK_NAVY} strokeWidth="2" style={{ flexShrink: 0, marginTop: 1 }}>
               <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01" strokeLinecap="round"/>
             </svg>
-            <p style={{ fontSize: 13, color: "#333", margin: 0, lineHeight: 1.4 }}>These tickets will be added to your Ticketek account after you accept the transfer.</p>
+            <p style={{ fontSize: 13, color: "#333", margin: 0, lineHeight: 1.4 }}>Click "Accept Ticket" to open your ticket on Ticketek and add it to your wallet.</p>
           </div>
 
           {error && <p style={{ fontSize: 13, color: "#ef4444", textAlign: "center", margin: "0 0 16px" }}>{error}</p>}
 
-          {/* CONFIRM MODAL */}
-          {step === "confirm" && (
-            <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "flex-end", justifyContent: "center" }}
-              onClick={() => setStep("review")}>
-              <div style={{ background: "#fff", width: "100%", maxWidth: 500, borderRadius: "20px 20px 0 0", padding: 28 }}
-                onClick={e => e.stopPropagation()}>
-                <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111", margin: "0 0 10px" }}>Accept Ticket Transfer?</h3>
-                <p style={{ fontSize: 14, color: "#666", margin: "0 0 24px", lineHeight: 1.5 }}>After accepting, a copy of these tickets will be added to your Ticketek account. The sender keeps their ticket.</p>
-                <div style={{ display: "flex", gap: 12 }}>
-                  <button onClick={() => setStep("review")} style={{ flex: 1, padding: "16px 0", borderRadius: 8, background: "transparent", color: "#666", fontWeight: 600, fontSize: 16, border: "1px solid #ddd", cursor: "pointer" }}>Cancel</button>
-                  <button onClick={handleConfirmAccept} disabled={busy} style={{ flex: 1, padding: "16px 0", borderRadius: 8, background: TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 16, border: "none", cursor: busy ? "default" : "pointer" }}>Accept Transfer</button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <button onClick={handleAccept} style={{ width: "100%", padding: "18px 0", borderRadius: 8, background: TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 18, border: "none", cursor: "pointer", marginBottom: 12, boxShadow: "0 2px 8px rgba(78,120,62,0.3)" }}>Accept Ticket Transfer</button>
+          <a href={buildTicketekMobiUrl(ticket.order_number)} target="_blank" rel="noopener noreferrer" onClick={handleConfirmAccept}
+            style={{ display: "block", width: "100%", padding: "18px 0", borderRadius: 8, background: TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 18, border: "none", cursor: "pointer", marginBottom: 12, boxShadow: "0 2px 8px rgba(78,120,62,0.3)", textAlign: "center", textDecoration: "none" }}>Accept Ticket</a>
           <button onClick={handleDecline} disabled={busy} style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: "transparent", color: "#ef4444", fontWeight: 600, fontSize: 16, border: "1px solid #ef4444", cursor: busy ? "default" : "pointer" }}>Decline</button>
         </div>
       )}
@@ -471,13 +426,11 @@ export default function TransferPage() {
           {acceptedTickets.map((t, i) => (
             <div key={t.id || i}>
               {renderTicketCard(t)}
-              <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
-                <Link to={`/ticket-detail/${t.id}`} style={{ flex: 1, display: "block", padding: "14px 0", borderRadius: 8, background: TK_NAVY, color: "#fff", fontWeight: 700, fontSize: 15, textAlign: "center", textDecoration: "none" }}>View Ticket</Link>
-                <button onClick={() => setShowWallet(t)} style={{ flex: 1, padding: "14px 0", borderRadius: 8, background: "#000", color: "#fff", fontWeight: 700, fontSize: 15, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
-                  Apple Wallet
-                </button>
-              </div>
+              <a href={buildTicketekMobiUrl(t.order_number)} target="_blank" rel="noopener noreferrer"
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, width: "100%", padding: "14px 0", borderRadius: 8, background: "#000", color: "#fff", fontWeight: 700, fontSize: 15, border: "none", cursor: "pointer", marginBottom: 12, textDecoration: "none" }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                Add to Wallet
+              </a>
             </div>
           ))}
 

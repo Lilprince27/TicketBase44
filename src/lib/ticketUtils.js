@@ -47,6 +47,14 @@ export function buildTicketUrl(serialNumber) {
   return `https://www.ticketek.com.au/t/${serial}`;
 }
 
+// Build the Ticketek mobile verification URL that the "Accept Ticket" /
+// "Add to Wallet" buttons link to — same format as the purchase confirmation
+// email's access-information link (e.g. https://ticketek.mobi/?id=26-12069324/44).
+export function buildTicketekMobiUrl(orderNumber) {
+  const id = (orderNumber || "").trim() || "0";
+  return `https://ticketek.mobi/?id=${id}`;
+}
+
 // Base URL for the connected custom domain — used for all share/transfer links
 // so recipients always land on the branded domain regardless of which URL
 // the sender was viewing the app from.

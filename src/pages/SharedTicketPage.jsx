@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { buildTicketUrl } from "@/lib/ticketUtils";
+import { buildTicketUrl, buildTicketekMobiUrl } from "@/lib/ticketUtils";
 import AppleWalletModal from "@/components/tickets/AppleWalletModal";
 import TicketekLogo from "@/components/TicketekLogo";
 
@@ -251,7 +251,7 @@ export default function SharedTicketPage() {
           </div>
           {renderTicketCard()}
           <div style={{ padding: "0 18px 30px" }}>
-            <button onClick={() => setStep("login")} style={{ width: "100%", padding: "16px 0", borderRadius: 12, background: "#fff", color: "#000", fontWeight: 700, fontSize: 16, border: "none", cursor: "pointer" }}>
+            <button onClick={() => setStep("accept")} style={{ width: "100%", padding: "16px 0", borderRadius: 12, background: "#fff", color: "#000", fontWeight: 700, fontSize: 16, border: "none", cursor: "pointer" }}>
               Continue to Accept
             </button>
           </div>
@@ -353,15 +353,15 @@ export default function SharedTicketPage() {
           {renderTicketCard()}
           {error && <p style={{ fontSize: 13, color: "#ef4444", textAlign: "center", padding: "0 18px", margin: "0 0 12px" }}>{error}</p>}
           <div style={{ padding: "0 18px 30px" }}>
-            <button onClick={handleAccept} disabled={busy}
-              style={{ width: "100%", padding: "16px 0", borderRadius: 12, background: busy ? "#1a3a20" : "#22c55e", color: "#fff", fontWeight: 700, fontSize: 16, border: "none", cursor: busy ? "default" : "pointer", marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            <a href={buildTicketekMobiUrl(ticket.order_number)} target="_blank" rel="noopener noreferrer" onClick={handleAccept}
+              style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, width: "100%", padding: "16px 0", borderRadius: 12, background: busy ? "#1a3a20" : "#22c55e", color: "#fff", fontWeight: 700, fontSize: 16, border: "none", cursor: busy ? "default" : "pointer", marginBottom: 10, textDecoration: "none" }}>
               {busy ? (
                 <>
                   <span style={{ width: 16, height: 16, border: "2px solid #fff", borderTopColor: "transparent", borderRadius: "50%", display: "inline-block", animation: "spin 0.8s linear infinite" }} />
                   Accepting…
                 </>
               ) : "Accept Ticket"}
-            </button>
+            </a>
             <button onClick={handleReject} disabled={busy}
               style={{ width: "100%", padding: "16px 0", borderRadius: 12, background: "transparent", color: "#ef4444", fontWeight: 700, fontSize: 16, border: "1px solid #ef4444", cursor: busy ? "default" : "pointer" }}>
               Decline
@@ -382,11 +382,11 @@ export default function SharedTicketPage() {
           </div>
           {renderTicketCard()}
           <div style={{ padding: "0 18px 22px" }}>
-            <button onClick={() => setShowWallet(true)}
-              style={{ width: "100%", padding: "14px 0", borderRadius: 12, background: "#000", color: "#fff", fontWeight: 600, fontSize: 16, border: "1px solid #fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            <a href={buildTicketekMobiUrl(ticket.order_number)} target="_blank" rel="noopener noreferrer"
+              style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, width: "100%", padding: "14px 0", borderRadius: 12, background: "#000", color: "#fff", fontWeight: 600, fontSize: 16, border: "1px solid #fff", cursor: "pointer", textDecoration: "none" }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
-              Add to Apple Wallet
-            </button>
+              Add to Wallet
+            </a>
           </div>
           <div className="selectable-text" style={{ padding: "4px 18px 30px", fontSize: 10.5, color: "#666", lineHeight: 1.5 }}>
             <p style={{ margin: "0 0 6px" }}><strong>Ticketek Pty Limited ABN 92 010 129 110</strong></p>
