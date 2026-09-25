@@ -27,6 +27,7 @@ export default function ExistingEventPicker({ userEmail, onSelect, onClose }) {
               section_bay: t.section_bay,
               ticket_type: t.ticket_type,
               price: t.price,
+              order_number: t.order_number,
               ticketCount: 1,
             });
           } else if (map.has(key)) {

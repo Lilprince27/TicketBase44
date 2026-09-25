@@ -92,6 +92,7 @@ export default function CreateTicketPage() {
   const [importStatus, setImportStatus] = useState("");
   const importFileRef = useRef(null);
   const [showExistingEventPicker, setShowExistingEventPicker] = useState(false);
+  const [existingOrderNumber, setExistingOrderNumber] = useState("");
 
   const urlParams = new URLSearchParams(window.location.search);
 
@@ -238,6 +239,7 @@ export default function CreateTicketPage() {
       price: evt.price || prev.price,
     }));
     if (evt.event_image) { setPrefilledImageUrl(evt.event_image); setImagePreview(evt.event_image); setImageFile(null); }
+    setExistingOrderNumber(evt.order_number || "");
     setShowExistingEventPicker(false);
   };
 
@@ -282,7 +284,7 @@ export default function CreateTicketPage() {
       const result = await base44.integrations.Core.UploadFile({ file: imageFile });
       imageUrl = result.file_url;
     }
-    const sharedOrderNumber = generateOrderNumber();
+    const sharedOrderNumber = existingOrderNumber || generateOrderNumber();
     const createdTickets = [];
     try {
       for (const seat of seats) {
@@ -407,9 +409,11 @@ export default function CreateTicketPage() {
               if (data.venue_name) handleChange("venue_name", data.venue_name);
               if (data.presenter) { setForm(f => ({ ...f, presenter: data.presenter })); }
               if (data.event_image_url) { setPrefilledImageUrl(data.event_image_url); setImagePreview(data.event_image_url); setImageFile(null); }
+              setExistingOrderNumber("");
             }}
             onClear={() => {
               handleChange("event_name", "");
+              setExistingOrderNumber("");
             }}
           />
           <p className="text-xs text-gray-400 mt-1">Search to auto-fill event details from Ticketek.</p>

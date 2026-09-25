@@ -87,7 +87,7 @@ export default function TransferPage() {
       if (rec.status === "expired" || (rec.status === "pending" && new Date(rec.expires_at) < new Date())) {
         setStep("expired"); setLoading(false); return;
       }
-      if (rec.status === "accepted") { setStep("accepted"); setLoading(false); return; }
+      if (rec.status === "accepted") { setTicket(JSON.parse(rec.ticket_snapshot)); setStep("ticket_detail"); setLoading(false); return; }
       if (rec.status === "declined") { setStep("declined"); setLoading(false); return; }
       if (rec.status === "cancelled") { setStep("invalid"); setLoading(false); return; }
 
