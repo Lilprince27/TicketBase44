@@ -3,9 +3,9 @@ import { useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import TicketekLogo from "@/components/TicketekLogo";
 
-const TK_NAVY = "#0A1728";
-const TK_GOLD = "#F5C518";
-const TK_GREEN = "#2E7D32";
+const TK_NAVY = "#081a2e";
+const TK_GOLD = "#f0c83a";
+const TK_GREEN = "#4e7f3a";
 const TK_BLUE = "#254881";
 
 export default function Login() {
@@ -167,7 +167,7 @@ export default function Login() {
 
             {/* Sign up outline button */}
             <button onClick={() => { setMode("signup"); setError(""); }}
-              style={{ width: "100%", padding: "15px 0", borderRadius: 8, border: "1px solid #d0d0d0", background: "#fff", color: TK_BLUE, fontWeight: 600, fontSize: 16, cursor: "pointer" }}>
+              style={{ width: "100%", padding: "15px 0", borderRadius: 8, border: "1px solid #d0d0d0", background: "#fff", color: "#000", fontWeight: 600, fontSize: 16, cursor: "pointer" }}>
               Sign up
             </button>
           </>
@@ -201,7 +201,7 @@ export default function Login() {
             <div style={{ height: 1, background: "#e1e1e1", margin: "32px 0" }} />
 
             <button onClick={() => { setMode("signin"); setError(""); }}
-              style={{ width: "100%", padding: "15px 0", borderRadius: 8, border: "1px solid #d0d0d0", background: "#fff", color: TK_BLUE, fontWeight: 600, fontSize: 16, cursor: "pointer" }}>
+              style={{ width: "100%", padding: "15px 0", borderRadius: 8, border: "1px solid #d0d0d0", background: "#fff", color: "#000", fontWeight: 600, fontSize: 16, cursor: "pointer" }}>
               Sign in
             </button>
           </>
