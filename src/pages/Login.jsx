@@ -3,9 +3,9 @@ import { useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import TicketekLogo from "@/components/TicketekLogo";
 
-const TK_NAVY = "#081a2e";
-const TK_GOLD = "#f0c83a";
-const TK_GREEN = "#4e7f3a";
+const TK_NAVY = "#061626";
+const TK_GOLD = "#F1C40F";
+const TK_GREEN = "#5D8635";
 const TK_BLUE = "#254881";
 
 export default function Login() {
@@ -167,7 +167,7 @@ export default function Login() {
 
             {/* Sign up outline button */}
             <button onClick={() => { setMode("signup"); setError(""); }}
-              style={{ width: "100%", padding: "15px 0", borderRadius: 8, border: "1px solid #d0d0d0", background: "#fff", color: "#000", fontWeight: 600, fontSize: 16, cursor: "pointer" }}>
+              style={{ width: "100%", padding: "15px 0", borderRadius: 8, border: `1px solid ${TK_BLUE}`, background: "#fff", color: TK_BLUE, fontWeight: 600, fontSize: 16, cursor: "pointer" }}>
               Sign up
             </button>
           </>
@@ -201,7 +201,7 @@ export default function Login() {
             <div style={{ height: 1, background: "#e1e1e1", margin: "32px 0" }} />
 
             <button onClick={() => { setMode("signin"); setError(""); }}
-              style={{ width: "100%", padding: "15px 0", borderRadius: 8, border: "1px solid #d0d0d0", background: "#fff", color: "#000", fontWeight: 600, fontSize: 16, cursor: "pointer" }}>
+              style={{ width: "100%", padding: "15px 0", borderRadius: 8, border: `1px solid ${TK_BLUE}`, background: "#fff", color: TK_BLUE, fontWeight: 600, fontSize: 16, cursor: "pointer" }}>
               Sign in
             </button>
           </>
@@ -241,6 +241,16 @@ export default function Login() {
           <span style={{ color: TK_BLUE }}>Privacy Policy</span>
           {" "}here.
         </p>
+      </div>
+
+      {/* Chat widget — floating blue circle with smiling face */}
+      <div style={{ position: "fixed", bottom: 24, right: 20, width: 52, height: 52, borderRadius: "50%", background: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(37,99,235,0.4)", cursor: "pointer", zIndex: 9999 }}>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+          <line x1="9" y1="9" x2="9.01" y2="9"/>
+          <line x1="15" y1="9" x2="15.01" y2="9"/>
+        </svg>
       </div>
     </div>
   );
