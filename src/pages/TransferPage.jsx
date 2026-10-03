@@ -6,6 +6,7 @@ import TicketekLogo from "@/components/TicketekLogo";
 import AppleWalletModal from "@/components/tickets/AppleWalletModal";
 import AcceptTransferForm from "@/components/tickets/AcceptTransferForm";
 import TransferTicketDetail from "@/components/tickets/TransferTicketDetail";
+import { buildRecipientAcceptEmail } from "@/lib/recipientAcceptEmail";
 
 const TK_NAVY = "#001f2d";
 const TK_GREEN = "#4e783e";
@@ -168,6 +169,16 @@ export default function TransferPage() {
           to: rec.sender_email,
           subject: `Ticket transfer accepted: ${ticketData.event_name || "Ticket"}`,
           body: html,
+        });
+      } catch (e) {}
+
+      // Notify recipient — confirmation that they accepted (distinct write-up)
+      try {
+        const { subject, html: recipientHtml } = buildRecipientAcceptEmail(ticketData);
+        await base44.integrations.Core.SendEmail({
+          to: rec.recipient_email,
+          subject,
+          body: recipientHtml,
         });
       } catch (e) {}
 

@@ -6,6 +6,7 @@ import TicketekLogo from "@/components/TicketekLogo";
 import AppleWalletModal from "@/components/tickets/AppleWalletModal";
 import AcceptTransferForm from "@/components/tickets/AcceptTransferForm";
 import TransferTicketDetail from "@/components/tickets/TransferTicketDetail";
+import { buildRecipientAcceptEmail } from "@/lib/recipientAcceptEmail";
 
 const TK_NAVY = "#001f2d";
 const TK_GREEN = "#4e783e";
@@ -113,6 +114,16 @@ export default function SharedTicketPage() {
           to: rec.owner_email,
           subject: `Ticket accepted: ${ticketData.event_name || "Ticket"}`,
           body: html,
+        });
+      } catch (e) {}
+
+      // Notify recipient — confirmation that they accepted (distinct write-up)
+      try {
+        const { subject, html: recipientHtml } = buildRecipientAcceptEmail(ticketData);
+        await base44.integrations.Core.SendEmail({
+          to: accepterEmail,
+          subject,
+          body: recipientHtml,
         });
       } catch (e) {}
 
