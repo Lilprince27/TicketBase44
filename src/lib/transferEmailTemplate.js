@@ -23,7 +23,7 @@ function formatExpirationDate() {
   return d.toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 }
 
-export function buildTransferEmailHtml({ ticket, recipientName, senderName, appUrl = "https://tickeket.xyz" }) {
+export function buildTransferEmailHtml({ ticket, recipientName, senderName, appUrl = "https://tickeket.xyz", quantity = 1 }) {
   const transferId = generateTransferId();
   const orderId = generateOrderId(ticket);
   const expirationDate = formatExpirationDate();
@@ -34,7 +34,9 @@ export function buildTransferEmailHtml({ ticket, recipientName, senderName, appU
   const supportUrl = baseUrl;
   const privacyUrl = baseUrl;
   const termsUrl = baseUrl;
-  const qty = ticket.pax_number || "1";
+  // Quantity = the actual number of tickets in this transfer (one per email by default).
+  // Never use pax_number — that's a generated transaction ID, not a count.
+  const qty = String(quantity || 1);
 
   return `<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
