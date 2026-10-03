@@ -28,10 +28,12 @@ export function buildTransferEmailHtml({ ticket, recipientName, senderName, appU
   const orderId = generateOrderId(ticket);
   const expirationDate = formatExpirationDate();
   const heroImage = ticket.event_image || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=300&fit=crop";
-  const acceptUrl = `${appUrl}/tickets`;
-  const supportUrl = `${appUrl}/account`;
-  const privacyUrl = `${appUrl}/account`;
-  const termsUrl = `${appUrl}/account`;
+  // appUrl is the full recipient link (e.g. https://tickeket.xyz/shared-ticket/<token>) — use it as-is
+  const baseUrl = appUrl.replace(/\/(shared-ticket|transfer)\/.*$/, "");
+  const acceptUrl = appUrl;
+  const supportUrl = baseUrl;
+  const privacyUrl = baseUrl;
+  const termsUrl = baseUrl;
   const qty = ticket.pax_number || "1";
 
   return `<!DOCTYPE html>
@@ -173,7 +175,7 @@ export function buildTransferEmailHtml({ ticket, recipientName, senderName, appU
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
                   <td align="center" style="border-radius:12px;background-color:#ffffff;border:1.5px solid #0a1929;">
-                    <a href="${acceptUrl}/ticket-detail/${ticket.id}" target="_blank" style="display:block;padding:14px 0;font-size:14px;font-weight:600;color:#0a1929;text-decoration:none;">View Ticket</a>
+                    <a href="${acceptUrl}" target="_blank" style="display:block;padding:14px 0;font-size:14px;font-weight:600;color:#0a1929;text-decoration:none;">View Ticket</a>
                   </td>
                 </tr>
               </table>

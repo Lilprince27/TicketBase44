@@ -361,7 +361,7 @@ function AppShell() {
   if (location.pathname.startsWith("/shared-ticket")) {
     return (
       <Routes>
-        <Route path="/shared-ticket/:token" element={<Suspense fallback={<PageLoader />}><SharedTicketPage /></Suspense>} />
+        <Route path="/shared-ticket/:token/*" element={<Suspense fallback={<PageLoader />}><SharedTicketPage /></Suspense>} />
       </Routes>
     );
   }
