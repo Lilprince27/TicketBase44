@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppleWalletModal from "./AppleWalletModal";
+import WalletPassButton from "./WalletPassButton";
 import { buildTicketUrl } from "@/lib/ticketUtils";
 
 const isAndroid = () => /android/i.test(navigator.userAgent);
@@ -125,13 +126,7 @@ export default function TransferTicketDetail({ ticket, onBack }) {
             Add to Google Wallet
           </button>
         ) : (
-          <button
-            onClick={() => setShowWallet(true)}
-            style={{ backgroundColor: "black", color: "white", width: "100%", border: "none", padding: "8px", fontSize: 16, borderRadius: 6, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
-          >
-            <img src="https://www.image2url.com/r2/default/images/1777758037946-fd4ad460-0bfd-4c21-9c8f-3949e32a0c92.jpeg" alt="Wallet Icon" style={{ height: 32 }} />
-            Add to Apple Wallet
-          </button>
+          <WalletPassButton ticket={ticket} />
         )}
 
         {/* Fine print */}

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import AppleWalletModal from "../components/tickets/AppleWalletModal";
+import WalletPassButton from "../components/tickets/WalletPassButton";
 import ShareModal from "../components/tickets/ShareModal";
 import SendTicketModal from "../components/tickets/SendTicketModal";
 import TransferTicketModal from "../components/tickets/TransferTicketModal";
@@ -191,13 +192,7 @@ export default function TicketDetailPage() {
               Add to Google Wallet
             </button>
           ) : (
-            <button
-              onClick={() => setSearchParams({ modal: 'wallet' })}
-              style={{ backgroundColor: "black", color: "white", width: "100%", border: "none", padding: "8px", fontSize: 16, borderRadius: 6, fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "pointer" }}
-            >
-              <img src="https://www.image2url.com/r2/default/images/1777758037946-fd4ad460-0bfd-4c21-9c8f-3949e32a0c92.jpeg" alt="Wallet Icon" style={{ height: 32 }} />
-              Add to Apple Wallet
-            </button>
+            <WalletPassButton ticket={ticket} />
           )
         )}
 
