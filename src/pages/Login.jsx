@@ -3,10 +3,10 @@ import { useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import TicketekLogo from "@/components/TicketekLogo";
 
-const TK_NAVY = "#0a1b2a";
-const TK_GOLD = "#f1c40f";
-const TK_GREEN = "#4a7d32";
-const TK_BLUE = "#2c3e50";
+const TK_NAVY = "#0e1e2d";
+const TK_GOLD = "#fcc93b";
+const TK_GREEN = "#56773c";
+const TK_BLUE = "#0055aa";
 
 export default function Login() {
   const navigate = useNavigate();
