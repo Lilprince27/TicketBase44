@@ -57,8 +57,8 @@ export function buildTransferEmailHtml({ ticket, recipientName, senderName, appU
 
           <!-- Light header -->
           <tr>
-            <td style="background-color:#e8ecf5;padding:28px 32px;text-align:center;">
-              <span style="font-size:13px;font-weight:600;color:#5a6a8a;letter-spacing:2px;text-transform:uppercase;">Ticket Transfer</span>
+            <td style="background-color:#001f2d;padding:28px 32px;text-align:center;">
+              <span style="font-size:13px;font-weight:600;color:#EFC44B;letter-spacing:2px;text-transform:uppercase;">Ticket Transfer</span>
             </td>
           </tr>
 
@@ -248,11 +248,11 @@ export function buildTransferEmailHtml({ ticket, recipientName, senderName, appU
           <!-- Security notice -->
           <tr>
             <td style="padding:24px 32px 0;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f0f4ff;border-radius:12px;border:1px solid #d0dcf5;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#001a35;border-radius:12px;border:1px solid #001f2d;">
                 <tr>
                   <td style="padding:16px 18px;">
-                    <p style="margin:0 0 6px;font-size:13px;font-weight:700;color:#1a3a7a;">🔒 Security Notice</p>
-                    <p style="margin:0;font-size:12px;color:#3a5a8a;line-height:1.6;">This ticket transfer can only be accepted <strong>once</strong>. Once accepted, the ticket is permanently assigned to your account and the original sender will no longer have access. If you did not expect this transfer, please contact support immediately.</p>
+                    <p style="margin:0 0 6px;font-size:13px;font-weight:700;color:#EFC44B;">🔒 Security Notice</p>
+                    <p style="margin:0;font-size:12px;color:#ffffff;line-height:1.6;">This ticket transfer can only be accepted <strong>once</strong>. Once accepted, the ticket is permanently assigned to your account and the original sender will no longer have access. If you did not expect this transfer, please contact support immediately.</p>
                   </td>
                 </tr>
               </table>
@@ -269,15 +269,15 @@ export function buildTransferEmailHtml({ ticket, recipientName, senderName, appU
                     <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
                       <tr>
                         <td style="padding:0 8px;">
-                          <a href="${supportUrl}" style="font-size:13px;color:#0a5c9e;text-decoration:none;font-weight:500;">Support</a>
+                          <a href="${supportUrl}" style="font-size:13px;color:#001f2d;text-decoration:none;font-weight:500;">Support</a>
                         </td>
                         <td style="padding:0 8px;color:#d0d8e0;">·</td>
                         <td style="padding:0 8px;">
-                          <a href="${privacyUrl}" style="font-size:13px;color:#0a5c9e;text-decoration:none;font-weight:500;">Privacy Policy</a>
+                          <a href="${privacyUrl}" style="font-size:13px;color:#001f2d;text-decoration:none;font-weight:500;">Privacy Policy</a>
                         </td>
                         <td style="padding:0 8px;color:#d0d8e0;">·</td>
                         <td style="padding:0 8px;">
-                          <a href="${termsUrl}" style="font-size:13px;color:#0a5c9e;text-decoration:none;font-weight:500;">Terms</a>
+                          <a href="${termsUrl}" style="font-size:13px;color:#001f2d;text-decoration:none;font-weight:500;">Terms</a>
                         </td>
                       </tr>
                     </table>
