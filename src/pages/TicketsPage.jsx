@@ -125,7 +125,8 @@ function TicketGroup({ group, onWallet, sharedTicketMap, onManageShare }) {
                   </div>
                   <div style={{ borderTop: "1.5px dotted #ccc", margin: "0 16px 14px" }} />
                   <div style={{ padding: "0 16px 16px" }}>
-                    {isAndroid() ? (
+                    {!sharedTicketMap?.[ticket.serial_number] && (
+                    isAndroid() ? (
                       <button onClick={() => onWallet(ticket)}
                         style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "#000", color: "white", cursor: "pointer", marginBottom: 10 }}
                       >
@@ -139,6 +140,7 @@ function TicketGroup({ group, onWallet, sharedTicketMap, onManageShare }) {
                         <img src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/f6963ff4b_IMG_7127.jpeg" alt="Wallet" style={{ width: 28, height: "auto", objectFit: "contain" }} />
                         Add to Apple Wallet
                       </button>
+                    )
                     )}
                     <button
                       onClick={() => {
