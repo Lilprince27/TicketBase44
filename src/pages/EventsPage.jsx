@@ -5,7 +5,7 @@ import EventDetailModal from "../components/events/EventDetailModal";
 import EventHeroCarousel from "../components/events/EventHeroCarousel";
 import EventHorizontalScroll from "../components/events/EventHorizontalScroll";
 import EventListItem from "../components/events/EventListItem";
-import { TICKETEK_FEATURED, TICKETEK_TRENDING, TICKETEK_WAITLISTS } from "../components/events/ticketekEvents";
+import { TICKETEK_HERO, TICKETEK_FEATURED, TICKETEK_TRENDING, TICKETEK_WAITLISTS } from "../components/events/ticketekEvents";
 import TicketekLogo from "../components/TicketekLogo";
 import StellaChat from "../components/stella/StellaChat";
 import PullToRefresh from "../components/PullToRefresh";
@@ -232,7 +232,10 @@ export default function EventsPage() {
         ) : isFeaturedMode ? (
           <>
             {/* Hero carousel */}
-            <EventHeroCarousel events={TICKETEK_FEATURED} onSelect={setSelectedEvent} />
+            <EventHeroCarousel events={TICKETEK_HERO} onSelect={setSelectedEvent} />
+
+            {/* Featured */}
+            <EventHorizontalScroll title="Featured" events={TICKETEK_FEATURED} onSelect={setSelectedEvent} />
 
             {/* Trending now */}
             <EventHorizontalScroll title="Trending now" events={TICKETEK_TRENDING} onSelect={setSelectedEvent} />
