@@ -214,17 +214,19 @@ export default function TicketsPage() {
 
   useEffect(() => { loadTickets(); }, [loadTickets]);
 
-  const handleCancelShare = async (shareRecord, ticket) => {
+  const handleCancelShare = async (shareRecord, ticket, sendEmail = true) => {
     await base44.entities.SharedTicket.delete(shareRecord.id);
     await base44.entities.Ticket.update(ticket.id, { transfer_status: "active", active_transfer_id: null });
-    try {
-      const html = `<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto;"><div style="background: #001f2d; padding: 24px; text-align: center; border-radius: 12px 12px 0 0;"><h2 style="color: #FFC107; margin: 0 0 8px;">Ticket Share Cancelled</h2></div><div style="background: #fff; padding: 24px; border-radius: 0 0 12px 12px; border: 1px solid #e0e0e0; border-top: none;"><p style="color: #333; font-size: 15px; margin: 0 0 16px;">The sender has cancelled the shared ticket for <strong>${ticket.event_name}</strong>.</p><p style="color: #666; font-size: 13px; margin: 0;">Ticketek Pty Limited ABN 92 010 129 110</p></div></div>`;
-      await base44.integrations.Core.SendEmail({
-        to: shareRecord.accepted_by || shareRecord.recipient_email,
-        subject: `Ticket share cancelled: ${ticket.event_name}`,
-        body: html,
-      });
-    } catch {}
+    if (sendEmail) {
+      try {
+        const html = `<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto;"><div style="background: #001f2d; padding: 24px; text-align: center; border-radius: 12px 12px 0 0;"><h2 style="color: #FFC107; margin: 0 0 8px;">Ticket Share Cancelled</h2></div><div style="background: #fff; padding: 24px; border-radius: 0 0 12px 12px; border: 1px solid #e0e0e0; border-top: none;"><p style="color: #333; font-size: 15px; margin: 0 0 16px;">The sender has cancelled the shared ticket for <strong>${ticket.event_name}</strong>.</p><p style="color: #666; font-size: 13px; margin: 0;">Ticketek Pty Limited ABN 92 010 129 110</p></div></div>`;
+        await base44.integrations.Core.SendEmail({
+          to: shareRecord.accepted_by || shareRecord.recipient_email,
+          subject: `Ticket share cancelled: ${ticket.event_name}`,
+          body: html,
+        });
+      } catch {}
+    }
     setManageShareTicket(null);
     loadTickets();
   };

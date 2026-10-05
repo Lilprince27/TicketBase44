@@ -13,12 +13,13 @@ export default function SharedTicketManageModal({
 }) {
   const navigate = useNavigate();
   const [cancelling, setCancelling] = useState(false);
+  const [confirmCancel, setConfirmCancel] = useState(false);
 
-  const handleCancel = async () => {
+  const handleCancel = async (sendEmail) => {
     if (cancelling) return;
     setCancelling(true);
     try {
-      await onCancelShare(shareRecord, ticket);
+      await onCancelShare(shareRecord, ticket, sendEmail);
       onClose();
     } finally {
       setCancelling(false);
@@ -93,7 +94,7 @@ export default function SharedTicketManageModal({
         </button>
       </div>
 
-      {/* Two action buttons */}
+      {/* Action buttons / confirmation */}
       <div
         style={{
           flex: 1,
@@ -103,27 +104,75 @@ export default function SharedTicketManageModal({
           padding: "40px 20px",
         }}
       >
-        <button
-          onClick={handleCancel}
-          disabled={cancelling}
-          style={{ ...btnStyle, cursor: cancelling ? "default" : "pointer" }}
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#001f2d"
-            strokeWidth="2"
+        {!confirmCancel ? (
+          <button
+            onClick={() => setConfirmCancel(true)}
+            style={btnStyle}
           >
-            <circle cx="12" cy="12" r="10" />
-            <line x1="15" y1="9" x2="9" y2="15" />
-            <line x1="9" y1="9" x2="15" y2="15" />
-          </svg>
-          <span style={labelStyle}>
-            {cancelling ? "Cancelling..." : "Cancel share"}
-          </span>
-        </button>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#001f2d"
+              strokeWidth="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="15" y1="9" x2="9" y2="15" />
+              <line x1="9" y1="9" x2="15" y2="15" />
+            </svg>
+            <span style={labelStyle}>Cancel share</span>
+          </button>
+        ) : (
+          <>
+            <p style={{ fontSize: 15, color: "#666", margin: "0 0 4px", lineHeight: 1.4 }}>
+              Choose how to cancel this shared ticket:
+            </p>
+            <button
+              onClick={() => handleCancel(true)}
+              disabled={cancelling}
+              style={{ ...btnStyle, cursor: cancelling ? "default" : "pointer" }}
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#001f2d"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+              <span style={labelStyle}>
+                {cancelling ? "Cancelling..." : "Cancel and send email"}
+              </span>
+            </button>
+            <button
+              onClick={() => handleCancel(false)}
+              disabled={cancelling}
+              style={{ ...btnStyle, cursor: cancelling ? "default" : "pointer" }}
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#001f2d"
+                strokeWidth="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="15" y1="9" x2="9" y2="15" />
+                <line x1="9" y1="9" x2="15" y2="15" />
+              </svg>
+              <span style={labelStyle}>
+                {cancelling ? "Cancelling..." : "Cancel without email"}
+              </span>
+            </button>
+          </>
+        )}
 
         <button
           onClick={() => {
