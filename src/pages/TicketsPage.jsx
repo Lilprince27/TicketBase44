@@ -5,6 +5,8 @@ import AppleWalletModal from "../components/tickets/AppleWalletModal";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { getCustomerId } from "../lib/customerId";
 import PullToRefresh from "../components/PullToRefresh";
+import SharedTicketStatus from "../components/tickets/SharedTicketStatus";
+import SharedTicketManageModal from "../components/tickets/SharedTicketManageModal";
 
 // Generate a stable random order number in format YYYYMMDD,NNNNN based on ticket id
 function getOrderNumber(ticket) {
@@ -23,7 +25,7 @@ function getOrderNumber(ticket) {
 
 const isAndroid = () => /android/i.test(navigator.userAgent);
 
-function TicketGroup({ group, onWallet }) {
+function TicketGroup({ group, onWallet, sharedTicketMap, onManageShare }) {
   const [expanded, setExpanded] = useState(true);
   const navigate = useNavigate();
   const first = group[0];
@@ -139,12 +141,19 @@ function TicketGroup({ group, onWallet }) {
                       </button>
                     )}
                     <button
-                      onClick={() => navigate(`/ticket-detail/${ticket.id}`)}
+                      onClick={() => {
+                        const share = sharedTicketMap?.[ticket.serial_number];
+                        if (share) onManageShare(ticket, share);
+                        else navigate(`/ticket-detail/${ticket.id}`);
+                      }}
                       style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "#427926", color: "white", cursor: "pointer" }}
                     >
                       Manage ticket
                     </button>
                   </div>
+                  {sharedTicketMap?.[ticket.serial_number] && (
+                    <SharedTicketStatus shareRecord={sharedTicketMap[ticket.serial_number]} />
+                  )}
                 </div>
               ))}
             </div>
@@ -160,6 +169,8 @@ export default function TicketsPage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [walletTicket, setWalletTicket] = useState(null);
+  const [sharedTicketMap, setSharedTicketMap] = useState({});
+  const [manageShareTicket, setManageShareTicket] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const walletOpen = searchParams.get('modal') === 'wallet';
 
@@ -184,10 +195,37 @@ export default function TicketsPage() {
     const allTickets = await base44.entities.Ticket.filter({ owner_email: me.email });
     const hidden = JSON.parse(localStorage.getItem("hidden_tickets") || "[]");
     setTickets(allTickets.filter(t => !hidden.includes(t.id)));
+    // Load accepted shared tickets to show status under each ticket
+    const sharedTickets = await base44.entities.SharedTicket.filter({ owner_email: me.email });
+    const acceptedMap = {};
+    for (const s of sharedTickets) {
+      if (s.accepted_by) {
+        try {
+          const snap = JSON.parse(s.ticket_snapshot);
+          if (snap.serial_number) acceptedMap[snap.serial_number] = s;
+        } catch {}
+      }
+    }
+    setSharedTicketMap(acceptedMap);
     setLoading(false);
   }, []);
 
   useEffect(() => { loadTickets(); }, [loadTickets]);
+
+  const handleCancelShare = async (shareRecord, ticket) => {
+    await base44.entities.SharedTicket.delete(shareRecord.id);
+    await base44.entities.Ticket.update(ticket.id, { transfer_status: "active", active_transfer_id: null });
+    try {
+      const html = `<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto;"><div style="background: #001f2d; padding: 24px; text-align: center; border-radius: 12px 12px 0 0;"><h2 style="color: #FFC107; margin: 0 0 8px;">Ticket Share Cancelled</h2></div><div style="background: #fff; padding: 24px; border-radius: 0 0 12px 12px; border: 1px solid #e0e0e0; border-top: none;"><p style="color: #333; font-size: 15px; margin: 0 0 16px;">The sender has cancelled the shared ticket for <strong>${ticket.event_name}</strong>.</p><p style="color: #666; font-size: 13px; margin: 0;">Ticketek Pty Limited ABN 92 010 129 110</p></div></div>`;
+      await base44.integrations.Core.SendEmail({
+        to: shareRecord.accepted_by || shareRecord.recipient_email,
+        subject: `Ticket share cancelled: ${ticket.event_name}`,
+        body: html,
+      });
+    } catch {}
+    setManageShareTicket(null);
+    loadTickets();
+  };
 
   if (loading) {
     return (
@@ -209,6 +247,15 @@ export default function TicketsPage() {
     <PullToRefresh onRefresh={loadTickets}>
     <div style={{ background: "white", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", minHeight: "100vh" }}>
       {walletOpen && walletTicket && <AppleWalletModal ticket={walletTicket} onClose={() => navigate(-1)} />}
+
+      {manageShareTicket && (
+        <SharedTicketManageModal
+          ticket={manageShareTicket.ticket}
+          shareRecord={manageShareTicket.share}
+          onClose={() => setManageShareTicket(null)}
+          onCancelShare={handleCancelShare}
+        />
+      )}
 
       {/* Header */}
       <header className="sticky top-0 z-50" style={{ background: "#001a2c", paddingTop: "calc(env(safe-area-inset-top) + 20px)", paddingBottom: 20, paddingLeft: 20, paddingRight: 20 }}>
@@ -245,7 +292,7 @@ export default function TicketsPage() {
           </div>
         ) : (
           groups.map((group) => (
-            <TicketGroup key={group[0].order_number || group[0].id} group={group} onWallet={openWallet} />
+            <TicketGroup key={group[0].order_number || group[0].id} group={group} onWallet={openWallet} sharedTicketMap={sharedTicketMap} onManageShare={(ticket, share) => setManageShareTicket({ ticket, share })} />
           ))
         )}
       </div>
