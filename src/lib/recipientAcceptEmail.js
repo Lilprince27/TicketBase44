@@ -26,9 +26,9 @@ export function buildRecipientAcceptEmail(ticket) {
 
           <!-- Light blue header -->
           <tr>
-            <td style="background-color:#e3f2fd;padding:32px 24px;text-align:center;">
-              <h1 style="margin:0 0 8px;font-size:26px;font-weight:800;color:#2e7d32;letter-spacing:0.3px;">Ticket Accepted!</h1>
-              <p style="margin:0;font-size:15px;color:#37474f;line-height:1.5;">You've successfully accepted the ticket. Enjoy the show!</p>
+            <td style="background-color:#001f2d;padding:32px 24px;text-align:center;">
+              <h1 style="margin:0 0 8px;font-size:26px;font-weight:800;color:#4ade80;letter-spacing:0.3px;">Ticket Accepted!</h1>
+              <p style="margin:0;font-size:15px;color:#ffffff;line-height:1.5;">You've successfully accepted the ticket. Enjoy the show!</p>
             </td>
           </tr>
 
