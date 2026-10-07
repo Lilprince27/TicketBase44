@@ -159,11 +159,11 @@ export default function TransferPage() {
             <h2 style="color: #4ade80; margin: 0 0 8px;">Ticket Transfer Accepted!</h2>
             <p style="color: #fff; font-size: 14px; margin: 0;">Your ticket has been accepted by the recipient.</p>
           </div>
-          <div style="background: #fff; padding: 24px; border-radius: 0 0 12px 12px; border: 1px solid #e0e0e0; border-top: none;">
-            <p style="color: #333; font-size: 14px; margin: 0 0 8px;"><strong>${ticketData.event_name || "Event"}</strong></p>
-            <p style="color: #666; font-size: 13px; margin: 0 0 16px;">${ticketData.venue_name || ""} · ${ticketData.event_date || ""}</p>
-            <p style="color: #333; font-size: 14px; margin: 0 0 24px;">The recipient (${rec.recipient_email}) has accepted the ticket. Your ticket remains in your wallet.</p>
-            <p style="color: #999; font-size: 12px; margin: 0;">Ticketek Pty Limited ABN 92 010 129 110</p>
+          <div style="background: #001f2d; padding: 24px; border-radius: 0 0 12px 12px; border: 1px solid #003352; border-top: none;">
+            <p style="color: #ffffff; font-size: 14px; margin: 0 0 8px;"><strong>${ticketData.event_name || "Event"}</strong></p>
+            <p style="color: #c5d5e0; font-size: 13px; margin: 0 0 16px;">${ticketData.venue_name || ""} · ${ticketData.event_date || ""}</p>
+            <p style="color: #d0dae2; font-size: 14px; margin: 0 0 24px;">The recipient (${rec.recipient_email}) has accepted the ticket. Your ticket remains in your wallet.</p>
+            <p style="color: #8aa0b0; font-size: 12px; margin: 0;">Ticketek Pty Limited ABN 92 010 129 110</p>
           </div>
         </div>`;
         await base44.integrations.Core.SendEmail({

@@ -34,11 +34,11 @@ export function buildRecipientAcceptEmail(ticket) {
 
           <!-- Dark charcoal body -->
           <tr>
-            <td style="background-color:#212121;padding:28px 24px;">
+            <td style="background-color:#001f2d;padding:28px 24px;">
               <p style="margin:0 0 6px;font-size:20px;font-weight:700;color:#ffffff;">${eventName}</p>
-              <p style="margin:0 0 18px;font-size:14px;color:#b0bec5;line-height:1.5;">${detailLine}</p>
-              <p style="margin:0 0 18px;font-size:14px;color:#cfd8dc;line-height:1.6;">Your ticket is now in your wallet. Open the Ticketek app to view it and present it at the venue for entry.</p>
-              <p style="margin:0;font-size:11px;color:#616161;">Ticketek Pty Limited ABN 92 010 129 110</p>
+              <p style="margin:0 0 18px;font-size:14px;color:#c5d5e0;line-height:1.5;">${detailLine}</p>
+              <p style="margin:0 0 18px;font-size:14px;color:#d0dae2;line-height:1.6;">Your ticket is now in your wallet. Open the Ticketek app to view it and present it at the venue for entry.</p>
+              <p style="margin:0;font-size:11px;color:#8aa0b0;">Ticketek Pty Limited ABN 92 010 129 110</p>
             </td>
           </tr>
 

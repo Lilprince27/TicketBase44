@@ -100,7 +100,7 @@ export function buildTicketAvailabilityEmail({ ticket, senderEmail, recipientEma
 
   // Event info card with seat details (matches reference design)
   const eventInfoCard = `
-    <div style="background-color:#242424;border:1px solid #333333;border-radius:12px;padding:20px;margin:0 0 24px;">
+    <div style="background-color:#003352;border:1px solid #004070;border-radius:12px;padding:20px;margin:0 0 24px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td style="vertical-align:top;width:28px;padding-top:2px;">
@@ -115,7 +115,7 @@ export function buildTicketAvailabilityEmail({ ticket, senderEmail, recipientEma
         ${seatBlock ? `
         <tr>
           <td colspan="2" style="padding:14px 0 10px;">
-            <div style="border-top:1px solid #333333;"></div>
+            <div style="border-top:1px solid #004070;"></div>
           </td>
         </tr>
         <tr>
@@ -139,8 +139,8 @@ export function buildTicketAvailabilityEmail({ ticket, senderEmail, recipientEma
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background-color:#1a1a1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#1a1a1a;">
+<body style="margin:0;padding:0;background-color:#001f2d;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#001f2d;">
     <tr>
       <td align="center" style="padding:32px 16px;">
         <table role="presentation" width="500" cellpadding="0" cellspacing="0" border="0" style="max-width:500px;width:100%;">
