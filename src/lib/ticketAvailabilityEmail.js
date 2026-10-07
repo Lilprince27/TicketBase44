@@ -73,12 +73,12 @@ export function buildTicketAvailabilityEmail({ ticket, senderEmail, recipientEma
   // 3-step progress bar
   const step = (label, iconSvg) => `
     <td style="text-align:center;width:33%;vertical-align:top;padding:0 4px;">
-      <div style="width:46px;height:46px;border-radius:50%;background-color:#007bff;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;">
+      <div style="width:46px;height:46px;border-radius:50%;background-color:#001f2d;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;">
         ${iconSvg}
       </div>
       <div style="font-size:12px;font-weight:600;color:#ffffff;letter-spacing:0.3px;">${label}</div>
     </td>`;
-  const connector = `<td style="width:8px;"><div style="height:2px;background-color:#007bff;margin-top:22px;"></div></td>`;
+  const connector = `<td style="width:8px;"><div style="height:2px;background-color:#001f2d;margin-top:22px;"></div></td>`;
 
   const progressBar = `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 24px;max-width:340px;">
