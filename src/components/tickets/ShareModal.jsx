@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { buildTransferEmailHtml } from "@/lib/transferEmailTemplate";
 import { APP_BASE_URL, buildShareUrl, generateSecureToken } from "@/lib/ticketUtils";
+import { assertEmailQuotaAvailable, consumeEmailQuota } from "@/lib/emailQuota";
 
 export default function ShareModal({ ticket, onClose, onTransferred }) {
   const [email, setEmail] = useState("");
@@ -39,6 +40,9 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
     setError("");
     try {
       const me = await base44.auth.me();
+
+      // Check unified email quota (share + transfer share the same counter)
+      await assertEmailQuotaAvailable();
 
       // Create a secure accept-into-wallet link (sender keeps their ticket)
       const token = generateSecureToken();
@@ -87,6 +91,9 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
         body: emailHtml,
       }).catch(() => {});
 
+      // Decrement the unified email quota (share + transfer share the same counter)
+      await consumeEmailQuota().catch(() => {});
+
       setSuccess(true);
       setTransferring(false);
       setTimeout(() => {
@@ -94,7 +101,7 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
         else onClose();
       }, 1800);
     } catch (e) {
-      setError("Transfer failed. Please try again.");
+      setError(e.message || "Transfer failed. Please try again.");
       setTransferring(false);
     }
   };
