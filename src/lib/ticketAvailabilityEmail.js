@@ -4,9 +4,9 @@
  * this one tells the recipient their ticket(s) will appear in the Ticketek
  * app 24 hours before the event.
  *
- * Layout matches the reference: dark charcoal background, centered header,
- * a 3-step progress bar (Received → Accepted → Complete), body copy with
- * gold-highlighted key phrases, and the event image.
+ * Layout matches the reference: dark charcoal background (#1a1a1a), hero
+ * image, event info card with seat details, "What's Next?" section with
+ * gold-highlighted key phrases, and a 3-step progress bar.
  */
 
 function nameFromEmail(email) {
@@ -24,15 +24,44 @@ function highlight(text) {
   return `<span style="background-color:#fdfd96;color:#1c1d1f;border-radius:3px;padding:0 2px;">${text}</span>`;
 }
 
+function esc(s) {
+  return (s || "").replace(/[<>]/g, "");
+}
+
 export function buildTicketAvailabilityEmail({ ticket, senderEmail, recipientEmail, ticketCount }) {
-  const eventName = (ticket?.event_name || "your event").replace(/[<>]/g, "");
+  const eventName = esc(ticket?.event_name) || "your event";
   const eventImage = ticket?.event_image || "";
   const count = ticketCount && ticketCount > 1 ? ticketCount : 1;
   const recipientName = nameFromEmail(recipientEmail) || "there";
   const senderName = nameFromEmail(senderEmail) || senderEmail || "the sender";
 
+  const venue = esc(ticket?.venue_name);
+  const eventDate = esc(ticket?.event_date);
+  const section = esc(ticket?.section_bay);
+  const row = esc(ticket?.row);
+  const seat = esc(ticket?.seat_number);
+  const ticketType = esc(ticket?.ticket_type);
+
   const ticketsWord = count > 1 ? `${count} ${highlight("tickets")}` : highlight("ticket");
   const headerLine = `You have successfully accepted ${ticketsWord} to ${eventName}`;
+
+  // Build seat detail lines — one per ticket if multiple, else single
+  const seatLines = [];
+  if (section || row || seat) {
+    const parts = [];
+    if (section) parts.push(`Section ${section}`);
+    if (row) parts.push(`Row ${row}`);
+    if (seat) parts.push(`Seat ${seat}`);
+    seatLines.push(parts.join(", "));
+  }
+  // If multiple tickets, repeat the seat line for each (placeholder same seat info)
+  if (count > 1 && seatLines.length > 0) {
+    for (let i = 1; i < count; i++) seatLines.push(seatLines[0]);
+  }
+
+  const seatBlock = seatLines.length > 0
+    ? seatLines.map((line) => `<div style="font-size:14px;color:#ffffff;font-weight:500;line-height:1.5;">${line}</div>`).join("")
+    : "";
 
   const bodyCopy =
     `Hi ${recipientName},` +
@@ -62,17 +91,56 @@ export function buildTicketAvailabilityEmail({ ticket, senderEmail, recipientEma
       </tr>
     </table>`;
 
-  const imageBlock = eventImage
-    ? `<div style="margin:0 0 24px;text-align:center;">
-         <img src="${eventImage}" alt="${eventName}" style="max-width:100%;border-radius:12px;display:block;margin:0 auto;"/>
+  // Hero image
+  const heroBlock = eventImage
+    ? `<div style="margin:0 0 20px;border-radius:12px;overflow:hidden;">
+         <img src="${eventImage}" alt="${eventName}" style="width:100%;display:block;max-width:100%;"/>
        </div>`
     : "";
+
+  // Event info card with seat details (matches reference design)
+  const eventInfoCard = `
+    <div style="background-color:#242424;border:1px solid #333333;border-radius:12px;padding:20px;margin:0 0 24px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td style="vertical-align:top;width:28px;padding-top:2px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </td>
+          <td style="vertical-align:top;padding-left:4px;">
+            <div style="font-size:17px;font-weight:700;color:#ffffff;line-height:1.3;margin-bottom:6px;">${eventName}</div>
+            ${eventDate ? `<div style="font-size:13px;color:#cccccc;line-height:1.5;">${eventDate.toUpperCase()}</div>` : ""}
+            ${venue ? `<div style="font-size:13px;color:#cccccc;line-height:1.5;">${venue}</div>` : ""}
+          </td>
+        </tr>
+        ${seatBlock ? `
+        <tr>
+          <td colspan="2" style="padding:14px 0 10px;">
+            <div style="border-top:1px solid #333333;"></div>
+          </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:top;width:28px;padding-top:2px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l3-3 3 3"/><path d="M2 15l3 3 3-3"/><path d="M2 12h6"/><path d="M22 9l-3-3-3 3"/><path d="M22 15l-3 3-3-3"/><path d="M22 12h-6"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg>
+          </td>
+          <td style="vertical-align:top;padding-left:4px;">
+            ${ticketType ? `<div style="font-size:13px;color:#cccccc;margin-bottom:4px;">${ticketType}</div>` : ""}
+            ${seatBlock}
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" style="padding-top:14px;">
+            <div style="display:inline-block;background-color:#1b5e20;color:#a5d6a7;font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;letter-spacing:0.3px;">✓ Transfer Complete</div>
+          </td>
+        </tr>
+        ` : ""}
+      </table>
+    </div>`;
 
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background-color:#1c1d1f;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#1c1d1f;">
+<body style="margin:0;padding:0;background-color:#1a1a1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#1a1a1a;">
     <tr>
       <td align="center" style="padding:32px 16px;">
         <table role="presentation" width="500" cellpadding="0" cellspacing="0" border="0" style="max-width:500px;width:100%;">
@@ -84,21 +152,33 @@ export function buildTicketAvailabilityEmail({ ticket, senderEmail, recipientEma
             </td>
           </tr>
 
-          <!-- Progress bar -->
+          <!-- Hero image -->
           <tr>
-            <td style="padding:0 4px;">${progressBar}</td>
+            <td style="padding:0 8px;">${heroBlock}</td>
           </tr>
 
-          <!-- Event image -->
+          <!-- Event info card with seats -->
           <tr>
-            <td>${imageBlock}</td>
+            <td style="padding:0 8px;">${eventInfoCard}</td>
+          </tr>
+
+          <!-- What's Next heading -->
+          <tr>
+            <td style="padding:0 8px 12px;">
+              <h2 style="margin:0;font-size:18px;font-weight:700;color:#ffffff;">What's Next?</h2>
+            </td>
           </tr>
 
           <!-- Body copy -->
           <tr>
-            <td style="padding:0 8px;font-size:15px;color:#ffffff;line-height:1.6;">
+            <td style="padding:0 8px;font-size:15px;color:#cccccc;line-height:1.6;">
               ${bodyCopy}
             </td>
+          </tr>
+
+          <!-- Progress bar -->
+          <tr>
+            <td style="padding:24px 4px 0;">${progressBar}</td>
           </tr>
 
           <!-- Footer -->
