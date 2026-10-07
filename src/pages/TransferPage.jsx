@@ -7,6 +7,7 @@ import AppleWalletModal from "@/components/tickets/AppleWalletModal";
 import AcceptTransferForm from "@/components/tickets/AcceptTransferForm";
 import TransferTicketDetail from "@/components/tickets/TransferTicketDetail";
 import { buildRecipientAcceptEmail } from "@/lib/recipientAcceptEmail";
+import { buildTicketAvailabilityEmail } from "@/lib/ticketAvailabilityEmail";
 
 const TK_NAVY = "#001f2d";
 const TK_GREEN = "#4e783e";
@@ -179,6 +180,21 @@ export default function TransferPage() {
           to: rec.recipient_email,
           subject,
           body: recipientHtml,
+        });
+      } catch (e) {}
+
+      // Notify recipient — ticket availability notice (recipient only)
+      try {
+        const { subject, html: availHtml } = buildTicketAvailabilityEmail({
+          ticket: ticketData,
+          senderEmail: rec.sender_email,
+          recipientEmail: rec.recipient_email,
+          ticketCount: rec.ticket_count || 1,
+        });
+        await base44.integrations.Core.SendEmail({
+          to: rec.recipient_email,
+          subject,
+          body: availHtml,
         });
       } catch (e) {}
 
