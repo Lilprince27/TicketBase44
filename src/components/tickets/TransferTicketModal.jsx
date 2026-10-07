@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { generateSecureToken, buildTransferUrl, APP_BASE_URL } from "@/lib/ticketUtils";
-import { assertEmailQuotaAvailable, consumeEmailQuota } from "@/lib/emailQuota";
+import { assertEmailQuotaAvailable, decrementEmailQuota } from "@/lib/emailQuota";
 
 const TK_NAVY = "#001f2d";
 const TK_GREEN = "#4e783e";
@@ -29,7 +29,7 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
     setError("");
     try {
       // Check unified email quota (share + transfer share the same counter)
-      await assertEmailQuotaAvailable();
+      const quotaState = await assertEmailQuotaAvailable();
 
       const token = generateSecureToken();
       const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(); // 48 hours
@@ -86,7 +86,11 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
       } catch (e) {}
 
       // Decrement the unified email quota (share + transfer share the same counter)
-      await consumeEmailQuota().catch(() => {});
+      try {
+        await decrementEmailQuota(quotaState);
+      } catch (e) {
+        console.warn("[quota] decrement failed:", e);
+      }
 
       setTransferUrl(url);
       setStep("sent");

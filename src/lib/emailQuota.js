@@ -31,6 +31,8 @@ export async function getEmailQuota() {
 /**
  * Checks whether the user has at least one email quota remaining.
  * Throws an Error with a friendly message if the quota is exhausted.
+ * Returns the quota state (with profileId + used) on success so the
+ * caller can decrement without a second lookup.
  */
 export async function assertEmailQuotaAvailable() {
   const state = await getEmailQuota();
@@ -48,14 +50,18 @@ export async function assertEmailQuotaAvailable() {
 
 /**
  * Decrements the user's remaining email quota by 1 (increments
- * email_transfer_used). Call this only after a share/transfer email
- * has been successfully sent.
+ * email_transfer_used). Pass the state returned by
+ * assertEmailQuotaAvailable() so we don't need a second auth.me() +
+ * filter round-trip. Falls back to a fresh lookup if state is omitted.
  */
-export async function consumeEmailQuota() {
-  const state = await getEmailQuota();
-  if (!state) return;
-  await base44.entities.UserProfile.update(state.profileId, {
-    email_transfer_used: state.used + 1,
+export async function decrementEmailQuota(state) {
+  let s = state;
+  if (!s || !s.profileId) {
+    s = await getEmailQuota();
+  }
+  if (!s) return;
+  await base44.entities.UserProfile.update(s.profileId, {
+    email_transfer_used: (s.used || 0) + 1,
   });
-  return state.used + 1;
+  return (s.used || 0) + 1;
 }

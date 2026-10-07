@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { buildTransferEmailHtml } from "@/lib/transferEmailTemplate";
 import { APP_BASE_URL, buildShareUrl, generateSecureToken } from "@/lib/ticketUtils";
-import { assertEmailQuotaAvailable, consumeEmailQuota } from "@/lib/emailQuota";
+import { assertEmailQuotaAvailable, decrementEmailQuota } from "@/lib/emailQuota";
 
 export default function ShareModal({ ticket, onClose, onTransferred }) {
   const [email, setEmail] = useState("");
@@ -42,7 +42,7 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
       const me = await base44.auth.me();
 
       // Check unified email quota (share + transfer share the same counter)
-      await assertEmailQuotaAvailable();
+      const quotaState = await assertEmailQuotaAvailable();
 
       // Create a secure accept-into-wallet link (sender keeps their ticket)
       const token = generateSecureToken();
@@ -92,7 +92,11 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
       }).catch(() => {});
 
       // Decrement the unified email quota (share + transfer share the same counter)
-      await consumeEmailQuota().catch(() => {});
+      try {
+        await decrementEmailQuota(quotaState);
+      } catch (e) {
+        console.warn("[quota] decrement failed:", e);
+      }
 
       setSuccess(true);
       setTransferring(false);
