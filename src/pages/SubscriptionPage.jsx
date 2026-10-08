@@ -231,7 +231,7 @@ export default function SubscriptionPage() {
         {isAdmin && <SendNotificationPanel />}
         {isAdmin && <LifetimeSubscriptionPanel />}
         {isAdmin && <ProSubscriptionPanel />}
-        {isAdmin && <AdminEmailTransferPanel />}
+        {isAdmin && <AdminEmailTransferPanel isAdmin={isAdmin} />}
         {isAdmin && <AdminTransferPanel />}
         <TicketTransferSettingsPanel />
         <HideSettingsPanel />

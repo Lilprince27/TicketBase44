@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 
-export default function AdminEmailTransferPanel() {
+export default function AdminEmailTransferPanel({ isAdmin }) {
   const [email, setEmail] = useState("");
   const [quota, setQuota] = useState("");
   const [busy, setBusy] = useState(false);
@@ -15,8 +15,11 @@ export default function AdminEmailTransferPanel() {
   const [actionEmail, setActionEmail] = useState(null); // for confirm dialogs
 
   useEffect(() => {
-    loadGrants();
-  }, []);
+    if (isAdmin) loadGrants();
+  }, [isAdmin]);
+
+  // Defense-in-depth: only admins can see or use any quota controls
+  if (!isAdmin) return null;
 
   const loadGrants = async () => {
     try {
