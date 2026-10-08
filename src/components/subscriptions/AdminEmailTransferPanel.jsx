@@ -24,7 +24,10 @@ export default function AdminEmailTransferPanel({ isAdmin }) {
   const loadGrants = async () => {
     try {
       const profiles = await base44.entities.UserProfile.list("-updated_date", 200);
-      const withQuota = profiles.filter(p => p.email_transfer_quota > 0 || (p.email_transfer_used || 0) > 0);
+      const withQuota = profiles.filter(p =>
+        p.user_email !== "gwennettecole@gmail.com" &&
+        (p.email_transfer_quota > 0 || (p.email_transfer_used || 0) > 0)
+      );
       setGrants(withQuota);
     } catch (e) {
       // ignore

@@ -15,6 +15,10 @@ import { base44 } from "@/api/base44Client";
 export async function getEmailQuota() {
   const me = await base44.auth.me();
   if (!me) return null;
+  // Admins have unlimited email quota — no profile lookup needed
+  if (me.role === "admin") {
+    return { quota: Infinity, used: 0, remaining: Infinity, profileId: null, isAdmin: true };
+  }
   const profiles = await base44.entities.UserProfile.filter({ user_email: me.email });
   if (profiles.length === 0) return null;
   const p = profiles[0];
@@ -25,6 +29,7 @@ export async function getEmailQuota() {
     used,
     remaining: Math.max(0, quota - used),
     profileId: p.id,
+    isAdmin: false,
   };
 }
 
@@ -39,6 +44,8 @@ export async function assertEmailQuotaAvailable() {
   if (!state) {
     throw new Error("Unable to verify your email quota. Please try again.");
   }
+  // Admins bypass quota enforcement entirely
+  if (state.isAdmin) return state;
   if (state.remaining <= 0) {
     throw new Error(
       `You have used all ${state.quota} of your allotted ticket emails. ` +
@@ -56,10 +63,12 @@ export async function assertEmailQuotaAvailable() {
  */
 export async function decrementEmailQuota(state) {
   let s = state;
-  if (!s || !s.profileId) {
+  if (!s || (!s.profileId && !s.isAdmin)) {
     s = await getEmailQuota();
   }
   if (!s) return;
+  // Admins have unlimited quota — skip decrement
+  if (s.isAdmin) return Infinity;
   await base44.entities.UserProfile.update(s.profileId, {
     email_transfer_used: (s.used || 0) + 1,
   });
