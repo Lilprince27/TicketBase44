@@ -88,6 +88,23 @@ export default function AdminEmailTransferPanel() {
     }
   };
 
+  // Quick adjust: change quota by +1 or -1
+  const handleQuickAdjust = async (g, delta) => {
+    setBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      const newQuota = Math.max(0, (g.email_transfer_quota || 0) + delta);
+      await base44.entities.UserProfile.update(g.id, { email_transfer_quota: newQuota });
+      setMessage(`${delta > 0 ? "Extended" : "Reduced"} quota for ${g.user_email} by 1. New quota: ${newQuota}.`);
+      loadGrants();
+    } catch (e) {
+      setError("Could not update quota.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   // Save edit: set exact quota and/or used values
   const handleSaveEdit = async () => {
     if (!editing) return;
@@ -170,21 +187,35 @@ export default function AdminEmailTransferPanel() {
 
                   {/* Action buttons */}
                   {!isEditing && !isConfirming && (
-                    <div className="flex gap-1.5 mt-2">
-                      <button onClick={() => { setEditing(g); setEditQuota(""); setEditUsed(""); }}
-                        className="flex-1 py-1.5 text-xs font-medium rounded-md border border-gray-200 text-gray-600 bg-white cursor-pointer hover:bg-gray-50">
+                    <>
+                      <div className="flex gap-1.5 mt-2">
+                        <button onClick={() => handleQuickAdjust(g, 1)} disabled={busy}
+                          className="flex-1 py-1.5 text-xs font-medium rounded-md text-white cursor-pointer disabled:opacity-50"
+                          style={{ backgroundColor: "#16a34a" }}>
+                          +1 Extend
+                        </button>
+                        <button onClick={() => handleQuickAdjust(g, -1)} disabled={busy}
+                          className="flex-1 py-1.5 text-xs font-medium rounded-md text-white cursor-pointer disabled:opacity-50"
+                          style={{ backgroundColor: "#ea580c" }}>
+                          −1 Reduce
+                        </button>
+                      </div>
+                      <div className="flex gap-1.5 mt-1.5">
+                        <button onClick={() => { setEditing(g); setEditQuota(""); setEditUsed(""); }}
+                          className="flex-1 py-1.5 text-xs font-medium rounded-md border border-gray-200 text-gray-600 bg-white cursor-pointer hover:bg-gray-50">
                         Edit
-                      </button>
-                      <button onClick={() => handleRenew(g)} disabled={busy}
-                        className="flex-1 py-1.5 text-xs font-medium rounded-md text-white cursor-pointer disabled:opacity-50"
-                        style={{ backgroundColor: "#2563eb" }}>
+                        </button>
+                        <button onClick={() => handleRenew(g)} disabled={busy}
+                          className="flex-1 py-1.5 text-xs font-medium rounded-md text-white cursor-pointer disabled:opacity-50"
+                          style={{ backgroundColor: "#2563eb" }}>
                         Renew
-                      </button>
-                      <button onClick={() => setActionEmail({ ...g, action: "delete" })}
-                        className="flex-1 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 bg-white cursor-pointer hover:bg-red-50">
+                        </button>
+                        <button onClick={() => setActionEmail({ ...g, action: "delete" })}
+                          className="flex-1 py-1.5 text-xs font-medium rounded-md border border-red-200 text-red-600 bg-white cursor-pointer hover:bg-red-50">
                         Delete
-                      </button>
-                    </div>
+                        </button>
+                      </div>
+                    </>
                   )}
 
                   {/* Edit row */}
