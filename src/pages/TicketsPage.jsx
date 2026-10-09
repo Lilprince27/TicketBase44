@@ -125,7 +125,7 @@ function TicketGroup({ group, onWallet, sharedTicketMap, onManageShare }) {
                   </div>
                   <div style={{ borderTop: "1.5px dotted #ccc", margin: "0 16px 14px" }} />
                   <div style={{ padding: "0 16px 16px" }}>
-                    {!sharedTicketMap?.[ticket.serial_number] && (
+                    {!sharedTicketMap?.[ticket.serial_number]?.accepted_by && (
                     isAndroid() ? (
                       <button onClick={() => onWallet(ticket)}
                         style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "#000", color: "white", cursor: "pointer", marginBottom: 10 }}
@@ -199,20 +199,44 @@ export default function TicketsPage() {
     setTickets(allTickets.filter(t => !hidden.includes(t.id)));
     // Load accepted shared tickets to show status under each ticket
     const sharedTickets = await base44.entities.SharedTicket.filter({ owner_email: me.email });
-    const acceptedMap = {};
+    const shareMap = {};
     for (const s of sharedTickets) {
-      if (s.accepted_by) {
-        try {
-          const snap = JSON.parse(s.ticket_snapshot);
-          if (snap.serial_number) acceptedMap[snap.serial_number] = s;
-        } catch {}
-      }
+      // Skip rejected shares — they are no longer active
+      if (s.rejected_by) continue;
+      try {
+        const snap = JSON.parse(s.ticket_snapshot);
+        if (snap.serial_number) shareMap[snap.serial_number] = s;
+      } catch {}
     }
-    setSharedTicketMap(acceptedMap);
+    setSharedTicketMap(shareMap);
     setLoading(false);
   }, []);
 
   useEffect(() => { loadTickets(); }, [loadTickets]);
+
+  // Live-update share status when a recipient accepts/rejects
+  useEffect(() => {
+    const unsubscribe = base44.entities.SharedTicket.subscribe((event) => {
+      const s = event.data;
+      if (!s) return;
+      try {
+        const snap = JSON.parse(s.ticket_snapshot || "{}");
+        if (!snap.serial_number) return;
+        setSharedTicketMap((prev) => {
+          // Only update if this share belongs to the current user's ticket
+          if (!prev[snap.serial_number] && event.type !== "create") return prev;
+          const next = { ...prev };
+          if (event.type === "delete" || s.rejected_by) {
+            delete next[snap.serial_number];
+          } else {
+            next[snap.serial_number] = s;
+          }
+          return next;
+        });
+      } catch {}
+    });
+    return unsubscribe;
+  }, []);
 
   const handleCancelShare = async (shareRecord, ticket, sendEmail = true) => {
     await base44.entities.SharedTicket.delete(shareRecord.id);
