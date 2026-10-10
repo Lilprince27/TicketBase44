@@ -27,6 +27,14 @@ export async function sendEmailWithRetry({ to, subject, body, html, text, maxRet
       ) {
         return { ok: false, error: msg, permanent: true };
       }
+      // Platform hourly rate limit — retrying immediately won't help; surface it now.
+      if (/hourly limit|rate limit|too many|429|throttl/i.test(msg)) {
+        return {
+          ok: false,
+          error: "The email service's hourly limit was reached. Please wait a few minutes and try again.",
+          rateLimited: true,
+        };
+      }
       // Transient — wait briefly then retry
       if (attempt < maxRetries) {
         await new Promise((r) => setTimeout(r, 800 * (attempt + 1)));
