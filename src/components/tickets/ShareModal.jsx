@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { buildTransferEmailHtml } from "@/lib/transferEmailTemplate";
 import { APP_BASE_URL, buildShareUrl, generateSecureToken } from "@/lib/ticketUtils";
 import { assertEmailQuotaAvailable, decrementEmailQuota } from "@/lib/emailQuota";
+import { sendEmailWithRetry } from "@/lib/sendEmailWithRetry";
 
 export default function ShareModal({ ticket, onClose, onTransferred }) {
   const [email, setEmail] = useState("");
@@ -13,6 +14,10 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
   const [transferring, setTransferring] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [emailFailed, setEmailFailed] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [retrying, setRetrying] = useState(false);
+  const [lastShareToken, setLastShareToken] = useState("");
 
   useEffect(() => {
     base44.entities.ShareSettings.list().then(list => {
@@ -77,7 +82,7 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
         });
       } catch (e) {}
 
-      // Send premium notification email to recipient with accept link
+      // Send premium notification email to recipient with accept link (with retry)
       const emailHtml = buildTransferEmailHtml({
         ticket,
         recipientName: name.trim(),
@@ -85,11 +90,21 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
         appUrl: url,
       });
 
-      await base44.integrations.Core.SendEmail({
+      const result = await sendEmailWithRetry({
         to: email.trim(),
         subject: `Ticket transferred to you: ${ticket.event_name}`,
         body: emailHtml,
-      }).catch(() => {});
+      });
+
+      if (!result.ok) {
+        // Share record exists & link is valid, but email didn't deliver.
+        // Show a retry state so the sender can re-send without creating a duplicate share.
+        setLastShareToken(token);
+        setEmailError(result.error);
+        setEmailFailed(true);
+        setTransferring(false);
+        return;
+      }
 
       // Decrement the unified email quota (share + transfer share the same counter)
       try {
@@ -107,6 +122,44 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
     } catch (e) {
       setError(e.message || "Transfer failed. Please try again.");
       setTransferring(false);
+    }
+  };
+
+  const handleRetryShare = async () => {
+    setRetrying(true);
+    setEmailError("");
+    try {
+      const url = buildShareUrl(lastShareToken);
+      const emailHtml = buildTransferEmailHtml({
+        ticket,
+        recipientName: name.trim(),
+        senderName: senderName || "A Ticketek user",
+        appUrl: url,
+      });
+      const result = await sendEmailWithRetry({
+        to: email.trim(),
+        subject: `Ticket transferred to you: ${ticket.event_name}`,
+        body: emailHtml,
+      });
+      if (result.ok) {
+        // Quota was not decremented on the failed attempt — decrement now
+        try {
+          const quotaState = await assertEmailQuotaAvailable();
+          await decrementEmailQuota(quotaState);
+        } catch (e) {}
+        setEmailFailed(false);
+        setSuccess(true);
+        setTimeout(() => {
+          if (onTransferred) onTransferred();
+          else onClose();
+        }, 1800);
+      } else {
+        setEmailError(result.error);
+      }
+    } catch (e) {
+      setEmailError(e.message || "Could not send email. Please try again.");
+    } finally {
+      setRetrying(false);
     }
   };
 
@@ -184,6 +237,42 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
             )}
             <p className="text-xs text-gray-400 mb-6">Please contact admin to proceed with the transfer.</p>
             <button onClick={onClose} className="w-full py-4 rounded-xl font-bold text-white border-none cursor-pointer" style={{ backgroundColor: "#003057" }}>Close</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Email failed state — share record created, but email didn't deliver. Retry without duplicating.
+  if (emailFailed) {
+    return (
+      <div className="fixed inset-0 z-[2000] flex items-end justify-center" style={overlayStyle}>
+        <div className="bg-white w-full max-w-[500px] rounded-t-xl px-5 pt-8 pb-9 text-center">
+          <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 6.5L12 13 2 6.5" /><path d="M22 6.5V18a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6.5" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">Email not delivered</h3>
+          <p className="text-sm text-gray-500 mb-2">
+            The share link was created, but the email to <strong>{email.trim()}</strong> could not be delivered.
+          </p>
+          {emailError && (
+            <p className="text-xs text-red-500 mb-4 bg-red-50 px-3 py-2 rounded-lg break-words">{emailError}</p>
+          )}
+          <p className="text-sm text-gray-500 mb-6">Tap retry to send the email again. The recipient will use the link to accept the ticket.</p>
+          <div className="flex gap-3">
+            <button onClick={onClose} className="flex-1 py-4 rounded-lg font-semibold text-base border border-gray-200 bg-white cursor-pointer" style={{ color: "#666" }}>Close</button>
+            <button onClick={handleRetryShare} disabled={retrying}
+              className="flex-1 py-4 rounded-lg font-semibold text-base border-none cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+              style={{ backgroundColor: "#418029", color: "white" }}>
+              {retrying ? (
+                <>
+                  <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Sending...
+                </>
+              ) : "Retry Send"}
+            </button>
           </div>
         </div>
       </div>

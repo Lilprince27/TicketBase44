@@ -2,16 +2,19 @@ import { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { generateSecureToken, buildTransferUrl, APP_BASE_URL } from "@/lib/ticketUtils";
 import { assertEmailQuotaAvailable, decrementEmailQuota } from "@/lib/emailQuota";
+import { sendEmailWithRetry } from "@/lib/sendEmailWithRetry";
 
 const TK_NAVY = "#001f2d";
 const TK_GREEN = "#4e783e";
 const TK_YELLOW = "#EFC44B";
 
 export default function TransferTicketModal({ ticket, user, onClose }) {
-  const [step, setStep] = useState("form"); // form | confirm | sending | sent | error
+  const [step, setStep] = useState("form"); // form | confirm | sending | sent | email_failed | error
   const [recipientEmail, setRecipientEmail] = useState("");
   const [error, setError] = useState("");
   const [transferUrl, setTransferUrl] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [retrying, setRetrying] = useState(false);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const emailValid = emailRegex.test(recipientEmail.trim());
@@ -62,15 +65,22 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
         });
       } catch (e) {}
 
-      // Send transfer email
-      try {
-        const html = buildTransferEmailHtml(ticket, url, recipientEmail.trim(), user.email);
-        await base44.integrations.Core.SendEmail({
-          to: recipientEmail.trim(),
-          subject: "You've received a Ticketek ticket transfer",
-          body: html,
-        });
-      } catch (e) {}
+      // Send transfer email (with retry — surface failures instead of swallowing)
+      const emailHtml = buildTransferEmailHtml(ticket, url, recipientEmail.trim(), user.email);
+      const result = await sendEmailWithRetry({
+        to: recipientEmail.trim(),
+        subject: "You've received a Ticketek ticket transfer",
+        body: emailHtml,
+      });
+
+      if (!result.ok) {
+        // Transfer record exists & link is valid, but email didn't deliver.
+        // Show a retry state so the sender can re-send without recreating the record.
+        setTransferUrl(url);
+        setEmailError(result.error);
+        setStep("email_failed");
+        return;
+      }
 
       // Create ticket history
       try {
@@ -97,6 +107,28 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
     } catch (e) {
       setError(e.message || "Could not initiate transfer. Please try again.");
       setStep("error");
+    }
+  };
+
+  const handleRetryEmail = async () => {
+    setRetrying(true);
+    setEmailError("");
+    try {
+      const emailHtml = buildTransferEmailHtml(ticket, transferUrl, recipientEmail.trim(), user.email);
+      const result = await sendEmailWithRetry({
+        to: recipientEmail.trim(),
+        subject: "You've received a Ticketek ticket transfer",
+        body: emailHtml,
+      });
+      if (result.ok) {
+        setStep("sent");
+      } else {
+        setEmailError(result.error);
+      }
+    } catch (e) {
+      setEmailError(e.message || "Could not send email. Please try again.");
+    } finally {
+      setRetrying(false);
     }
   };
 
@@ -258,6 +290,31 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
             <div style={{ display: "flex", gap: 12 }}>
               <button onClick={handleCancelTransfer} style={{ flex: 1, padding: "14px 0", borderRadius: 8, background: "transparent", color: "#ef4444", fontWeight: 600, fontSize: 15, border: "1px solid #ef4444", cursor: "pointer" }}>Cancel Transfer</button>
               <button onClick={onClose} style={{ flex: 1, padding: "14px 0", borderRadius: 8, background: TK_NAVY, color: "#fff", fontWeight: 700, fontSize: 15, border: "none", cursor: "pointer" }}>Done</button>
+            </div>
+          </div>
+        )}
+
+        {/* EMAIL FAILED STEP — transfer created, but email didn't deliver. Retry without duplicating. */}
+        {step === "email_failed" && (
+          <div style={{ padding: 24, textAlign: "center" }}>
+            <div style={{ width: 56, height: 56, margin: "0 auto 16px", borderRadius: "50%", background: "#fff7e6", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#EFC44B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 6.5L12 13 2 6.5"/><path d="M22 6.5V18a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6.5"/></svg>
+            </div>
+            <h3 style={{ fontSize: 20, fontWeight: 700, color: "#111", margin: "0 0 8px" }}>Email not delivered</h3>
+            <p style={{ fontSize: 14, color: "#666", margin: "0 0 8px", lineHeight: 1.5 }}>
+              The transfer link was created, but the email to <strong>{recipientEmail.trim()}</strong> could not be delivered.
+            </p>
+            {emailError && (
+              <p style={{ fontSize: 12, color: "#ef4444", margin: "0 0 16px", background: "#fef2f2", padding: "8px 12px", borderRadius: 8, wordBreak: "break-word" }}>
+                {emailError}
+              </p>
+            )}
+            <p style={{ fontSize: 13, color: "#555", margin: "0 0 20px" }}>Tap retry to send the email again. The recipient will use the link to accept the ticket.</p>
+            <div style={{ display: "flex", gap: 12 }}>
+              <button onClick={onClose} style={{ flex: 1, padding: "14px 0", borderRadius: 8, background: "transparent", color: "#666", fontWeight: 600, fontSize: 15, border: "1px solid #ddd", cursor: "pointer" }}>Close</button>
+              <button onClick={handleRetryEmail} disabled={retrying} style={{ flex: 1, padding: "14px 0", borderRadius: 8, background: retrying ? "#9ca3af" : TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 15, border: "none", cursor: retrying ? "default" : "pointer" }}>
+                {retrying ? "Sending..." : "Retry Send"}
+              </button>
             </div>
           </div>
         )}

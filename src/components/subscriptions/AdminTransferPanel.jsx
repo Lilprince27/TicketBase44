@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { sendEmailWithRetry } from "@/lib/sendEmailWithRetry";
 
 const TK_NAVY = "#001f2d";
 const TK_GREEN = "#4e783e";
@@ -75,11 +76,15 @@ export default function AdminTransferPanel() {
           <a href="${url}" style="display: block; text-align: center; padding: 16px; background: #4e783e; color: #fff; font-weight: 700; border-radius: 8px; text-decoration: none;">Accept Ticket</a>
         </div>
       </div>`;
-      await base44.integrations.Core.SendEmail({
+      const result = await sendEmailWithRetry({
         to: transfer.recipient_email,
         subject: "Reminder: You've received a Ticketek ticket transfer",
         body: html,
       });
+      if (!result.ok) {
+        alert(`Could not resend email to ${transfer.recipient_email}: ${result.error}`);
+        return;
+      }
       await base44.entities.TransferAuditLog.create({
         transfer_id: transfer.id,
         secure_token: transfer.secure_token,

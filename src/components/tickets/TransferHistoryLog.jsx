@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { buildTransferUrl } from "@/lib/ticketUtils";
+import { sendEmailWithRetry } from "@/lib/sendEmailWithRetry";
 
 const STATUS_CONFIG = {
   pending: { label: "Pending", bg: "#fef3c7", color: "#b45309", dot: "#e6a700" },
@@ -80,13 +81,15 @@ export default function TransferHistoryLog({ userEmail }) {
       const url = buildTransferUrl(transfer.secure_token);
       let ticketData = {};
       try { ticketData = JSON.parse(transfer.ticket_snapshot); } catch (e) {}
-      try {
-        await base44.integrations.Core.SendEmail({
-          to: transfer.recipient_email,
-          subject: `Reminder: You've received a ticket transfer for ${transfer.event_name || "an event"}`,
-          body: buildResendEmailHtml(transfer, ticketData, url, userEmail),
-        });
-      } catch (e) {}
+      const result = await sendEmailWithRetry({
+        to: transfer.recipient_email,
+        subject: `Reminder: You've received a ticket transfer for ${transfer.event_name || "an event"}`,
+        body: buildResendEmailHtml(transfer, ticketData, url, userEmail),
+      });
+      if (!result.ok) {
+        alert(`Could not resend email to ${transfer.recipient_email}: ${result.error}`);
+        return;
+      }
       try {
         await base44.entities.TransferAuditLog.create({
           transfer_id: transfer.id,
