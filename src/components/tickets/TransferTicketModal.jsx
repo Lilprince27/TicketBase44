@@ -11,6 +11,7 @@ const TK_YELLOW = "#EFC44B";
 export default function TransferTicketModal({ ticket, user, onClose }) {
   const [step, setStep] = useState("form"); // form | confirm | sending | sent | email_failed | error
   const [recipientEmail, setRecipientEmail] = useState("");
+  const [recipientName, setRecipientName] = useState("");
   const [error, setError] = useState("");
   const [transferUrl, setTransferUrl] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -18,10 +19,13 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const emailValid = emailRegex.test(recipientEmail.trim());
+  const nameValid = recipientName.trim() !== "";
+  const formValid = emailValid && nameValid;
   const isSelf = recipientEmail.trim().toLowerCase() === (user?.email || "").toLowerCase();
 
   const handleConfirm = async () => {
     if (!emailValid) { setError("Please enter a valid email address."); return; }
+    if (!nameValid) { setError("Please enter the recipient's name."); return; }
     if (isSelf) { setError("You cannot transfer a ticket to yourself."); return; }
     setError("");
     setStep("confirm");
@@ -36,7 +40,7 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
 
       const token = generateSecureToken();
       const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(); // 48 hours
-      const ticketSnapshot = JSON.stringify(ticket);
+      const ticketSnapshot = JSON.stringify({ ...ticket, recipient_name: recipientName.trim() });
       const url = buildTransferUrl(token);
 
       // Create the transfer record
@@ -211,6 +215,8 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
           <div style={{ padding: 24 }}>
             <label style={{ display: "block", fontSize: 14, fontWeight: 600, color: "#333", marginBottom: 6 }}>You are transferring this ticket to:</label>
             <input type="email" value={recipientEmail} onChange={e => setRecipientEmail(e.target.value)} placeholder="recipient@email.com"
+              style={{ width: "100%", padding: "14px 16px", borderRadius: 8, border: "1px solid #ccc", fontSize: 16, outline: "none", boxSizing: "border-box", marginBottom: 12 }} />
+            <input type="text" value={recipientName} onChange={e => setRecipientName(e.target.value)} placeholder="Recipient full name (e.g. James Smith)"
               style={{ width: "100%", padding: "14px 16px", borderRadius: 8, border: "1px solid #ccc", fontSize: 16, outline: "none", boxSizing: "border-box", marginBottom: 20 }} />
 
             {/* Ticket summary */}
@@ -229,8 +235,8 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
 
             <div style={{ display: "flex", gap: 12 }}>
               <button onClick={onClose} style={{ flex: 1, padding: "16px 0", borderRadius: 8, background: "transparent", color: "#666", fontWeight: 600, fontSize: 16, border: "1px solid #ddd", cursor: "pointer" }}>Cancel</button>
-              <button onClick={handleConfirm} disabled={!emailValid}
-                style={{ flex: 1, padding: "16px 0", borderRadius: 8, background: emailValid ? TK_NAVY : "#ccc", color: "#fff", fontWeight: 700, fontSize: 16, border: "none", cursor: emailValid ? "pointer" : "default" }}>Transfer Ticket</button>
+              <button onClick={handleConfirm} disabled={!formValid}
+                style={{ flex: 1, padding: "16px 0", borderRadius: 8, background: formValid ? TK_NAVY : "#ccc", color: "#fff", fontWeight: 700, fontSize: 16, border: "none", cursor: formValid ? "pointer" : "default" }}>Transfer Ticket</button>
             </div>
           </div>
         )}
@@ -251,7 +257,8 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
 
             <div style={{ background: "#f8f9fa", borderRadius: 12, padding: 16, marginBottom: 20 }}>
               <p style={{ fontSize: 13, fontWeight: 600, color: "#333", margin: "0 0 4px" }}>Transferring to:</p>
-              <p style={{ fontSize: 15, color: TK_NAVY, fontWeight: 700, margin: "0 0 12px" }}>{recipientEmail.trim()}</p>
+              <p style={{ fontSize: 15, color: TK_NAVY, fontWeight: 700, margin: "0 0 4px" }}>{recipientName.trim()}</p>
+              <p style={{ fontSize: 13, color: "#666", margin: "0 0 12px" }}>{recipientEmail.trim()}</p>
               <p style={{ fontSize: 13, fontWeight: 600, color: "#333", margin: "0 0 4px" }}>Ticket:</p>
               <p style={{ fontSize: 14, color: "#111", fontWeight: 600, margin: "0 0 2px" }}>{ticket.event_name}</p>
               <p style={{ fontSize: 13, color: "#666", margin: "0 0 2px" }}>{ticket.event_date} · {ticket.venue_name}</p>

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AppleWalletModal from "./AppleWalletModal";
 import WalletPassButton from "./WalletPassButton";
 import { buildTicketUrl } from "@/lib/ticketUtils";
+import { formatHolderName } from "@/lib/holderTitle";
 
 const isAndroid = () => /android/i.test(navigator.userAgent);
 
@@ -18,6 +19,9 @@ export default function TransferTicketDetail({ ticket, onBack }) {
   if (!ticket) return null;
 
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(buildTicketUrl(ticket.serial_number))}`;
+  // After acceptance, "Held by" shows the recipient's name (with inferred title),
+  // not the original sender. Falls back to holder_name for older snapshots.
+  const holderDisplay = ticket.recipient_name ? formatHolderName(ticket.recipient_name) : ticket.holder_name;
 
   return (
     <div style={{ margin: "0 auto", backgroundColor: "#f2f2f2", minHeight: "100vh", fontFamily: "-apple-system, system-ui, sans-serif", color: "#000", maxWidth: 500 }}>
@@ -49,7 +53,7 @@ export default function TransferTicketDetail({ ticket, onBack }) {
                   <strong>{ticket.ticket_type || "Adult"}</strong><br />{ticket.price}
                 </div>
                 <div style={{ fontSize: 11, fontWeight: 500, color: "#000", textAlign: "right" }}>
-                  <strong>Held by</strong><br />{ticket.holder_name}
+                  <strong>Held by</strong><br />{holderDisplay}
                 </div>
               </div>
               <div style={{ position: "relative", width: 110, height: 110, display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -75,7 +79,7 @@ export default function TransferTicketDetail({ ticket, onBack }) {
                 <span style={{ display: "block", fontSize: 11, marginTop: 10, color: "#000" }}>{ticket.serial_number}</span>
               </div>
               <div style={{ fontSize: 11, fontWeight: 500, width: 90, color: "#000", textAlign: "right" }}>
-                <strong>Held by</strong><br />{ticket.holder_name}
+                <strong>Held by</strong><br />{holderDisplay}
               </div>
             </div>
           )}

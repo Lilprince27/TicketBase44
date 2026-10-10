@@ -60,6 +60,7 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
         serial_number: ticket.serial_number, order_number: ticket.order_number, event_code: ticket.event_code,
         transaction_number: ticket.transaction_number, purchase_date: ticket.purchase_date, seller_id: ticket.seller_id,
         pax_number: ticket.pax_number, event_image: ticket.event_image, sender_name: senderName,
+        recipient_name: name.trim(),
       });
       await base44.entities.SharedTicket.create({
         share_token: token,
