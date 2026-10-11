@@ -89,7 +89,11 @@ export default function TicketDetailPage() {
       {/* Share selection page — opens when "Share ticket" is tapped */}
       {showSelection && (
         <TicketShareSelection
-          tickets={allTickets}
+          tickets={allTickets.filter(t =>
+            t.event_name === ticket.event_name &&
+            t.event_date === ticket.event_date &&
+            t.venue_name === ticket.venue_name
+          )}
           sharedTicketMap={sharedTicketMap}
           preSelectedId={ticket.id}
           onClose={() => setShowSelection(false)}

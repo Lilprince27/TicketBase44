@@ -2,21 +2,16 @@ import { useState } from "react";
 import { X } from "lucide-react";
 
 /**
- * Full-screen selection page that lets the user pick which event/tickets to share.
- * Opens when "Manage ticket" is tapped on a non-shared ticket.
+ * Full-screen selection page that lets the user pick which tickets to share.
+ * Opens when "Share ticket" is tapped on the ticket details page.
+ * `tickets` must already be limited to the current event — no event selection is shown.
  * After selection, calls onShare(selectedTickets) — parent opens ShareModal or BulkTransferModal.
  */
 export default function TicketShareSelection({ tickets, sharedTicketMap, preSelectedId, onClose, onShare }) {
   const [selectedIds, setSelectedIds] = useState(new Set(preSelectedId ? [preSelectedId] : []));
 
-  // Group tickets by order (same as wallet page)
-  const grouped = tickets.reduce((acc, t) => {
-    const key = t.order_number || t.id;
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(t);
-    return acc;
-  }, {});
-  const groups = Object.values(grouped);
+  // All tickets belong to the same (current) event
+  const first = tickets[0];
 
   const toggleSelect = (id) => {
     setSelectedIds((prev) => {
@@ -50,10 +45,9 @@ export default function TicketShareSelection({ tickets, sharedTicketMap, preSele
 
       {/* Ticket list */}
       <div style={{ flex: 1, overflowY: "auto", padding: "16px 20px 100px" }}>
-        {groups.map((group) => {
-          const first = group[0];
-          return (
-            <div key={first.order_number || first.id} style={{ marginBottom: 16, border: "1.5px solid #e0e0e0", borderRadius: 8, overflow: "hidden" }}>
+        {first && (
+          <>
+            <div style={{ marginBottom: 16, border: "1.5px solid #e0e0e0", borderRadius: 8, overflow: "hidden" }}>
               {/* Event header */}
               <div style={{ padding: "12px 16px", background: "#f8f9fa", display: "flex", alignItems: "center", gap: 12 }}>
                 <img
@@ -68,7 +62,7 @@ export default function TicketShareSelection({ tickets, sharedTicketMap, preSele
               </div>
 
               {/* Individual tickets */}
-              {group.map((ticket, idx) => {
+              {tickets.map((ticket, idx) => {
                 const isShared = !!sharedTicketMap?.[ticket.serial_number]?.accepted_by;
                 const isSelected = selectedIds.has(ticket.id);
                 return (
@@ -115,8 +109,8 @@ export default function TicketShareSelection({ tickets, sharedTicketMap, preSele
                 );
               })}
             </div>
-          );
-        })}
+          </>
+        )}
       </div>
 
       {/* Bottom action bar */}
