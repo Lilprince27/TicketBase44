@@ -7,9 +7,6 @@ import { getCustomerId } from "../lib/customerId";
 import PullToRefresh from "../components/PullToRefresh";
 import SharedTicketStatus from "../components/tickets/SharedTicketStatus";
 import SharedTicketManageModal from "../components/tickets/SharedTicketManageModal";
-import BulkTransferModal from "../components/tickets/BulkTransferModal";
-import ShareModal from "../components/tickets/ShareModal";
-import TicketShareSelection from "../components/tickets/TicketShareSelection";
 
 // Generate a stable random order number in format YYYYMMDD,NNNNN based on ticket id
 function getOrderNumber(ticket) {
@@ -28,8 +25,9 @@ function getOrderNumber(ticket) {
 
 const isAndroid = () => /android/i.test(navigator.userAgent);
 
-function TicketGroup({ group, onWallet, sharedTicketMap, onManageShare, onShareTicket }) {
+function TicketGroup({ group, onWallet, sharedTicketMap, onManageShare }) {
   const [expanded, setExpanded] = useState(true);
+  const navigate = useNavigate();
   const first = group[0];
 
   return (
@@ -151,7 +149,7 @@ function TicketGroup({ group, onWallet, sharedTicketMap, onManageShare, onShareT
                       onClick={() => {
                         const share = sharedTicketMap?.[ticket.serial_number];
                         if (share) onManageShare(ticket, share);
-                        else onShareTicket(ticket);
+                        else navigate(`/ticket-detail/${ticket.id}`);
                       }}
                       style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "#427926", color: "white", cursor: "pointer" }}
                     >
@@ -178,9 +176,6 @@ export default function TicketsPage() {
   const [walletTicket, setWalletTicket] = useState(null);
   const [sharedTicketMap, setSharedTicketMap] = useState({});
   const [manageShareTicket, setManageShareTicket] = useState(null);
-  const [shareSelectionTicket, setShareSelectionTicket] = useState(null);
-  const [bulkTransferTickets, setBulkTransferTickets] = useState(null);
-  const [shareModalTicket, setShareModalTicket] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const walletOpen = searchParams.get('modal') === 'wallet';
 
@@ -271,16 +266,6 @@ export default function TicketsPage() {
     );
   }
 
-  const handleShareSelected = (selectedTickets) => {
-    if (selectedTickets.length === 0) return;
-    setShareSelectionTicket(null);
-    if (selectedTickets.length === 1) {
-      setShareModalTicket(selectedTickets[0]);
-    } else {
-      setBulkTransferTickets(selectedTickets);
-    }
-  };
-
   const grouped = tickets.reduce((acc, t) => {
     const key = t.order_number || t.id;
     if (!acc[key]) acc[key] = [];
@@ -339,40 +324,11 @@ export default function TicketsPage() {
           </div>
         ) : (
           groups.map((group) => (
-            <TicketGroup key={group[0].order_number || group[0].id} group={group} onWallet={openWallet} sharedTicketMap={sharedTicketMap} onManageShare={(ticket, share) => setManageShareTicket({ ticket, share })} onShareTicket={(ticket) => setShareSelectionTicket(ticket)} />
+            <TicketGroup key={group[0].order_number || group[0].id} group={group} onWallet={openWallet} sharedTicketMap={sharedTicketMap} onManageShare={(ticket, share) => setManageShareTicket({ ticket, share })} />
           ))
         )}
       </div>
 
-      {/* Ticket share selection page */}
-      {shareSelectionTicket && (
-        <TicketShareSelection
-          tickets={tickets}
-          sharedTicketMap={sharedTicketMap}
-          preSelectedId={shareSelectionTicket.id}
-          onClose={() => setShareSelectionTicket(null)}
-          onShare={handleShareSelected}
-        />
-      )}
-
-      {/* Single ticket share modal */}
-      {shareModalTicket && (
-        <ShareModal
-          ticket={shareModalTicket}
-          onClose={() => setShareModalTicket(null)}
-          onTransferred={() => { setShareModalTicket(null); loadTickets(); }}
-        />
-      )}
-
-      {/* Bulk transfer modal */}
-      {bulkTransferTickets && (
-        <BulkTransferModal
-          tickets={bulkTransferTickets}
-          user={user}
-          senderName={user?.display_name || user?.full_name || ""}
-          onClose={() => { setBulkTransferTickets(null); loadTickets(); }}
-        />
-      )}
     </div>
     </PullToRefresh>
   );

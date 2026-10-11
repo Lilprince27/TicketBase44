@@ -7,6 +7,8 @@ import ShareModal from "../components/tickets/ShareModal";
 import SendTicketModal from "../components/tickets/SendTicketModal";
 import TransferTicketModal from "../components/tickets/TransferTicketModal";
 import { buildTicketUrl } from "@/lib/ticketUtils";
+import TicketShareSelection from "../components/tickets/TicketShareSelection";
+import BulkTransferModal from "../components/tickets/BulkTransferModal";
 
 
 const isAndroid = () => /android/i.test(navigator.userAgent);
@@ -23,12 +25,32 @@ export default function TicketDetailPage() {
   const showSend = searchParams.get('modal') === 'send';
   const showTransfer = searchParams.get('modal') === 'transfer';
   const [currentUser, setCurrentUser] = useState(null);
+  const [allTickets, setAllTickets] = useState([]);
+  const [sharedTicketMap, setSharedTicketMap] = useState({});
+  const [showSelection, setShowSelection] = useState(false);
+  const [shareModalTicket, setShareModalTicket] = useState(null);
+  const [bulkTransferTickets, setBulkTransferTickets] = useState(null);
 
   useEffect(() => {
     base44.entities.HideSettings.list().then(list => {
       if (list.length > 0) setHideSettings(list[0]);
     }).catch(() => {});
-    base44.auth.me().then(setCurrentUser).catch(() => {});
+    base44.auth.me().then(async (me) => {
+      setCurrentUser(me);
+      const myTickets = await base44.entities.Ticket.filter({ owner_email: me.email });
+      const hidden = JSON.parse(localStorage.getItem("hidden_tickets") || "[]");
+      setAllTickets(myTickets.filter(t => !hidden.includes(t.id)));
+      const sharedTickets = await base44.entities.SharedTicket.filter({ owner_email: me.email });
+      const shareMap = {};
+      for (const s of sharedTickets) {
+        if (s.rejected_by) continue;
+        try {
+          const snap = JSON.parse(s.ticket_snapshot);
+          if (snap.serial_number) shareMap[snap.serial_number] = s;
+        } catch {}
+      }
+      setSharedTicketMap(shareMap);
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -62,8 +84,41 @@ export default function TicketDetailPage() {
   return (
     <div style={{ margin: "0 auto", backgroundColor: "#f2f2f2", minHeight: "100vh", fontFamily: "-apple-system, system-ui, sans-serif", color: "#000", maxWidth: 500 }}>
       {showWallet && <AppleWalletModal ticket={ticket} onClose={() => navigate(-1)} />}
-      {showShare && <ShareModal ticket={ticket} onClose={() => navigate(-1)} onTransferred={() => navigate("/tickets", { replace: true })} />}
       {showSend && <SendTicketModal ticket={ticket} onClose={() => navigate(-1)} />}
+
+      {/* Share selection page — opens when "Share ticket" is tapped */}
+      {showSelection && (
+        <TicketShareSelection
+          tickets={allTickets}
+          sharedTicketMap={sharedTicketMap}
+          preSelectedId={ticket.id}
+          onClose={() => setShowSelection(false)}
+          onShare={(selected) => {
+            setShowSelection(false);
+            if (selected.length === 1) setShareModalTicket(selected[0]);
+            else setBulkTransferTickets(selected);
+          }}
+        />
+      )}
+
+      {/* Single ticket share modal (after selection) */}
+      {shareModalTicket && (
+        <ShareModal
+          ticket={shareModalTicket}
+          onClose={() => setShareModalTicket(null)}
+          onTransferred={() => { setShareModalTicket(null); navigate("/tickets", { replace: true }); }}
+        />
+      )}
+
+      {/* Bulk transfer modal (after selecting multiple tickets) */}
+      {bulkTransferTickets && currentUser && (
+        <BulkTransferModal
+          tickets={bulkTransferTickets}
+          user={currentUser}
+          senderName={currentUser?.display_name || currentUser?.full_name || ""}
+          onClose={() => setBulkTransferTickets(null)}
+        />
+      )}
 
       {/* Header */}
       <div style={{ position: "sticky", top: 0, zIndex: 100, background: "white", height: 55, display: "flex", alignItems: "center", borderBottom: "1px solid #ddd" }}>
@@ -163,7 +218,7 @@ export default function TicketDetailPage() {
         {/* Share button */}
         {!hideSettings.hide_share_button && (
           <button
-            onClick={() => setSearchParams({ modal: 'share' })}
+            onClick={() => setShowSelection(true)}
             style={{ backgroundColor: "#43822a", color: "white", width: "100%", border: "none", padding: "12px", fontSize: 17, borderRadius: 4, fontWeight: 600, marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, cursor: "pointer" }}
           >
             <svg style={{ width: 32, height: 32 }} viewBox="0 0 24 24" fill="none">
