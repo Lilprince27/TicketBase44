@@ -17,6 +17,7 @@ import NotificationPermissionModal from './components/onboarding/NotificationPer
 import AdminNotificationBanner from './components/notifications/AdminNotificationBanner';
 import MaintenanceFeeScreen from './components/MaintenanceFeeScreen';
 import MaintenanceReminderBanner from './components/notifications/MaintenanceReminderBanner';
+import TicketNotificationBanner from './components/notifications/TicketNotificationBanner';
 
 const EventsPage = lazy(() => import('./pages/EventsPage'));
 const AccountPage = lazy(() => import('./pages/AccountPage.jsx'));
@@ -337,6 +338,7 @@ const AuthenticatedApp = () => {
     {showNotifPrompt && !showNameSetup && <NotificationPermissionModal onAllow={handleNotifAllow} onSkip={handleNotifSkip} />}
     {authUser && <AdminNotificationBanner userEmail={authUser.email} />}
     {authUser && <MaintenanceReminderBanner userEmail={authUser.email} />}
+    {authUser && <TicketNotificationBanner userEmail={authUser.email} />}
     <InstallPrompt />
     <Routes>
       <Route element={<Layout />}>

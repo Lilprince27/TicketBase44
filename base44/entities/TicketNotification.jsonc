@@ -1,0 +1,90 @@
+{
+  "name": "TicketNotification",
+  "type": "object",
+  "properties": {
+    "recipient_email": {
+      "type": "string",
+      "title": "Recipient Email"
+    },
+    "sender_email": {
+      "type": "string",
+      "title": "Sender Email"
+    },
+    "sender_name": {
+      "type": "string",
+      "title": "Sender Display Name"
+    },
+    "event_name": {
+      "type": "string",
+      "title": "Event Name"
+    },
+    "notification_type": {
+      "type": "string",
+      "title": "Notification Type",
+      "enum": [
+        "transfer",
+        "share",
+        "bulk_transfer"
+      ],
+      "default": "transfer"
+    },
+    "ticket_count": {
+      "type": "number",
+      "title": "Number of Tickets",
+      "default": 1
+    },
+    "read": {
+      "type": "boolean",
+      "title": "Read",
+      "default": false
+    }
+  },
+  "required": [
+    "recipient_email",
+    "sender_email",
+    "event_name",
+    "notification_type"
+  ],
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        {
+          "data.recipient_email": "{{user.email}}"
+        },
+        {
+          "data.sender_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.recipient_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "$or": [
+        {
+          "data.recipient_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

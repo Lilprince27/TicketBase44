@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { generateSecureToken, buildTransferUrl, APP_BASE_URL } from "@/lib/ticketUtils";
 import { assertEmailQuotaAvailable, decrementEmailQuota } from "@/lib/emailQuota";
 import { sendEmailWithRetry } from "@/lib/sendEmailWithRetry";
+import { createTicketNotification } from "@/lib/ticketNotification";
 
 const TK_NAVY = "#001f2d";
 const TK_GREEN = "#4e783e";
@@ -105,6 +106,16 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
       } catch (e) {
         console.warn("[quota] decrement failed:", e);
       }
+
+      // Push notification to recipient
+      await createTicketNotification({
+        recipientEmail: recipientEmail.trim(),
+        senderEmail: user.email,
+        senderName: user.display_name || user.full_name || user.email,
+        eventName: ticket.event_name || "",
+        notificationType: "transfer",
+        ticketCount: 1,
+      });
 
       setTransferUrl(url);
       setStep("sent");

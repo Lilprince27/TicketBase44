@@ -4,6 +4,7 @@ import { buildTransferEmailHtml } from "@/lib/transferEmailTemplate";
 import { APP_BASE_URL, buildShareUrl, generateSecureToken } from "@/lib/ticketUtils";
 import { assertEmailQuotaAvailable, decrementEmailQuota } from "@/lib/emailQuota";
 import { sendEmailWithRetry } from "@/lib/sendEmailWithRetry";
+import { createTicketNotification } from "@/lib/ticketNotification";
 
 export default function ShareModal({ ticket, onClose, onTransferred }) {
   const [email, setEmail] = useState("");
@@ -113,6 +114,16 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
       } catch (e) {
         console.warn("[quota] decrement failed:", e);
       }
+
+      // Push notification to recipient
+      await createTicketNotification({
+        recipientEmail: email.trim(),
+        senderEmail: me.email,
+        senderName: senderName || me.email,
+        eventName: ticket.event_name || "",
+        notificationType: "share",
+        ticketCount: 1,
+      });
 
       setSuccess(true);
       setTransferring(false);

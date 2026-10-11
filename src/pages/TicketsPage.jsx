@@ -7,6 +7,7 @@ import { getCustomerId } from "../lib/customerId";
 import PullToRefresh from "../components/PullToRefresh";
 import SharedTicketStatus from "../components/tickets/SharedTicketStatus";
 import SharedTicketManageModal from "../components/tickets/SharedTicketManageModal";
+import BulkTransferModal from "../components/tickets/BulkTransferModal";
 
 // Generate a stable random order number in format YYYYMMDD,NNNNN based on ticket id
 function getOrderNumber(ticket) {
@@ -25,7 +26,7 @@ function getOrderNumber(ticket) {
 
 const isAndroid = () => /android/i.test(navigator.userAgent);
 
-function TicketGroup({ group, onWallet, sharedTicketMap, onManageShare }) {
+function TicketGroup({ group, onWallet, sharedTicketMap, onManageShare, selectMode, selectedIds, onToggleSelect }) {
   const [expanded, setExpanded] = useState(true);
   const navigate = useNavigate();
   const first = group[0];
@@ -94,7 +95,20 @@ function TicketGroup({ group, onWallet, sharedTicketMap, onManageShare }) {
             {/* Individual seat cards */}
             <div style={{ padding: "0 20px 16px", background: "white" }}>
               {group.map((ticket, idx) => (
-                <div key={ticket.id} style={{ marginTop: idx === 0 ? 12 : 16, border: "1.5px solid #e0e0e0", borderRadius: 12, overflow: "hidden", background: "white" }}>
+                <div
+                  key={ticket.id}
+                  onClick={() => { if (selectMode && !sharedTicketMap?.[ticket.serial_number]?.accepted_by) onToggleSelect(ticket.id); }}
+                  style={{ marginTop: idx === 0 ? 12 : 16, border: selectedIds?.has(ticket.id) ? "2px solid #001a2c" : "1.5px solid #e0e0e0", borderRadius: 12, overflow: "hidden", background: "white", position: "relative", cursor: selectMode && !sharedTicketMap?.[ticket.serial_number]?.accepted_by ? "pointer" : "default" }}
+                >
+                  {selectMode && (
+                    <div style={{ position: "absolute", top: 10, right: 10, zIndex: 5 }}>
+                      <div style={{ width: 26, height: 26, borderRadius: "50%", border: selectedIds?.has(ticket.id) ? "none" : "2px solid #ccc", background: selectedIds?.has(ticket.id) ? "#001a2c" : "white", display: "flex", alignItems: "center", justifyContent: "center", opacity: sharedTicketMap?.[ticket.serial_number]?.accepted_by ? 0.3 : 1 }}>
+                        {selectedIds?.has(ticket.id) && (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        )}
+                      </div>
+                    </div>
+                  )}
                   {/* Gate / Level header row */}
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 16px", background: "white" }}>
                     <span style={{ fontSize: 13, fontWeight: 700, color: "#111", textTransform: "uppercase" }}>{ticket.entry_gate ? `Gate ${ticket.entry_gate}` : (ticket.door_area ? `Door ${ticket.door_area}` : "Gate A")}</span>
@@ -173,6 +187,9 @@ export default function TicketsPage() {
   const [walletTicket, setWalletTicket] = useState(null);
   const [sharedTicketMap, setSharedTicketMap] = useState({});
   const [manageShareTicket, setManageShareTicket] = useState(null);
+  const [selectMode, setSelectMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [bulkTransferTickets, setBulkTransferTickets] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const walletOpen = searchParams.get('modal') === 'wallet';
 
@@ -263,6 +280,27 @@ export default function TicketsPage() {
     );
   }
 
+  const toggleSelect = (id) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const exitSelectMode = () => {
+    setSelectMode(false);
+    setSelectedIds(new Set());
+  };
+
+  const selectedTickets = tickets.filter((t) => selectedIds.has(t.id));
+
+  const handleBulkTransfer = () => {
+    if (selectedTickets.length === 0) return;
+    setBulkTransferTickets(selectedTickets);
+  };
+
   const grouped = tickets.reduce((acc, t) => {
     const key = t.order_number || t.id;
     if (!acc[key]) acc[key] = [];
@@ -294,6 +332,14 @@ export default function TicketsPage() {
               Customer ID: {getCustomerId(user?.id || "")}
             </p>
           </div>
+          {groups.length > 0 && (
+            <button
+              onClick={() => selectMode ? exitSelectMode() : setSelectMode(true)}
+              style={{ background: selectMode ? "rgba(255,255,255,0.15)" : "transparent", border: "1px solid rgba(255,255,255,0.3)", color: "white", padding: "8px 18px", borderRadius: 100, fontSize: 14, fontWeight: 600, cursor: "pointer" }}
+            >
+              {selectMode ? "Done" : "Select"}
+            </button>
+          )}
         </div>
       </header>
 
@@ -320,10 +366,37 @@ export default function TicketsPage() {
           </div>
         ) : (
           groups.map((group) => (
-            <TicketGroup key={group[0].order_number || group[0].id} group={group} onWallet={openWallet} sharedTicketMap={sharedTicketMap} onManageShare={(ticket, share) => setManageShareTicket({ ticket, share })} />
+            <TicketGroup key={group[0].order_number || group[0].id} group={group} onWallet={openWallet} sharedTicketMap={sharedTicketMap} onManageShare={(ticket, share) => setManageShareTicket({ ticket, share })} selectMode={selectMode} selectedIds={selectedIds} onToggleSelect={toggleSelect} />
           ))
         )}
       </div>
+
+      {/* Multi-select bottom action bar */}
+      {selectMode && selectedIds.size > 0 && (
+        <div style={{ position: "fixed", bottom: "calc(90px + env(safe-area-inset-bottom))", left: 0, right: 0, display: "flex", justifyContent: "center", padding: "0 20px", zIndex: 100 }}>
+          <div style={{ background: "#001a2c", borderRadius: 100, padding: "8px 8px 8px 20px", display: "flex", alignItems: "center", gap: 12, boxShadow: "0 4px 20px rgba(0,0,0,0.25)", width: "100%", maxWidth: 400 }}>
+            <span style={{ color: "white", fontSize: 14, fontWeight: 600, flex: 1 }}>
+              {selectedIds.size} {selectedIds.size === 1 ? "ticket" : "tickets"} selected
+            </span>
+            <button
+              onClick={handleBulkTransfer}
+              style={{ background: "#427926", color: "white", border: "none", padding: "12px 24px", borderRadius: 100, fontSize: 14, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}
+            >
+              Transfer Selected
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk transfer modal */}
+      {bulkTransferTickets && (
+        <BulkTransferModal
+          tickets={bulkTransferTickets}
+          user={user}
+          senderName={user?.display_name || user?.full_name || ""}
+          onClose={() => { setBulkTransferTickets(null); exitSelectMode(); loadTickets(); }}
+        />
+      )}
     </div>
     </PullToRefresh>
   );
