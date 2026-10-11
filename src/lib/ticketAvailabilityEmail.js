@@ -28,12 +28,15 @@ function esc(s) {
   return (s || "").replace(/[<>]/g, "");
 }
 
-export function buildTicketAvailabilityEmail({ ticket, senderEmail, recipientEmail, ticketCount }) {
+export function buildTicketAvailabilityEmail({ ticket, senderEmail, recipientEmail, ticketCount, senderName: senderNameOverride }) {
   const eventName = esc(ticket?.event_name) || "your event";
   const eventImage = ticket?.event_image || "";
   const count = ticketCount && ticketCount > 1 ? ticketCount : 1;
   const recipientName = nameFromEmail(recipientEmail) || "there";
-  const senderName = nameFromEmail(senderEmail) || senderEmail || "the sender";
+  // Prefer the sender's profile name (from their settings); fall back to the
+  // name stored in the ticket snapshot, then to the email-derived name.
+  const snapshotSenderName = ticket?.sender_name || "";
+  const senderName = esc(senderNameOverride || snapshotSenderName) || nameFromEmail(senderEmail) || senderEmail || "the sender";
 
   const venue = esc(ticket?.venue_name);
   const eventDate = esc(ticket?.event_date);

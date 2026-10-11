@@ -130,11 +130,19 @@ export default function SharedTicketPage() {
 
       // Notify recipient — ticket availability notice (recipient only)
       try {
+        // Look up the sender's profile name (from their settings page)
+        let senderProfileName = "";
+        try {
+          const senderProfiles = await base44.entities.UserProfile.filter({ user_email: rec.owner_email });
+          const p = senderProfiles[0];
+          if (p?.first_name) senderProfileName = `${p.first_name}${p.last_name ? " " + p.last_name : ""}`;
+        } catch (e) {}
         const { subject, html: availHtml } = buildTicketAvailabilityEmail({
           ticket: ticketData,
           senderEmail: rec.owner_email,
           recipientEmail: accepterEmail,
           ticketCount: 1,
+          senderName: senderProfileName,
         });
         await base44.integrations.Core.SendEmail({
           to: accepterEmail,
