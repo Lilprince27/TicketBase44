@@ -147,65 +147,55 @@ export default function BulkTransferModal({ tickets, user, senderName, onClose }
         style={{ background: "#fff", width: "100%", maxWidth: 500, borderRadius: "20px 20px 0 0", maxHeight: "90vh", overflowY: "auto", fontFamily: "-apple-system, system-ui, sans-serif" }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div style={{ background: TK_NAVY, padding: "20px 20px 16px", borderRadius: "20px 20px 0 0" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h2 style={{ color: "#fff", fontSize: 20, fontWeight: 700, margin: 0 }}>
-              Transfer {tickets.length} {tickets.length === 1 ? "Ticket" : "Tickets"}
-            </h2>
-            <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", padding: 4 }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-          </div>
-        </div>
-
-        {/* FORM STEP */}
+        {/* FORM STEP — matches the original ShareModal design */}
         {step === "form" && (
-          <div style={{ padding: 24 }}>
-            <label style={{ display: "block", fontSize: 14, fontWeight: 600, color: "#333", marginBottom: 6 }}>You are transferring {tickets.length} {tickets.length === 1 ? "ticket" : "tickets"} to:</label>
-            <input
-              type="email"
-              value={recipientEmail}
-              onChange={(e) => setRecipientEmail(e.target.value)}
-              placeholder="recipient@email.com"
-              style={{ width: "100%", padding: "14px 16px", borderRadius: 8, border: "1px solid #ccc", fontSize: 16, outline: "none", boxSizing: "border-box", marginBottom: 12 }}
-            />
-            <input
-              type="text"
-              value={recipientName}
-              onChange={(e) => setRecipientName(e.target.value)}
-              placeholder="Recipient full name (e.g. James Smith)"
-              style={{ width: "100%", padding: "14px 16px", borderRadius: 8, border: "1px solid #ccc", fontSize: 16, outline: "none", boxSizing: "border-box", marginBottom: 20 }}
-            />
-
-            {/* Ticket list summary */}
-            <div style={{ background: "#f8f9fa", borderRadius: 12, padding: 16, marginBottom: 20 }}>
-              <p style={{ fontSize: 12, fontWeight: 700, color: TK_NAVY, textTransform: "uppercase", letterSpacing: 0.5, margin: "0 0 10px" }}>
-                Tickets ({tickets.length}):
-              </p>
-              {tickets.map((t, i) => (
-                <div key={t.id || i} style={{ marginBottom: i < tickets.length - 1 ? 10 : 0, paddingBottom: i < tickets.length - 1 ? 10 : 0, borderBottom: i < tickets.length - 1 ? "1px solid #eee" : "none" }}>
-                  <p style={{ fontSize: 14, fontWeight: 700, color: "#111", margin: "0 0 2px" }}>{t.event_name}</p>
-                  <p style={{ fontSize: 12, color: "#666", margin: "0 0 2px" }}>{t.event_date} · {t.venue_name}</p>
-                  <p style={{ fontSize: 12, color: "#666", margin: 0 }}>
-                    Sec {t.section_bay || "-"} · Row {t.row || "-"} · Seat {t.seat_number || "-"}
-                  </p>
-                </div>
-              ))}
+          <div style={{ padding: "24px 20px 36px" }}>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 16, marginBottom: 24 }}>
+              <svg style={{ width: 48, height: 48, transform: "rotate(-45deg)", flexShrink: 0 }} viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.5">
+                <path d="M2 8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v2a2 2 0 1 0 0 4v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-2a2 2 0 1 0 0-4V8z" />
+                <line x1="6" y1="5" x2="6" y2="19" strokeDasharray="2 2" />
+              </svg>
+              <div>
+                <h2 style={{ fontSize: 20, fontWeight: 600, color: "#4b5563", margin: 0 }}>Share ticket{tickets.length > 1 ? "s" : ""}</h2>
+                <p style={{ fontSize: 14, color: "#6b7280", marginTop: 4, marginBottom: 0 }}>Transfer {tickets.length === 1 ? "this ticket" : `these ${tickets.length} tickets`} to anyone via email.</p>
+              </div>
             </div>
 
-            {error && <p style={{ fontSize: 13, color: "#ef4444", textAlign: "center", margin: "0 0 16px" }}>{error}</p>}
+            <div style={{ marginBottom: 16 }}>
+              <input
+                type="email"
+                value={recipientEmail}
+                onChange={(e) => setRecipientEmail(e.target.value)}
+                placeholder="Enter recipient email"
+                style={{ width: "100%", padding: "16px", border: "1px solid #e5e7eb", borderRadius: 8, fontSize: 16, outline: "none", color: "#1f2937", boxSizing: "border-box" }}
+              />
+            </div>
+            <div style={{ marginBottom: 16 }}>
+              <input
+                type="text"
+                value={recipientName}
+                onChange={(e) => setRecipientName(e.target.value)}
+                placeholder="Enter recipient name"
+                style={{ width: "100%", padding: "16px", border: "1px solid #e5e7eb", borderRadius: 8, fontSize: 16, outline: "none", color: "#1f2937", boxSizing: "border-box" }}
+              />
+            </div>
+
+            {error && <p style={{ fontSize: 14, color: "#ef4444", textAlign: "center", marginBottom: 12 }}>{error}</p>}
+
+            <p style={{ fontSize: 14, color: "#9ca3af", textAlign: "center", margin: "20px 8px", lineHeight: 1.5 }}>
+              A secure accept link will be emailed to the recipient. Your ticket{tickets.length > 1 ? "s" : ""} stay{tickets.length === 1 ? "s" : ""} in your wallet.
+            </p>
 
             <div style={{ display: "flex", gap: 12 }}>
-              <button onClick={onClose} style={{ flex: 1, padding: "16px 0", borderRadius: 8, background: "transparent", color: "#666", fontWeight: 600, fontSize: 16, border: "1px solid #ddd", cursor: "pointer" }}>
+              <button onClick={onClose} style={{ flex: 1, padding: "16px 0", borderRadius: 8, border: "1px solid #e5e7eb", background: "#fff", color: "#004b8d", fontWeight: 600, fontSize: 16, cursor: "pointer" }}>
                 Cancel
               </button>
               <button
                 onClick={handleTransfer}
                 disabled={!formValid}
-                style={{ flex: 1, padding: "16px 0", borderRadius: 8, background: formValid ? TK_NAVY : "#ccc", color: "#fff", fontWeight: 700, fontSize: 16, border: "none", cursor: formValid ? "pointer" : "default" }}
+                style={{ flex: 1, padding: "16px 0", borderRadius: 8, border: "none", background: formValid ? "#418029" : "#e8e8e8", color: formValid ? "#fff" : "#9ca3af", fontWeight: 600, fontSize: 16, cursor: formValid ? "pointer" : "default" }}
               >
-                Transfer {tickets.length} {tickets.length === 1 ? "Ticket" : "Tickets"}
+                Transfer ticket{tickets.length > 1 ? "s" : ""}
               </button>
             </div>
           </div>
