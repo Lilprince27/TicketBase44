@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
+import { getEventCountry, setEventCountry } from "@/lib/countryPreference";
 
 export default function ProfilePage() {
   const navigate = useNavigate();
@@ -8,13 +9,20 @@ export default function ProfilePage() {
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [country, setCountry] = useState("both");
 
   useEffect(() => {
     base44.auth.me().then((u) => {
       setUser(u);
       setName(u.display_name || u.full_name || "");
     });
+    setCountry(getEventCountry());
   }, []);
+
+  const handleCountryChange = (value) => {
+    setCountry(value);
+    setEventCountry(value);
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -46,6 +54,32 @@ export default function ProfilePage() {
           className="w-full px-4 py-3 border border-gray-200 rounded-lg text-base outline-none text-gray-800 placeholder-gray-400 focus:border-blue-400"
         />
         <p className="text-xs text-gray-400 mt-2">This name will appear on your account greeting.</p>
+
+        {/* Event country preference */}
+        <div className="mt-8">
+          <label className="block text-sm font-medium text-gray-600 mb-2">Event Region</label>
+          <p className="text-xs text-gray-400 mb-3">Choose which country's events appear on the homepage.</p>
+          <div className="flex gap-2">
+            {[
+              { value: "both", label: "Australia & NZ" },
+              { value: "AU", label: "Australia only" },
+              { value: "NZ", label: "New Zealand only" },
+            ].map(opt => (
+              <button
+                key={opt.value}
+                onClick={() => handleCountryChange(opt.value)}
+                className="flex-1 py-3 rounded-lg text-sm font-semibold border-2 transition-all cursor-pointer"
+                style={{
+                  backgroundColor: country === opt.value ? "#003057" : "white",
+                  color: country === opt.value ? "white" : "#666",
+                  borderColor: country === opt.value ? "#003057" : "#e0e0e0",
+                }}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
         <button
           onClick={handleSave}

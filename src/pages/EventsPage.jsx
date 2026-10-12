@@ -9,6 +9,7 @@ import { TICKETEK_HERO, TICKETEK_FEATURED, TICKETEK_TRENDING, TICKETEK_WAITLISTS
 import TicketekLogo from "../components/TicketekLogo";
 import StellaChat from "../components/stella/StellaChat";
 import PullToRefresh from "../components/PullToRefresh";
+import { getEventCountry } from "@/lib/countryPreference";
 
 const TM_API_KEY = "ysl6MCmD7CZKfSZtD9MGlKh8rGG4mNgO";
 
@@ -52,8 +53,13 @@ export default function EventsPage() {
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [eventCountry, setEventCountry] = useState("both");
   const debounceTimer = useRef(null);
   const loaderRef = useRef(null);
+
+  useEffect(() => {
+    setEventCountry(getEventCountry());
+  }, []);
 
   const fetchEvents = useCallback(async (query, category, currentOffset, replace = false, silent = false) => {
     if (replace && !silent) setLoading(true);
@@ -231,26 +237,33 @@ export default function EventsPage() {
           </div>
         ) : isFeaturedMode ? (
           <>
-            {/* Hero carousel */}
-            <EventHeroCarousel events={TICKETEK_HERO} onSelect={setSelectedEvent} />
+            {/* Australia sections */}
+            {(eventCountry === "both" || eventCountry === "AU") && (
+              <>
+                <EventHeroCarousel events={TICKETEK_HERO} onSelect={setSelectedEvent} />
+                <EventHorizontalScroll title="Featured" events={TICKETEK_FEATURED} onSelect={setSelectedEvent} />
+                <EventHorizontalScroll title="Trending now" events={TICKETEK_TRENDING} onSelect={setSelectedEvent} />
+                <EventHorizontalScroll title="Waitlists" events={TICKETEK_WAITLISTS} onSelect={setSelectedEvent} />
+              </>
+            )}
 
-            {/* Featured */}
-            <EventHorizontalScroll title="Featured" events={TICKETEK_FEATURED} onSelect={setSelectedEvent} />
-
-            {/* Trending now */}
-            <EventHorizontalScroll title="Trending now" events={TICKETEK_TRENDING} onSelect={setSelectedEvent} />
-
-            {/* Waitlists */}
-            <EventHorizontalScroll title="Waitlists" events={TICKETEK_WAITLISTS} onSelect={setSelectedEvent} />
-
-            {/* New Zealand events */}
-            <div className="px-4 pt-6 pb-2">
-              <h2 className="text-lg font-bold text-gray-900">New Zealand</h2>
-              <p className="text-sm text-gray-500">Events across the ditch</p>
-            </div>
-            <EventHorizontalScroll title="NZ Featured" events={TICKETEK_NZ_FEATURED} onSelect={setSelectedEvent} />
-            <EventHorizontalScroll title="NZ Trending now" events={TICKETEK_NZ_TRENDING} onSelect={setSelectedEvent} />
-            <EventHorizontalScroll title="NZ Waitlists" events={TICKETEK_NZ_WAITLISTS} onSelect={setSelectedEvent} />
+            {/* New Zealand sections */}
+            {(eventCountry === "both" || eventCountry === "NZ") && (
+              <>
+                {eventCountry === "NZ" && (
+                  <EventHeroCarousel events={TICKETEK_NZ_FEATURED.slice(0, 4)} onSelect={setSelectedEvent} />
+                )}
+                {eventCountry === "both" && (
+                  <div className="px-4 pt-6 pb-2">
+                    <h2 className="text-lg font-bold text-gray-900">New Zealand</h2>
+                    <p className="text-sm text-gray-500">Events across the ditch</p>
+                  </div>
+                )}
+                <EventHorizontalScroll title="NZ Featured" events={TICKETEK_NZ_FEATURED} onSelect={setSelectedEvent} />
+                <EventHorizontalScroll title="NZ Trending now" events={TICKETEK_NZ_TRENDING} onSelect={setSelectedEvent} />
+                <EventHorizontalScroll title="NZ Waitlists" events={TICKETEK_NZ_WAITLISTS} onSelect={setSelectedEvent} />
+              </>
+            )}
 
             {/* More events from API */}
             {events.length > 0 && (

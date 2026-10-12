@@ -12,6 +12,7 @@ const OLIVIA_DEAN_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb
 const NOAH_KAHAN_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/47e6fd2a8_IMG_5079.jpeg";
 const DANIEL_CAESAR_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/7da5b30fc_IMG_5611.jpeg";
 const HILARY_DUFF_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/9f021eb3f_IMG_5974.jpeg";
+const NZ_CDN = "https://d19py84rdi4j91.cloudfront.net/dbimages";
 
 export const LOCAL_EVENT_OVERRIDES = {
   "olivia dean": [
@@ -93,6 +94,22 @@ export const LOCAL_EVENT_OVERRIDES = {
         venue_name: "Brisbane Entertainment Centre, Brisbane, QLD",
         event_image_url: OLIVIA_DEAN_IMAGE,
         presenter: "Frontier Touring",
+      },
+    },
+    {
+      id: "local-olivia-dean-nz-1",
+      title: "Olivia Dean",
+      date: "Sat 17 Oct 2026 · 6:00pm",
+      venue: "Western Springs",
+      city: "Auckland, New Zealand",
+      image: `${NZ_CDN}/sfx101979.png`,
+      local: true,
+      localData: {
+        event_name: "Olivia Dean",
+        event_date: "Sat 17 Oct 2026 · 6:00pm",
+        venue_name: "Western Springs, Auckland, New Zealand",
+        event_image_url: `${NZ_CDN}/sfx101979.png`,
+        presenter: "Handsome Tours & Laneway Presents",
       },
     },
   ],
@@ -399,7 +416,30 @@ const TICKETEK_LOCAL_EVENTS = [
   { title: "Adelaide United v Công an Hà Nội FC — AFC Champions League Elite", date: "Tue 11 Aug 2026", venue: "Coopers Stadium, Hindmarsh, SA", image: `${TK_CDN}/sfx364359.png`, keys: ["adelaide united", "cong an ha noi"] },
 ];
 
-const TK_LOCAL_FORMATTED = [...TICKETEK_LOCAL_EVENTS, ...getFormattedDbEvents()].map((m, i) => ({
+// === Ticketek New Zealand events — sourced from premier.ticketek.co.nz (Oct 2026) ===
+const TICKETEK_NZ_LOCAL_EVENTS = [
+  { title: "Olivia Dean — The Art of Loving Live", date: "Sat 17 Oct 2026 · 6:00pm", venue: "Western Springs, Auckland, NZ", image: `${NZ_CDN}/sfx101979.png`, keys: ["olivia dean nz", "olivia dean new zealand", "olivia dean western springs", "olivia dean auckland"] },
+  { title: "LEGO Star Wars: The Exhibition", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx100725.png`, keys: ["lego star wars", "lego star wars exhibition"] },
+  { title: "NZ Cricket 2026-27", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx101972.jpg`, keys: ["nz cricket", "new zealand cricket"] },
+  { title: "Equifest", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx101043.png`, keys: ["equifest"] },
+  { title: "Race Of Champions New Zealand", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx102443.jpg`, keys: ["race of champions", "race of champions nz"] },
+  { title: "New Zealand Rugby 2026 Season", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx101839.png`, keys: ["nz rugby", "new zealand rugby", "all blacks"] },
+  { title: "Mainland Pouakai 2026 Season", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx101583.jpg`, keys: ["mainland pouakai", "pouakai"] },
+  { title: "An Evening with Che Fu & the Kratez — Celebrating 25 years of Navigator", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx102437.png`, keys: ["che fu", "che fu and the kratez"] },
+  { title: "Beatlemania On Tour", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx99921.jpg`, keys: ["beatlemania", "beatlemania on tour"] },
+  { title: "ANZ Premier League Darts 2026", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx101189.jpg`, keys: ["anz premier league darts", "premier league darts nz"] },
+  { title: "Dunedin Craft Beer & Food Festival 2026", date: "", venue: "Dunedin, New Zealand", image: `${NZ_CDN}/sfx101363.jpg`, keys: ["dunedin craft beer", "dunedin festival"] },
+  { title: "Secret Screenings: With Beau Miles", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx101153.jpg`, keys: ["secret screenings", "beau miles"] },
+  { title: "All Whites v India Series 2026", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx101691.jpg`, keys: ["all whites", "all whites v india"] },
+  { title: "The Pearl Fishers", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx101571.jpg`, keys: ["the pearl fishers", "pearl fishers"] },
+  { title: "Bad Bunny (Waitlist)", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx99194.jpg`, keys: ["bad bunny"] },
+  { title: "Morgan Wallen (Waitlist)", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx97344.jpg`, keys: ["morgan wallen"] },
+  { title: "Warbirds Over Wanaka 2028 (Waitlist)", date: "", venue: "Wanaka, New Zealand", image: `${NZ_CDN}/sfx101380.jpg`, keys: ["warbirds over wanaka", "warbirds"] },
+  { title: "Miley Cyrus (Waitlist)", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx99239.jpg`, keys: ["miley cyrus"] },
+  { title: "Sabrina Carpenter (Waitlist)", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx97365.jpg`, keys: ["sabrina carpenter"] },
+];
+
+const TK_LOCAL_FORMATTED = [...TICKETEK_LOCAL_EVENTS, ...TICKETEK_NZ_LOCAL_EVENTS, ...getFormattedDbEvents()].map((m, i) => ({
   id: `local-tk-${i + 1}`,
   title: m.title,
   date: m.date,
