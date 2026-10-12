@@ -26,6 +26,7 @@ const TicketDetailPage = lazy(() => import('./pages/TicketDetailPage.jsx'));
 const CreateTicketPage = lazy(() => import('./pages/CreateTicketPage.jsx'));
 const SubscriptionPage = lazy(() => import('./pages/SubscriptionPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const HelpPage = lazy(() => import('./pages/HelpPage'));
 const SharedTicketPage = lazy(() => import('./pages/SharedTicketPage'));
 const TransferPage = lazy(() => import('./pages/TransferPage'));
 const LoginPage = lazy(() => import('./pages/Login'));
@@ -213,6 +214,7 @@ const AuthenticatedApp = () => {
             <Route path="/subscriptions" element={<LoginGate navigateToLogin={navigateToLogin} />} />
             <Route path="/create-ticket" element={<LoginGate navigateToLogin={navigateToLogin} />} />
             <Route path="/profile" element={<LoginGate navigateToLogin={navigateToLogin} />} />
+            <Route path="/help" element={<LoginGate navigateToLogin={navigateToLogin} />} />
           </Route>
           <Route path="/ticket-detail/:id" element={<LoginGate navigateToLogin={navigateToLogin} />} />
           <Route path="*" element={<PageNotFound />} />
@@ -348,6 +350,7 @@ const AuthenticatedApp = () => {
         <Route path="/subscriptions" element={<Suspense fallback={<PageLoader />}><SubscriptionPage /></Suspense>} />
         <Route path="/create-ticket" element={<Suspense fallback={<PageLoader />}><CreateTicketPage /></Suspense>} />
         <Route path="/profile" element={<Suspense fallback={<PageLoader />}><ProfilePage /></Suspense>} />
+        <Route path="/help" element={<Suspense fallback={<PageLoader />}><HelpPage /></Suspense>} />
       </Route>
       <Route path="/ticket-detail/:id" element={<Suspense fallback={<PageLoader />}><TicketDetailPage /></Suspense>} />
       

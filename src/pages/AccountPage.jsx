@@ -59,7 +59,7 @@ export default function AccountPage() {
         <MenuItem
           icon={<HelpIcon />}
           label="Help"
-          onClick={() => {}}
+          onClick={() => navigate("/help")}
         />
         <MenuItem
           icon={<InfoIcon />}

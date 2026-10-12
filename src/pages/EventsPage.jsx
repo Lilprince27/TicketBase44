@@ -10,6 +10,7 @@ import TicketekLogo from "../components/TicketekLogo";
 import StellaChat from "../components/stella/StellaChat";
 import PullToRefresh from "../components/PullToRefresh";
 import { getEventCountry } from "@/lib/countryPreference";
+import { getRecentSearches, addRecentSearch } from "@/lib/recentSearches";
 
 const TM_API_KEY = "ysl6MCmD7CZKfSZtD9MGlKh8rGG4mNgO";
 
@@ -54,11 +55,13 @@ export default function EventsPage() {
   const [hasMore, setHasMore] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [eventCountry, setEventCountry] = useState("both");
+  const [recentSearches, setRecentSearches] = useState([]);
   const debounceTimer = useRef(null);
   const loaderRef = useRef(null);
 
   useEffect(() => {
     setEventCountry(getEventCountry());
+    setRecentSearches(getRecentSearches());
   }, []);
 
   const fetchEvents = useCallback(async (query, category, currentOffset, replace = false, silent = false) => {
@@ -131,7 +134,12 @@ export default function EventsPage() {
     debounceTimer.current = setTimeout(() => {
       setOffset(0);
       fetchEvents(searchQuery, CATEGORIES[activeTab], 0, true);
-    }, 300);
+      // Save non-empty searches to recent list
+      if (searchQuery.trim().length >= 2) {
+        addRecentSearch(searchQuery.trim());
+        setRecentSearches(getRecentSearches());
+      }
+    }, 600);
     return () => clearTimeout(debounceTimer.current);
   }, [searchQuery]);
 
@@ -228,6 +236,24 @@ export default function EventsPage() {
           .search-input:focus { outline: none; }
         `}</style>
       </header>
+
+      {/* Recent searches — shown when search is empty */}
+      {!searchQuery && recentSearches.length > 0 && (
+        <div className="px-4 pt-4">
+          <p className="text-sm font-semibold text-gray-500 mb-2">Recent searches</p>
+          <div className="flex flex-wrap gap-2">
+            {recentSearches.map((term, i) => (
+              <button
+                key={i}
+                onClick={() => setSearchQuery(term)}
+                className="px-3 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 border border-gray-200 cursor-pointer hover:bg-gray-200 transition-colors"
+              >
+                {term}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Content */}
       <div style={{ paddingBottom: "calc(140px + env(safe-area-inset-bottom))" }}>
