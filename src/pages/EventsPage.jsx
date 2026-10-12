@@ -5,7 +5,7 @@ import EventDetailModal from "../components/events/EventDetailModal";
 import EventHeroCarousel from "../components/events/EventHeroCarousel";
 import EventHorizontalScroll from "../components/events/EventHorizontalScroll";
 import EventListItem from "../components/events/EventListItem";
-import { TICKETEK_HERO, TICKETEK_FEATURED, TICKETEK_TRENDING, TICKETEK_WAITLISTS } from "../components/events/ticketekEvents";
+import { TICKETEK_HERO, TICKETEK_FEATURED, TICKETEK_TRENDING, TICKETEK_WAITLISTS, TICKETEK_NZ_FEATURED, TICKETEK_NZ_TRENDING, TICKETEK_NZ_WAITLISTS } from "../components/events/ticketekEvents";
 import TicketekLogo from "../components/TicketekLogo";
 import StellaChat from "../components/stella/StellaChat";
 import PullToRefresh from "../components/PullToRefresh";
@@ -242,6 +242,15 @@ export default function EventsPage() {
 
             {/* Waitlists */}
             <EventHorizontalScroll title="Waitlists" events={TICKETEK_WAITLISTS} onSelect={setSelectedEvent} />
+
+            {/* New Zealand events */}
+            <div className="px-4 pt-6 pb-2">
+              <h2 className="text-lg font-bold text-gray-900">New Zealand</h2>
+              <p className="text-sm text-gray-500">Events across the ditch</p>
+            </div>
+            <EventHorizontalScroll title="NZ Featured" events={TICKETEK_NZ_FEATURED} onSelect={setSelectedEvent} />
+            <EventHorizontalScroll title="NZ Trending now" events={TICKETEK_NZ_TRENDING} onSelect={setSelectedEvent} />
+            <EventHorizontalScroll title="NZ Waitlists" events={TICKETEK_NZ_WAITLISTS} onSelect={setSelectedEvent} />
 
             {/* More events from API */}
             {events.length > 0 && (

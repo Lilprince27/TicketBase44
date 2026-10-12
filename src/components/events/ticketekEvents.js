@@ -36,3 +36,34 @@ export const TICKETEK_WAITLISTS = [
   { id: "mychemicalromance", title: "My Chemical Romance", subtitle: "Waitlist", image: `${CDN}/sfx261927.jpg`, venue: "Various venues, Australia" },
   { id: "parispaloma", title: "Paris Paloma", subtitle: "Waitlist", image: `${CDN}/sfx314983.jpg`, venue: "Various venues, Australia" },
 ];
+
+// === Ticketek New Zealand events — sourced from premier.ticketek.co.nz (Oct 2026) ===
+const NZ_CDN = "https://d19py84rdi4j91.cloudfront.net/dbimages";
+
+export const TICKETEK_NZ_FEATURED = [
+  { id: "oliviadean", title: "Olivia Dean", subtitle: "The Art of Loving Live", image: `${NZ_CDN}/sfx101979.png`, venue: "Western Springs, Auckland" },
+  { id: "legosw", title: "LEGO Star Wars: The Exhibition", subtitle: "", image: `${NZ_CDN}/sfx100725.png`, venue: "Various venues, New Zealand" },
+  { id: "nzcricket", title: "NZ Cricket 2026-27", subtitle: "", image: `${NZ_CDN}/sfx101972.jpg`, venue: "Various venues, New Zealand" },
+  { id: "equifest", title: "Equifest", subtitle: "", image: `${NZ_CDN}/sfx101043.png`, venue: "Various venues, New Zealand" },
+  { id: "rocnz", title: "Race Of Champions New Zealand", subtitle: "", image: `${NZ_CDN}/sfx102443.jpg`, venue: "Various venues, New Zealand" },
+  { id: "nzrugby", title: "New Zealand Rugby 2026 Season", subtitle: "", image: `${NZ_CDN}/sfx101839.png`, venue: "Various venues, New Zealand" },
+  { id: "pouakai", title: "Mainland Pouakai 2026 Season", subtitle: "", image: `${NZ_CDN}/sfx101583.jpg`, venue: "Various venues, New Zealand" },
+  { id: "chefu", title: "An Evening with Che Fu & the Kratez", subtitle: "Celebrating 25 years of Navigator", image: `${NZ_CDN}/sfx102437.png`, venue: "Various venues, New Zealand" },
+];
+
+export const TICKETEK_NZ_TRENDING = [
+  { id: "beatlemania", title: "Beatlemania On Tour", subtitle: "", image: `${NZ_CDN}/sfx99921.jpg`, venue: "Various venues, New Zealand" },
+  { id: "anzdarts", title: "ANZ Premier League Darts 2026", subtitle: "", image: `${NZ_CDN}/sfx101189.jpg`, venue: "Various venues, New Zealand" },
+  { id: "dunedincbf", title: "Dunedin Craft Beer & Food Festival 2026", subtitle: "", image: `${NZ_CDN}/sfx101363.jpg`, venue: "Dunedin, New Zealand" },
+  { id: "secretscreeningsnz", title: "Secret Screenings: With Beau Miles", subtitle: "", image: `${NZ_CDN}/sfx101153.jpg`, venue: "Various venues, New Zealand" },
+  { id: "allwhites", title: "All Whites v India Series 2026", subtitle: "", image: `${NZ_CDN}/sfx101691.jpg`, venue: "Various venues, New Zealand" },
+  { id: "pearlfishers", title: "The Pearl Fishers", subtitle: "", image: `${NZ_CDN}/sfx101571.jpg`, venue: "Various venues, New Zealand" },
+];
+
+export const TICKETEK_NZ_WAITLISTS = [
+  { id: "badbunny", title: "Bad Bunny", subtitle: "Waitlist", image: `${NZ_CDN}/sfx99194.jpg`, venue: "Various venues, New Zealand" },
+  { id: "morganwallen", title: "Morgan Wallen", subtitle: "Waitlist", image: `${NZ_CDN}/sfx97344.jpg`, venue: "Various venues, New Zealand" },
+  { id: "warbirds", title: "Warbirds Over Wanaka 2028", subtitle: "Waitlist", image: `${NZ_CDN}/sfx101380.jpg`, venue: "Wanaka, New Zealand" },
+  { id: "mileycyrus", title: "Miley Cyrus", subtitle: "Waitlist", image: `${NZ_CDN}/sfx99239.jpg`, venue: "Various venues, New Zealand" },
+  { id: "sabrinacarpenter", title: "Sabrina Carpenter", subtitle: "Waitlist", image: `${NZ_CDN}/sfx97365.jpg`, venue: "Various venues, New Zealand" },
+];
