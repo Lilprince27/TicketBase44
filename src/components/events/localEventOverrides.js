@@ -12,6 +12,7 @@ const OLIVIA_DEAN_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb
 const NOAH_KAHAN_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/47e6fd2a8_IMG_5079.jpeg";
 const DANIEL_CAESAR_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/7da5b30fc_IMG_5611.jpeg";
 const HILARY_DUFF_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/9f021eb3f_IMG_5974.jpeg";
+const ZARA_LARSSON_IMAGE = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages/sfx355845.jpg";
 const NZ_CDN = "https://d19py84rdi4j91.cloudfront.net/dbimages";
 
 export const LOCAL_EVENT_OVERRIDES = {
@@ -359,6 +360,152 @@ export const LOCAL_EVENT_OVERRIDES = {
       },
     },
   ],
+  "zara larsson": [
+    {
+      id: "local-zara-larsson-1",
+      title: "Zara Larsson",
+      date: "Tue 13 Oct 2026 · 7:00pm",
+      venue: "Riverstage",
+      city: "Brisbane",
+      image: ZARA_LARSSON_IMAGE,
+      local: true,
+      localData: {
+        event_name: "Zara Larsson",
+        event_date: "Tue 13 Oct 2026 · 7:00pm",
+        venue_name: "Riverstage, Brisbane, QLD",
+        event_image_url: ZARA_LARSSON_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+    {
+      id: "local-zara-larsson-2",
+      title: "Zara Larsson",
+      date: "Thu 15 Oct 2026 · 7:00pm",
+      venue: "Hordern Pavilion",
+      city: "Sydney",
+      image: ZARA_LARSSON_IMAGE,
+      local: true,
+      localData: {
+        event_name: "Zara Larsson",
+        event_date: "Thu 15 Oct 2026 · 7:00pm",
+        venue_name: "Hordern Pavilion, Sydney, NSW",
+        event_image_url: ZARA_LARSSON_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+    {
+      id: "local-zara-larsson-3",
+      title: "Zara Larsson",
+      date: "Sat 17 Oct 2026 · 7:00pm",
+      venue: "Margaret Court Arena",
+      city: "Melbourne",
+      image: ZARA_LARSSON_IMAGE,
+      local: true,
+      localData: {
+        event_name: "Zara Larsson",
+        event_date: "Sat 17 Oct 2026 · 7:00pm",
+        venue_name: "Margaret Court Arena, Melbourne, VIC",
+        event_image_url: ZARA_LARSSON_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+    {
+      id: "local-zara-larsson-4",
+      title: "Zara Larsson",
+      date: "Sun 18 Oct 2026 · 7:00pm",
+      venue: "Adelaide Entertainment Centre",
+      city: "Adelaide",
+      image: ZARA_LARSSON_IMAGE,
+      local: true,
+      localData: {
+        event_name: "Zara Larsson",
+        event_date: "Sun 18 Oct 2026 · 7:00pm",
+        venue_name: "Adelaide Entertainment Centre, Adelaide, SA",
+        event_image_url: ZARA_LARSSON_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+    {
+      id: "local-zara-larsson-5",
+      title: "Zara Larsson",
+      date: "Tue 20 Oct 2026 · 7:00pm",
+      venue: "RAC Arena",
+      city: "Perth",
+      image: ZARA_LARSSON_IMAGE,
+      local: true,
+      localData: {
+        event_name: "Zara Larsson",
+        event_date: "Tue 20 Oct 2026 · 7:00pm",
+        venue_name: "RAC Arena, Perth, WA",
+        event_image_url: ZARA_LARSSON_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+    {
+      id: "local-zara-larsson-6",
+      title: "Zara Larsson",
+      date: "Thu 22 Oct 2026 · 8:00pm",
+      venue: "Rod Laver Arena",
+      city: "Melbourne",
+      image: ZARA_LARSSON_IMAGE,
+      local: true,
+      localData: {
+        event_name: "Zara Larsson",
+        event_date: "Thu 22 Oct 2026 · 8:00pm",
+        venue_name: "Rod Laver Arena, Melbourne, VIC",
+        event_image_url: ZARA_LARSSON_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+    {
+      id: "local-zara-larsson-7",
+      title: "Zara Larsson",
+      date: "Fri 23 Oct 2026 · 8:00pm",
+      venue: "Afterpay Arena",
+      city: "Sydney Olympic Park",
+      image: ZARA_LARSSON_IMAGE,
+      local: true,
+      localData: {
+        event_name: "Zara Larsson",
+        event_date: "Fri 23 Oct 2026 · 8:00pm",
+        venue_name: "Afterpay Arena, formerly known as Qudos Bank Arena, Sydney Olympic Park, NSW",
+        event_image_url: ZARA_LARSSON_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+    {
+      id: "local-zara-larsson-nz-1",
+      title: "Zara Larsson",
+      date: "Sun 25 Oct 2026 · 7:00pm",
+      venue: "Spark Arena",
+      city: "Auckland, New Zealand",
+      image: ZARA_LARSSON_IMAGE,
+      local: true,
+      localData: {
+        event_name: "Zara Larsson",
+        event_date: "Sun 25 Oct 2026 · 7:00pm",
+        venue_name: "Spark Arena, Auckland, New Zealand",
+        event_image_url: ZARA_LARSSON_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+    {
+      id: "local-zara-larsson-nz-2",
+      title: "Zara Larsson",
+      date: "Mon 26 Oct 2026 · 7:00pm",
+      venue: "Spark Arena",
+      city: "Auckland, New Zealand",
+      image: ZARA_LARSSON_IMAGE,
+      local: true,
+      localData: {
+        event_name: "Zara Larsson",
+        event_date: "Mon 26 Oct 2026 · 7:00pm",
+        venue_name: "Spark Arena, Auckland, New Zealand",
+        event_image_url: ZARA_LARSSON_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+  ],
 };
 
 
@@ -414,6 +561,7 @@ const TICKETEK_LOCAL_EVENTS = [
   { title: "2026 Capital.com Australian Open", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx361173.jpg`, keys: ["australian open", "capital.com australian open"] },
   { title: "2026 Australian Short Course Champs", date: "Tue 29 Sep - Fri 02 Oct 2026", venue: "Aquatic Centre, Sydney Olympic Park, NSW", image: `${TK_CDN}/sfx363619.jpg`, keys: ["short course champs", "australian short course"] },
   { title: "Adelaide United v Công an Hà Nội FC — AFC Champions League Elite", date: "Tue 11 Aug 2026", venue: "Coopers Stadium, Hindmarsh, SA", image: `${TK_CDN}/sfx364359.png`, keys: ["adelaide united", "cong an ha noi"] },
+  { title: "Zara Larsson — Midnight Sun Tour 2026", date: "Oct 2026", venue: "Various venues, Australia", image: `${TK_CDN}/sfx355845.jpg`, keys: ["zara larsson", "midnight sun tour"] },
 ];
 
 // === Ticketek New Zealand events — sourced from premier.ticketek.co.nz (Oct 2026) ===
@@ -437,6 +585,7 @@ const TICKETEK_NZ_LOCAL_EVENTS = [
   { title: "Warbirds Over Wanaka 2028 (Waitlist)", date: "", venue: "Wanaka, New Zealand", image: `${NZ_CDN}/sfx101380.jpg`, keys: ["warbirds over wanaka", "warbirds"] },
   { title: "Miley Cyrus (Waitlist)", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx99239.jpg`, keys: ["miley cyrus"] },
   { title: "Sabrina Carpenter (Waitlist)", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx97365.jpg`, keys: ["sabrina carpenter"] },
+  { title: "Zara Larsson — Midnight Sun Tour 2026", date: "Oct 2026", venue: "Spark Arena, Auckland, New Zealand", image: `${TK_CDN}/sfx355845.jpg`, keys: ["zara larsson nz", "zara larsson new zealand", "zara larsson auckland"] },
 ];
 
 const TK_LOCAL_FORMATTED = [...TICKETEK_LOCAL_EVENTS, ...TICKETEK_NZ_LOCAL_EVENTS, ...getFormattedDbEvents()].map((m, i) => ({

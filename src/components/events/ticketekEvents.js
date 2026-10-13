@@ -16,6 +16,7 @@ export const TICKETEK_FEATURED = [
   { id: "deltaoodrem", title: "Delta Goodrem", subtitle: "", image: `${CDN}/sfx363329.jpg`, venue: "Various venues, Australia" },
   { id: "westlife", title: "Westlife", subtitle: "", image: `${CDN}/sfx360731.jpg`, venue: "Various venues, Australia" },
   { id: "dirtydancing", title: "Dirty Dancing In Concert", subtitle: "", image: `${CDN}/sfx362379.jpg`, venue: "Various venues, Australia" },
+  { id: "zaralarsson", title: "Zara Larsson", subtitle: "Midnight Sun Tour 2026", image: `${CDN}/sfx355845.jpg`, venue: "Various venues, Australia" },
 ];
 
 export const TICKETEK_TRENDING = [
@@ -49,6 +50,7 @@ export const TICKETEK_NZ_FEATURED = [
   { id: "nzrugby", title: "New Zealand Rugby 2026 Season", subtitle: "", image: `${NZ_CDN}/sfx101839.png`, venue: "Various venues, New Zealand" },
   { id: "pouakai", title: "Mainland Pouakai 2026 Season", subtitle: "", image: `${NZ_CDN}/sfx101583.jpg`, venue: "Various venues, New Zealand" },
   { id: "chefu", title: "An Evening with Che Fu & the Kratez", subtitle: "Celebrating 25 years of Navigator", image: `${NZ_CDN}/sfx102437.png`, venue: "Various venues, New Zealand" },
+  { id: "zaralarssonnz", title: "Zara Larsson", subtitle: "Midnight Sun Tour 2026", image: `${CDN}/sfx355845.jpg`, venue: "Spark Arena, Auckland, New Zealand" },
 ];
 
 export const TICKETEK_NZ_TRENDING = [
