@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { buildPurchaseConfirmationHtml } from "@/lib/purchaseConfirmationEmail";
 import { buildShareUrl } from "@/lib/ticketUtils";
+import { getCustomerId } from "@/lib/customerId";
 
 function makeToken() {
   const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -92,6 +93,7 @@ export default function SendTicketModal({ ticket, onClose }) {
         ticket,
         recipientName,
         orderNumber: ticket.order_number || "",
+        customerId: getCustomerId(me.id),
         seatLabel,
         seatValue,
         quantity: 1,

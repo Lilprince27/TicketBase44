@@ -9,6 +9,7 @@ import {
 import EventNameSearch from "../components/events/EventNameSearch";
 import ExistingEventPicker from "../components/tickets/ExistingEventPicker";
 import { buildPurchaseConfirmationHtml } from "../lib/purchaseConfirmationEmail";
+import { getCustomerId } from "../lib/customerId";
 
 const PRESENTERS = [
   { group: "TEG's Internal Promotion Network", items: ["TEG Dainty", "TEG Live", "TEG Van Egmond", "MJR Presents"] },
@@ -266,7 +267,7 @@ export default function CreateTicketPage() {
       } else { seatValue = seatNumbers.join(", "); }
     }
     const emailHtml = buildPurchaseConfirmationHtml({
-      ticket, recipientName: displayName, orderNumber, seatLabel, seatValue, quantity: seatsList.length,
+      ticket, recipientName: displayName, orderNumber, customerId: getCustomerId(me.id), seatLabel, seatValue, quantity: seatsList.length,
       pricing: emailPricing, accessName: displayName, accessUrl: `https://ticketek.mobi/?id=${orderNumber}`,
     });
 
