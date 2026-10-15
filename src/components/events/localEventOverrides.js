@@ -13,6 +13,7 @@ const NOAH_KAHAN_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9
 const DANIEL_CAESAR_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/7da5b30fc_IMG_5611.jpeg";
 const HILARY_DUFF_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/9f021eb3f_IMG_5974.jpeg";
 const ZARA_LARSSON_IMAGE = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages/sfx355845.jpg";
+const ASAP_ROCKY_IMAGE = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages/sfx368777.jpg";
 const NZ_CDN = "https://d19py84rdi4j91.cloudfront.net/dbimages";
 
 export const LOCAL_EVENT_OVERRIDES = {
@@ -360,6 +361,88 @@ export const LOCAL_EVENT_OVERRIDES = {
       },
     },
   ],
+  "asap rocky": [
+    {
+      id: "local-asap-rocky-1",
+      title: "A$AP Rocky",
+      date: "Sat 5 Dec 2026 · 7:00pm",
+      venue: "Rod Laver Arena",
+      city: "Melbourne",
+      image: ASAP_ROCKY_IMAGE,
+      local: true,
+      localData: {
+        event_name: "A$AP Rocky",
+        event_date: "Sat 5 Dec 2026 · 7:00pm",
+        venue_name: "Rod Laver Arena, Melbourne, VIC",
+        event_image_url: ASAP_ROCKY_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+    {
+      id: "local-asap-rocky-2",
+      title: "A$AP Rocky",
+      date: "Wed 9 Dec 2026 · 7:00pm",
+      venue: "Afterpay Arena",
+      city: "Sydney Olympic Park",
+      image: ASAP_ROCKY_IMAGE,
+      local: true,
+      localData: {
+        event_name: "A$AP Rocky",
+        event_date: "Wed 9 Dec 2026 · 7:00pm",
+        venue_name: "Afterpay Arena, formerly known as Qudos Bank Arena, Sydney Olympic Park, NSW",
+        event_image_url: ASAP_ROCKY_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+    {
+      id: "local-asap-rocky-3",
+      title: "A$AP Rocky",
+      date: "Mon 14 Dec 2026 · 7:00pm",
+      venue: "Brisbane Entertainment Centre",
+      city: "Brisbane",
+      image: ASAP_ROCKY_IMAGE,
+      local: true,
+      localData: {
+        event_name: "A$AP Rocky",
+        event_date: "Mon 14 Dec 2026 · 7:00pm",
+        venue_name: "Brisbane Entertainment Centre, Brisbane, QLD",
+        event_image_url: ASAP_ROCKY_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+    {
+      id: "local-asap-rocky-4",
+      title: "A$AP Rocky",
+      date: "Thu 17 Dec 2026 · 7:00pm",
+      venue: "RAC Arena",
+      city: "Perth",
+      image: ASAP_ROCKY_IMAGE,
+      local: true,
+      localData: {
+        event_name: "A$AP Rocky",
+        event_date: "Thu 17 Dec 2026 · 7:00pm",
+        venue_name: "RAC Arena, Perth, WA",
+        event_image_url: ASAP_ROCKY_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+    {
+      id: "local-asap-rocky-nz-1",
+      title: "A$AP Rocky",
+      date: "Sat 12 Dec 2026 · 7:00pm",
+      venue: "Spark Arena",
+      city: "Auckland, New Zealand",
+      image: ASAP_ROCKY_IMAGE,
+      local: true,
+      localData: {
+        event_name: "A$AP Rocky",
+        event_date: "Sat 12 Dec 2026 · 7:00pm",
+        venue_name: "Spark Arena, Auckland, New Zealand",
+        event_image_url: ASAP_ROCKY_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+  ],
   "zara larsson": [
     {
       id: "local-zara-larsson-1",
@@ -562,6 +645,7 @@ const TICKETEK_LOCAL_EVENTS = [
   { title: "2026 Australian Short Course Champs", date: "Tue 29 Sep - Fri 02 Oct 2026", venue: "Aquatic Centre, Sydney Olympic Park, NSW", image: `${TK_CDN}/sfx363619.jpg`, keys: ["short course champs", "australian short course"] },
   { title: "Adelaide United v Công an Hà Nội FC — AFC Champions League Elite", date: "Tue 11 Aug 2026", venue: "Coopers Stadium, Hindmarsh, SA", image: `${TK_CDN}/sfx364359.png`, keys: ["adelaide united", "cong an ha noi"] },
   { title: "Zara Larsson — Midnight Sun Tour 2026", date: "Oct 2026", venue: "Various venues, Australia", image: `${TK_CDN}/sfx355845.jpg`, keys: ["zara larsson", "midnight sun tour"] },
+  { title: "A$AP Rocky — Don't Be Dumb World Tour", date: "Dec 2026", venue: "Various venues, Australia", image: `${TK_CDN}/sfx368777.jpg`, keys: ["asap rocky", "a$ap rocky", "dont be dumb", "don't be dumb"] },
 ];
 
 // === Ticketek New Zealand events — sourced from premier.ticketek.co.nz (Oct 2026) ===
@@ -586,6 +670,7 @@ const TICKETEK_NZ_LOCAL_EVENTS = [
   { title: "Miley Cyrus (Waitlist)", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx99239.jpg`, keys: ["miley cyrus"] },
   { title: "Sabrina Carpenter (Waitlist)", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx97365.jpg`, keys: ["sabrina carpenter"] },
   { title: "Zara Larsson — Midnight Sun Tour 2026", date: "Oct 2026", venue: "Spark Arena, Auckland, New Zealand", image: `${TK_CDN}/sfx355845.jpg`, keys: ["zara larsson nz", "zara larsson new zealand", "zara larsson auckland"] },
+  { title: "A$AP Rocky — Don't Be Dumb World Tour", date: "Sat 12 Dec 2026", venue: "Spark Arena, Auckland, New Zealand", image: `${TK_CDN}/sfx368777.jpg`, keys: ["asap rocky nz", "a$ap rocky new zealand", "asap rocky auckland", "dont be dumb nz"] },
 ];
 
 const TK_LOCAL_FORMATTED = [...TICKETEK_LOCAL_EVENTS, ...TICKETEK_NZ_LOCAL_EVENTS, ...getFormattedDbEvents()].map((m, i) => ({
