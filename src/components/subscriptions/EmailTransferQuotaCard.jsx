@@ -1,9 +1,7 @@
 /**
- * Displays the user's email transfer quota in a card matching the reference design:
- *  - Email address on the left, "N left" in green on the right
- *  - "N used of M" in gray below
+ * Displays the user's remaining email transfer count below the subscription status.
  */
-export default function EmailTransferQuotaCard({ email, quota, used }) {
+export default function EmailTransferQuotaCard({ quota, used }) {
   const remaining = Math.max(0, (quota || 0) - (used || 0));
   return (
     <div
@@ -13,15 +11,13 @@ export default function EmailTransferQuotaCard({ email, quota, used }) {
         padding: "16px 18px",
         marginBottom: 24,
         background: "#fff",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ fontSize: 14, fontWeight: 500, color: "#212121" }}>{email || ""}</span>
-        <span style={{ fontSize: 14, fontWeight: 700, color: "#66bb6a" }}>{remaining} left</span>
-      </div>
-      <div style={{ fontSize: 13, color: "#9e9e9e", marginTop: 4 }}>
-        {used || 0} used of {quota || 0}
-      </div>
+      <span style={{ fontSize: 14, fontWeight: 500, color: "#212121" }}>Transfer emails</span>
+      <span style={{ fontSize: 14, fontWeight: 700, color: "#66bb6a" }}>{remaining} left</span>
     </div>
   );
 }

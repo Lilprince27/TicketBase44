@@ -169,7 +169,6 @@ export default function SubscriptionPage() {
         {/* Email transfer quota — visible to all non-admin users */}
         {!isAdmin && userProfile && (
           <EmailTransferQuotaCard
-            email={user?.email}
             quota={userProfile.email_transfer_quota}
             used={userProfile.email_transfer_used}
           />
