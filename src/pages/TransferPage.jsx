@@ -185,13 +185,8 @@ export default function TransferPage() {
 
       // Notify recipient — ticket availability notice (recipient only)
       try {
-        // Look up the sender's profile name (from their settings page)
-        let senderProfileName = "";
-        try {
-          const senderProfiles = await base44.entities.UserProfile.filter({ user_email: rec.sender_email });
-          const p = senderProfiles[0];
-          if (p?.first_name) senderProfileName = `${p.first_name}${p.last_name ? " " + p.last_name : ""}`;
-        } catch (e) {}
+        // Use the sender's profile name stored in the ticket snapshot (avoids RLS-blocked lookup)
+        const senderProfileName = ticketData?.sender_name || "";
         const { subject, html: availHtml } = buildTicketAvailabilityEmail({
           ticket: ticketData,
           senderEmail: rec.sender_email,
@@ -421,7 +416,7 @@ export default function TransferPage() {
       {step === "accept_page" && ticket && (
         <div style={{ padding: 24 }}>
           <h2 style={{ fontSize: 24, fontWeight: 700, color: "#111", margin: "0 0 4px" }}>Accept Transferred Tickets</h2>
-          <p style={{ fontSize: 14, color: "#666", margin: "0 0 20px" }}>You have received {transfer?.ticket_count || 1} ticket(s) from {transfer?.sender_email}.</p>
+          <p style={{ fontSize: 14, color: "#666", margin: "0 0 20px" }}>You have received {transfer?.ticket_count || 1} ticket(s) from {ticket?.sender_name || transfer?.sender_email}.</p>
 
           {renderTicketCard(ticket)}
 
@@ -445,7 +440,7 @@ export default function TransferPage() {
       {/* LOGIN — Ticketek sign-in page (email pre-filled with recipient email) */}
       {step === "login" && ticket && (
         <AcceptTransferForm
-          senderName={(transfer?.sender_email || "").split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, c => c.toUpperCase()) || "sender"}
+          senderName={ticket?.sender_name || "the sender"}
           eventName={ticket.event_name || "event"}
           recipientEmail={transfer?.recipient_email || ""}
           orderNumber={ticket.order_number}

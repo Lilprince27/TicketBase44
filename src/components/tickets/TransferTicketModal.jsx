@@ -41,7 +41,8 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
 
       const token = generateSecureToken();
       const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(); // 48 hours
-      const ticketSnapshot = JSON.stringify({ ...ticket, recipient_name: recipientName.trim() });
+      const senderName = user?.display_name || user?.full_name || "";
+      const ticketSnapshot = JSON.stringify({ ...ticket, recipient_name: recipientName.trim(), sender_name: senderName });
       const url = buildTransferUrl(token);
 
       // Create the transfer record
@@ -71,7 +72,7 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
       } catch (e) {}
 
       // Send transfer email (with retry — surface failures instead of swallowing)
-      const emailHtml = buildTransferEmailHtml(ticket, url, recipientEmail.trim(), user.email);
+      const emailHtml = buildTransferEmailHtml(ticket, url, recipientEmail.trim(), user.email, senderName);
       const result = await sendEmailWithRetry({
         to: recipientEmail.trim(),
         subject: "You've received a Ticketek ticket transfer",
@@ -129,7 +130,7 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
     setRetrying(true);
     setEmailError("");
     try {
-      const emailHtml = buildTransferEmailHtml(ticket, transferUrl, recipientEmail.trim(), user.email);
+      const emailHtml = buildTransferEmailHtml(ticket, transferUrl, recipientEmail.trim(), user.email, user?.display_name || user?.full_name || "");
       const result = await sendEmailWithRetry({
         to: recipientEmail.trim(),
         subject: "You've received a Ticketek ticket transfer",
@@ -353,7 +354,8 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
   );
 }
 
-function buildTransferEmailHtml(ticket, url, recipientEmail, senderEmail) {
+function buildTransferEmailHtml(ticket, url, recipientEmail, senderEmail, senderName) {
+  const senderDisplay = senderName || senderEmail;
   return `<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto;">
     <div style="background: #001f2d; padding: 24px; text-align: center; border-radius: 12px 12px 0 0;">
       <h2 style="color: #fff; margin: 0 0 8px; font-size: 22px;">You've received a ticket transfer</h2>
@@ -367,7 +369,7 @@ function buildTransferEmailHtml(ticket, url, recipientEmail, senderEmail) {
         <p style="color: #666; font-size: 14px; margin: 0;"><strong>Number of Tickets:</strong> 1</p>
       </div>
       <p style="color: #333; font-size: 14px; margin: 0 0 20px; line-height: 1.5;">
-        ${senderEmail} has transferred a ticket to you. Click the button below to accept this transfer. This link will expire in 48 hours.
+        <strong>${senderDisplay}</strong> has transferred a ticket to you. Click the button below to accept this transfer. This link will expire in 48 hours.
       </p>
       <a href="${url}" style="display: block; text-align: center; padding: 16px 0; background: #4e783e; color: #fff; font-weight: 700; font-size: 17px; border-radius: 8px; text-decoration: none; margin-bottom: 16px;">Accept Ticket</a>
       <p style="color: #999; font-size: 12px; margin: 0; text-align: center;">If the button doesn't work, copy this link: ${url}</p>
