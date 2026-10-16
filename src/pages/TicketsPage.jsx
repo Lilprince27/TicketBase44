@@ -7,6 +7,7 @@ import { getCustomerId } from "../lib/customerId";
 import PullToRefresh from "../components/PullToRefresh";
 import SharedTicketStatus from "../components/tickets/SharedTicketStatus";
 import SharedTicketManageModal from "../components/tickets/SharedTicketManageModal";
+import TransferStatus from "../components/tickets/TransferStatus";
 
 // Generate a stable random order number in format YYYYMMDD,NNNNN based on ticket id
 function getOrderNumber(ticket) {
@@ -25,7 +26,7 @@ function getOrderNumber(ticket) {
 
 const isAndroid = () => /android/i.test(navigator.userAgent);
 
-function TicketGroup({ group, onWallet, sharedTicketMap, onManageShare }) {
+function TicketGroup({ group, onWallet, sharedTicketMap, transferMap, onManageShare }) {
   const [expanded, setExpanded] = useState(true);
   const navigate = useNavigate();
   const first = group[0];
@@ -159,6 +160,9 @@ function TicketGroup({ group, onWallet, sharedTicketMap, onManageShare }) {
                   {sharedTicketMap?.[ticket.serial_number] && (
                     <SharedTicketStatus shareRecord={sharedTicketMap[ticket.serial_number]} />
                   )}
+                  {transferMap?.[ticket.serial_number] && (
+                    <TransferStatus transferRecord={transferMap[ticket.serial_number]} />
+                  )}
                 </div>
               ))}
             </div>
@@ -175,6 +179,7 @@ export default function TicketsPage() {
   const [loading, setLoading] = useState(true);
   const [walletTicket, setWalletTicket] = useState(null);
   const [sharedTicketMap, setSharedTicketMap] = useState({});
+  const [transferMap, setTransferMap] = useState({});
   const [manageShareTicket, setManageShareTicket] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const walletOpen = searchParams.get('modal') === 'wallet';
@@ -212,6 +217,22 @@ export default function TicketsPage() {
       } catch {}
     }
     setSharedTicketMap(shareMap);
+    // Load transfer records to show pending/accepted status under each ticket
+    const transfers = await base44.entities.TicketTransfer.filter({ sender_email: me.email });
+    const tMap = {};
+    for (const t of transfers) {
+      if (t.status === "declined" || t.status === "expired" || t.status === "cancelled") continue;
+      try {
+        const snap = JSON.parse(t.ticket_snapshot);
+        if (snap.serial_number) {
+          // Only keep the most recent transfer per serial number
+          if (!tMap[snap.serial_number] || new Date(t.created_date || 0) > new Date(tMap[snap.serial_number].created_date || 0)) {
+            tMap[snap.serial_number] = t;
+          }
+        }
+      } catch {}
+    }
+    setTransferMap(tMap);
     setLoading(false);
   }, []);
 
@@ -233,6 +254,28 @@ export default function TicketsPage() {
             delete next[snap.serial_number];
           } else {
             next[snap.serial_number] = s;
+          }
+          return next;
+        });
+      } catch {}
+    });
+    return unsubscribe;
+  }, []);
+
+  // Live-update transfer status when a recipient accepts/declines
+  useEffect(() => {
+    const unsubscribe = base44.entities.TicketTransfer.subscribe((event) => {
+      const t = event.data;
+      if (!t) return;
+      try {
+        const snap = JSON.parse(t.ticket_snapshot || "{}");
+        if (!snap.serial_number) return;
+        setTransferMap((prev) => {
+          const next = { ...prev };
+          if (event.type === "delete" || t.status === "declined" || t.status === "expired" || t.status === "cancelled") {
+            delete next[snap.serial_number];
+          } else {
+            next[snap.serial_number] = t;
           }
           return next;
         });
@@ -324,7 +367,7 @@ export default function TicketsPage() {
           </div>
         ) : (
           groups.map((group) => (
-            <TicketGroup key={group[0].order_number || group[0].id} group={group} onWallet={openWallet} sharedTicketMap={sharedTicketMap} onManageShare={(ticket, share) => setManageShareTicket({ ticket, share })} />
+            <TicketGroup key={group[0].order_number || group[0].id} group={group} onWallet={openWallet} sharedTicketMap={sharedTicketMap} transferMap={transferMap} onManageShare={(ticket, share) => setManageShareTicket({ ticket, share })} />
           ))
         )}
       </div>
