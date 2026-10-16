@@ -16,6 +16,7 @@ import HideSettingsPanel from "../components/subscriptions/HideSettingsPanel.jsx
 import AdminAuthCodesPanel from "../components/subscriptions/AdminAuthCodesPanel.jsx";
 import AdminEmailTransferPanel from "../components/subscriptions/AdminEmailTransferPanel.jsx";
 import AdminTransferPanel from "../components/subscriptions/AdminTransferPanel.jsx";
+import EmailTransferQuotaCard from "../components/subscriptions/EmailTransferQuotaCard.jsx";
 import TicketHistoryLog from "../components/tickets/TicketHistoryLog.jsx";
 import TransferHistoryLog from "../components/tickets/TransferHistoryLog.jsx";
 
@@ -163,6 +164,15 @@ export default function SubscriptionPage() {
             <div className="text-gray-800 font-bold">You don't have a subscription yet</div>
             <p className="text-gray-400 text-xs mt-2">Contact admin to get a subscription</p>
           </div>
+        )}
+
+        {/* Email transfer quota — visible to all non-admin users */}
+        {!isAdmin && userProfile && (
+          <EmailTransferQuotaCard
+            email={user?.email}
+            quota={userProfile.email_transfer_quota}
+            used={userProfile.email_transfer_used}
+          />
         )}
 
         {/* Contact Admin buttons */}
