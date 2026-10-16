@@ -133,17 +133,6 @@ function TicketGroup({ group, onWallet, sharedTicketMap, transferMap, onManageSh
                       const transfer = transferMap?.[ticket.serial_number];
                       const isTransferred = !!transfer;
                       const shareAccepted = !!sharedTicketMap?.[ticket.serial_number]?.accepted_by;
-                      if (isTransferred) {
-                        return (
-                          <button
-                            onClick={() => onCancelTransfer(ticket, transfer)}
-                            style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#dc2626", color: "white", cursor: "pointer" }}
-                          >
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-                            Cancel transfer
-                          </button>
-                        );
-                      }
                       return (
                         <>
                           {!shareAccepted && (
@@ -163,16 +152,26 @@ function TicketGroup({ group, onWallet, sharedTicketMap, transferMap, onManageSh
                             </button>
                           )
                           )}
-                          <button
-                            onClick={() => {
-                              const share = sharedTicketMap?.[ticket.serial_number];
-                              if (share) onManageShare(ticket, share);
-                              else navigate(`/ticket-detail/${ticket.id}`);
-                            }}
-                            style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "#427926", color: "white", cursor: "pointer" }}
-                          >
-                            Manage ticket
-                          </button>
+                          {isTransferred ? (
+                            <button
+                              onClick={() => onCancelTransfer(ticket, transfer)}
+                              style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#dc2626", color: "white", cursor: "pointer" }}
+                            >
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                              Cancel transfer
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                const share = sharedTicketMap?.[ticket.serial_number];
+                                if (share) onManageShare(ticket, share);
+                                else navigate(`/ticket-detail/${ticket.id}`);
+                              }}
+                              style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "#427926", color: "white", cursor: "pointer" }}
+                            >
+                              Manage ticket
+                            </button>
+                          )}
                         </>
                       );
                     })()}
