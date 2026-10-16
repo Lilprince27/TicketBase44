@@ -29,6 +29,7 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const HelpPage = lazy(() => import('./pages/HelpPage'));
 const SharedTicketPage = lazy(() => import('./pages/SharedTicketPage'));
 const TransferPage = lazy(() => import('./pages/TransferPage'));
+const ManageTransferPage = lazy(() => import('./pages/ManageTransferPage'));
 const LoginPage = lazy(() => import('./pages/Login'));
 
 const PageLoader = () => (
@@ -353,7 +354,8 @@ const AuthenticatedApp = () => {
         <Route path="/help" element={<Suspense fallback={<PageLoader />}><HelpPage /></Suspense>} />
       </Route>
       <Route path="/ticket-detail/:id" element={<Suspense fallback={<PageLoader />}><TicketDetailPage /></Suspense>} />
-      
+      <Route path="/manage-transfer/:id" element={<Suspense fallback={<PageLoader />}><ManageTransferPage /></Suspense>} />
+
       <Route path="*" element={<PageNotFound />} />
     </Routes>
     </>

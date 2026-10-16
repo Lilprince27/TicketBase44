@@ -1,7 +1,7 @@
 /**
- * Shows the transfer status under a ticket card:
- *  - Pending: "Pending acceptance by [Name]" (amber clock icon)
- *  - Accepted: "This ticket has been accepted by [Name]" (green check icon)
+ * Shows the transfer status under a ticket card with a yellow bell notification:
+ *  - Pending: "Pending acceptance by [Name]" (yellow bell)
+ *  - Accepted: "This ticket has been accepted by [Name]" (yellow bell)
  *  - Declined/Expired/Cancelled: not shown (no longer active)
  */
 export default function TransferStatus({ transferRecord }) {
@@ -24,30 +24,11 @@ export default function TransferStatus({ transferRecord }) {
       .replace(/\b\w/g, (c) => c.toUpperCase()) || "recipient";
   }
 
-  if (status === "accepted") {
-    return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "12px 16px",
-          borderTop: "1px solid #f0f0f0",
-          background: "#f0fdf4",
-        }}
-      >
-        <span style={{ fontSize: 13, color: "#555" }}>
-          This ticket has been accepted by {recipientName}
-        </span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-          <polyline points="22 4 12 14.01 9 11.01" />
-        </svg>
-      </div>
-    );
-  }
+  const message =
+    status === "accepted"
+      ? `This ticket has been accepted by ${recipientName}`
+      : `Pending acceptance by ${recipientName}`;
 
-  // Pending
   return (
     <div
       style={{
@@ -56,16 +37,28 @@ export default function TransferStatus({ transferRecord }) {
         justifyContent: "space-between",
         padding: "12px 16px",
         borderTop: "1px solid #f0f0f0",
-        background: "#fffaf0",
+        background: status === "accepted" ? "#f0fdf4" : "#fffaf0",
       }}
     >
-      <span style={{ fontSize: 13, color: "#555" }}>
-        Pending acceptance by {recipientName}
-      </span>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10" />
-        <polyline points="12 6 12 12 16 14" />
-      </svg>
+      <span style={{ fontSize: 13, color: "#555" }}>{message}</span>
+      {/* Yellow bell notification circle */}
+      <div
+        style={{
+          width: 28,
+          height: 28,
+          borderRadius: "50%",
+          background: "#FFC107",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+        }}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+      </div>
     </div>
   );
 }
