@@ -26,7 +26,7 @@ function getOrderNumber(ticket) {
 
 const isAndroid = () => /android/i.test(navigator.userAgent);
 
-function TicketGroup({ group, onWallet, sharedTicketMap, transferMap, onManageShare }) {
+function TicketGroup({ group, onWallet, sharedTicketMap, transferMap, onManageShare, onCancelTransfer }) {
   const [expanded, setExpanded] = useState(true);
   const navigate = useNavigate();
   const first = group[0];
@@ -129,33 +129,53 @@ function TicketGroup({ group, onWallet, sharedTicketMap, transferMap, onManageSh
                   </div>
                   <div style={{ borderTop: "1.5px dotted #ccc", margin: "0 16px 14px" }} />
                   <div style={{ padding: "0 16px 16px" }}>
-                    {!sharedTicketMap?.[ticket.serial_number]?.accepted_by && (
-                    isAndroid() ? (
-                      <button onClick={() => onWallet(ticket)}
-                        style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "#000", color: "white", cursor: "pointer", marginBottom: 10 }}
-                      >
-                        <img src="https://www.image2url.com/r2/default/images/1779671280742-1ae995e2-3a65-482a-9305-9de9fedcb5da.jpeg" alt="Google Wallet" style={{ width: 28, height: 28, marginRight: 12, objectFit: "contain" }} />
-                        Add to Google Wallet
-                      </button>
-                    ) : (
-                      <button onClick={() => onWallet(ticket)}
-                        style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, background: "#000", color: "white", cursor: "pointer", marginBottom: 10 }}
-                      >
-                        <img src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/f6963ff4b_IMG_7127.jpeg" alt="Wallet" style={{ width: 28, height: "auto", objectFit: "contain" }} />
-                        Add to Apple Wallet
-                      </button>
-                    )
-                    )}
-                    <button
-                      onClick={() => {
-                        const share = sharedTicketMap?.[ticket.serial_number];
-                        if (share) onManageShare(ticket, share);
-                        else navigate(`/ticket-detail/${ticket.id}`);
-                      }}
-                      style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "#427926", color: "white", cursor: "pointer" }}
-                    >
-                      Manage ticket
-                    </button>
+                    {(() => {
+                      const transfer = transferMap?.[ticket.serial_number];
+                      const isTransferred = !!transfer;
+                      const shareAccepted = !!sharedTicketMap?.[ticket.serial_number]?.accepted_by;
+                      if (isTransferred) {
+                        return (
+                          <button
+                            onClick={() => onCancelTransfer(ticket, transfer)}
+                            style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#dc2626", color: "white", cursor: "pointer" }}
+                          >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                            Cancel transfer
+                          </button>
+                        );
+                      }
+                      return (
+                        <>
+                          {!shareAccepted && (
+                          isAndroid() ? (
+                            <button onClick={() => onWallet(ticket)}
+                              style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "#000", color: "white", cursor: "pointer", marginBottom: 10 }}
+                            >
+                              <img src="https://www.image2url.com/r2/default/images/1779671280742-1ae995e2-3a65-482a-9305-9de9fedcb5da.jpeg" alt="Google Wallet" style={{ width: 28, height: 28, marginRight: 12, objectFit: "contain" }} />
+                              Add to Google Wallet
+                            </button>
+                          ) : (
+                            <button onClick={() => onWallet(ticket)}
+                              style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, background: "#000", color: "white", cursor: "pointer", marginBottom: 10 }}
+                            >
+                              <img src="https://media.base44.com/images/public/69d672ffd7bc803edb6bc612/f6963ff4b_IMG_7127.jpeg" alt="Wallet" style={{ width: 28, height: "auto", objectFit: "contain" }} />
+                              Add to Apple Wallet
+                            </button>
+                          )
+                          )}
+                          <button
+                            onClick={() => {
+                              const share = sharedTicketMap?.[ticket.serial_number];
+                              if (share) onManageShare(ticket, share);
+                              else navigate(`/ticket-detail/${ticket.id}`);
+                            }}
+                            style={{ width: "100%", padding: "14px", borderRadius: 6, border: "none", fontWeight: 700, fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "#427926", color: "white", cursor: "pointer" }}
+                          >
+                            Manage ticket
+                          </button>
+                        </>
+                      );
+                    })()}
                   </div>
                   {sharedTicketMap?.[ticket.serial_number] && (
                     <SharedTicketStatus shareRecord={sharedTicketMap[ticket.serial_number]} />
@@ -301,6 +321,65 @@ export default function TicketsPage() {
     loadTickets();
   };
 
+  const handleCancelTransfer = async (ticket, transferRecord) => {
+    try {
+      await base44.entities.TicketTransfer.update(transferRecord.id, {
+        status: "cancelled",
+        cancelled_at: new Date().toISOString(),
+      });
+      try {
+        await base44.entities.TransferAuditLog.create({
+          transfer_id: transferRecord.id,
+          secure_token: transferRecord.secure_token,
+          action: "cancelled",
+          actor_email: user.email,
+          metadata: JSON.stringify({ previous_status: transferRecord.status }),
+        });
+      } catch {}
+      try {
+        await base44.entities.TicketHistory.create({
+          ticket_id: ticket.id,
+          ticket_name: ticket.event_name,
+          owner_email: user.email,
+          action: "cancelled",
+          actor_email: user.email,
+          recipient_email: transferRecord.recipient_email,
+          details: `Transfer cancelled by sender (was ${transferRecord.status})`,
+        });
+      } catch {}
+      // Send cancellation email to recipient
+      try {
+        const html = `<div style="font-family: -apple-system, sans-serif; max-width: 500px; margin: 0 auto;">
+          <div style="background: #001f2d; padding: 24px; text-align: center; border-radius: 12px 12px 0 0;">
+            <h2 style="color: #fff; margin: 0 0 8px;">Ticket Transfer Cancelled</h2>
+            <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin: 0;">The sender has cancelled this ticket transfer.</p>
+          </div>
+          <div style="background: #fff; padding: 24px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 12px 12px;">
+            <div style="background: #f8f9fa; border-radius: 10px; padding: 16px; margin-bottom: 20px;">
+              <p style="color: #001f2d; font-size: 18px; font-weight: 700; margin: 0 0 8px;">${ticket.event_name || "Event"}</p>
+              <p style="color: #666; font-size: 14px; margin: 0 0 4px;"><strong>Date:</strong> ${ticket.event_date || "TBD"}</p>
+              <p style="color: #666; font-size: 14px; margin: 0;"><strong>Venue:</strong> ${ticket.venue_name || "TBD"}</p>
+            </div>
+            <p style="color: #333; font-size: 14px; margin: 0 0 16px; line-height: 1.5;">
+              The ticket transfer from ${user.email} has been cancelled. The transfer link is no longer valid.
+            </p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
+            <p style="color: #999; font-size: 12px; margin: 0;">Ticketek Pty Limited ABN 92 010 129 110</p>
+          </div>
+        </div>`;
+        await base44.integrations.Core.SendEmail({
+          to: transferRecord.recipient_email,
+          subject: `Ticket transfer cancelled: ${ticket.event_name || "Ticket"}`,
+          body: html,
+        });
+      } catch {}
+      loadTickets();
+    } catch (e) {
+      console.error("Cancel transfer failed:", e);
+      loadTickets();
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -367,7 +446,7 @@ export default function TicketsPage() {
           </div>
         ) : (
           groups.map((group) => (
-            <TicketGroup key={group[0].order_number || group[0].id} group={group} onWallet={openWallet} sharedTicketMap={sharedTicketMap} transferMap={transferMap} onManageShare={(ticket, share) => setManageShareTicket({ ticket, share })} />
+            <TicketGroup key={group[0].order_number || group[0].id} group={group} onWallet={openWallet} sharedTicketMap={sharedTicketMap} transferMap={transferMap} onManageShare={(ticket, share) => setManageShareTicket({ ticket, share })} onCancelTransfer={handleCancelTransfer} />
           ))
         )}
       </div>
