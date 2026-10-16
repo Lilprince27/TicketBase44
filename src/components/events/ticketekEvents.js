@@ -2,9 +2,11 @@
 const CDN = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages";
 
 export const TICKETEK_HERO = [
+  { id: "summerofcricket", title: "Summer of Cricket", subtitle: "", image: `${CDN}/sfx361047.jpg`, venue: "Various venues, Australia" },
+  { id: "asaprocky", title: "A$AP Rocky", subtitle: "Don't Be Dumb World Tour", image: `${CDN}/sfx368777.jpg`, venue: "Various venues, Australia" },
+  { id: "zaralarsson", title: "Zara Larsson", subtitle: "Midnight Sun Tour 2026", image: `${CDN}/sfx355845.jpg`, venue: "Various venues, Australia" },
   { id: "fontainesdc", title: "Fontaines D.C", subtitle: "", image: `${CDN}/sfx368795.jpg`, venue: "Various venues, Australia" },
   { id: "aleagues2027", title: "A-Leagues 2026/27 Season", subtitle: "", image: `${CDN}/sfx368706.png`, venue: "Various venues, Australia" },
-  { id: "summerofcricket", title: "Summer of Cricket", subtitle: "", image: `${CDN}/sfx361047.jpg`, venue: "Various venues, Australia" },
   { id: "evanescence", title: "Evanescence", subtitle: "", image: `${CDN}/sfx362080.jpg`, venue: "Various venues, Australia" },
 ];
 

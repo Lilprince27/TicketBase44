@@ -56,6 +56,7 @@ export default function EventsPage() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [eventCountry, setEventCountry] = useState("both");
   const [recentSearches, setRecentSearches] = useState([]);
+  const [searchFocused, setSearchFocused] = useState(false);
   const debounceTimer = useRef(null);
   const loaderRef = useRef(null);
 
@@ -167,19 +168,61 @@ export default function EventsPage() {
       <header className="sticky top-0 z-50" style={{ backgroundColor: "#051a24", paddingTop: "env(safe-area-inset-top)" }}>
         <div className="flex items-center px-4 py-3 gap-3">
           <TicketekLogo size={28} variant="white" className="flex-shrink-0" />
-          <div
-            className="flex-1 flex items-center rounded-xl px-3 py-2.5"
-            style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}
-          >
-            <Search className="w-5 h-5 flex-shrink-0" style={{ color: "#ffffff" }} />
-            <input
-              type="text"
-              placeholder="What are you looking for?"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="flex-1 bg-transparent border-none text-white text-sm font-medium outline-none ml-2.5 search-input"
-              style={{ color: "white" }}
-            />
+          <div className="flex-1 relative">
+            <div
+              className="flex items-center rounded-xl px-3 py-2.5"
+              style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}
+            >
+              <Search className="w-5 h-5 flex-shrink-0" style={{ color: "#ffffff" }} />
+              <input
+                type="text"
+                placeholder="What are you looking for?"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
+                className="flex-1 bg-transparent border-none text-white text-sm font-medium outline-none ml-2.5 search-input"
+                style={{ color: "white" }}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="flex-shrink-0 ml-1 p-1 rounded-full"
+                  style={{ background: "rgba(255,255,255,0.1)" }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              )}
+            </div>
+
+            {/* Recent searches dropdown — appears when search bar is focused and empty */}
+            {searchFocused && !searchQuery && recentSearches.length > 0 && (
+              <div
+                className="absolute left-0 right-0 top-full mt-1 rounded-xl overflow-hidden z-50"
+                style={{ background: "#fff", boxShadow: "0 8px 24px rgba(0,0,0,0.18)", border: "1px solid #e5e7eb" }}
+              >
+                <div className="flex items-center justify-between px-4 py-2.5 border-b border-gray-100">
+                  <span className="text-sm font-semibold text-gray-700">Recent searches</span>
+                  <button
+                    onClick={() => { localStorage.removeItem("tk_recent_searches"); setRecentSearches([]); }}
+                    className="text-xs font-medium text-blue-500 cursor-pointer"
+                  >
+                    Clear all
+                  </button>
+                </div>
+                {recentSearches.map((term, i) => (
+                  <button
+                    key={i}
+                    onMouseDown={(e) => { e.preventDefault(); setSearchQuery(term); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors cursor-pointer border-b border-gray-50 last:border-none"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" className="flex-shrink-0"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/></svg>
+                    <span className="text-sm text-gray-800 flex-1">{term}</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" strokeWidth="2" className="flex-shrink-0"><path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           {/* Alexis AI Avatar */}
           <div
@@ -236,24 +279,6 @@ export default function EventsPage() {
           .search-input:focus { outline: none; }
         `}</style>
       </header>
-
-      {/* Recent searches — shown when search is empty */}
-      {!searchQuery && recentSearches.length > 0 && (
-        <div className="px-4 pt-4">
-          <p className="text-sm font-semibold text-gray-500 mb-2">Recent searches</p>
-          <div className="flex flex-wrap gap-2">
-            {recentSearches.map((term, i) => (
-              <button
-                key={i}
-                onClick={() => setSearchQuery(term)}
-                className="px-3 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 border border-gray-200 cursor-pointer hover:bg-gray-200 transition-colors"
-              >
-                {term}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Content */}
       <div style={{ paddingBottom: "calc(140px + env(safe-area-inset-bottom))" }}>
