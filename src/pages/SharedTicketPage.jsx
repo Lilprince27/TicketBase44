@@ -24,6 +24,7 @@ export default function SharedTicketPage() {
   const [step, setStep] = useState("loading"); // loading | accept | processing | ticket_detail | declined | invalid
   const [busy, setBusy] = useState(false);
   const [showWallet, setShowWallet] = useState(null);
+  const [senderName, setSenderName] = useState("");
 
   useEffect(() => {
     if (!token) { setStep("invalid"); setLoading(false); return; }
@@ -37,6 +38,13 @@ export default function SharedTicketPage() {
       const rec = list[0];
       setSharedRecord(rec);
       try { setTicket(JSON.parse(rec.ticket_snapshot)); } catch { setStep("invalid"); setLoading(false); return; }
+
+      // Fetch sender's saved profile name
+      try {
+        const senderProfiles = await base44.entities.UserProfile.filter({ user_email: rec.owner_email });
+        const p = senderProfiles[0];
+        if (p?.first_name) setSenderName(`${p.first_name}${p.last_name ? " " + p.last_name : ""}`);
+      } catch (e) {}
 
       // If already accepted, show ticket detail (same as transfer)
       if (rec.accepted_by) { setStep("ticket_detail"); setLoading(false); return; }
@@ -245,7 +253,7 @@ export default function SharedTicketPage() {
       {step === "accept_page" && ticket && (
         <div style={{ padding: 24 }}>
           <h2 style={{ fontSize: 24, fontWeight: 700, color: "#111", margin: "0 0 4px" }}>Accept Shared Ticket</h2>
-          <p style={{ fontSize: 14, color: "#666", margin: "0 0 20px" }}>You have received a ticket from {sharedRecord?.owner_email}.</p>
+          <p style={{ fontSize: 14, color: "#666", margin: "0 0 20px" }}>You have received a ticket from {senderName || sharedRecord?.owner_email}.</p>
 
           <div style={{ background: "#fff", borderRadius: 12, overflow: "hidden", border: "1px solid #e8e8e8", marginBottom: 12 }}>
             {ticket.event_image && <img src={ticket.event_image} alt={ticket.event_name} style={{ width: "100%", height: 140, objectFit: "cover" }} />}
