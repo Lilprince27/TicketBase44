@@ -39,12 +39,20 @@ export default function SharedTicketPage() {
       setSharedRecord(rec);
       try { setTicket(JSON.parse(rec.ticket_snapshot)); } catch { setStep("invalid"); setLoading(false); return; }
 
-      // Fetch sender's saved profile name
+      // Use sender's saved profile name from ticket snapshot or UserProfile
+      let parsedTicket = null;
+      try { parsedTicket = JSON.parse(rec.ticket_snapshot); } catch {}
+      const cleanName = (val) => (val && !val.includes("@") ? val.trim() : "");
+      let resolvedName = cleanName(parsedTicket?.sender_name) || cleanName(parsedTicket?.holder_name);
       try {
         const senderProfiles = await base44.entities.UserProfile.filter({ user_email: rec.owner_email });
         const p = senderProfiles[0];
-        if (p?.first_name) setSenderName(`${p.first_name}${p.last_name ? " " + p.last_name : ""}`);
+        if (p?.first_name) resolvedName = `${p.first_name}${p.last_name ? " " + p.last_name : ""}`.trim();
       } catch (e) {}
+      if (!resolvedName && rec.owner_email) {
+        resolvedName = rec.owner_email.split("@")[0].replace(/[._-]+/g, " ").replace(/\d+/g, "").trim().replace(/\b\w/g, c => c.toUpperCase());
+      }
+      setSenderName(resolvedName || "Ticketek Member");
 
       // If already accepted, show ticket detail (same as transfer)
       if (rec.accepted_by) { setStep("ticket_detail"); setLoading(false); return; }
@@ -239,7 +247,7 @@ export default function SharedTicketPage() {
       {/* LOGIN — Ticketek sign-in page (email pre-filled with recipient email) */}
       {step === "login" && ticket && (
         <AcceptTransferForm
-          senderName={(sharedRecord?.owner_email || "").split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, c => c.toUpperCase()) || "sender"}
+          senderName={senderName || "Ticketek Member"}
           eventName={ticket.event_name || "event"}
           recipientEmail={sharedRecord?.recipient_email || ""}
           orderNumber={ticket.order_number}
@@ -253,7 +261,7 @@ export default function SharedTicketPage() {
       {step === "accept_page" && ticket && (
         <div style={{ padding: 24 }}>
           <h2 style={{ fontSize: 24, fontWeight: 700, color: "#111", margin: "0 0 4px" }}>Accept Shared Ticket</h2>
-          <p style={{ fontSize: 14, color: "#666", margin: "0 0 20px" }}>You have received a ticket from {senderName || sharedRecord?.owner_email}.</p>
+          <p style={{ fontSize: 14, color: "#666", margin: "0 0 20px" }}>You have received a ticket from {senderName || "Ticketek Member"}.</p>
 
           <div style={{ background: "#fff", borderRadius: 12, overflow: "hidden", border: "1px solid #e8e8e8", marginBottom: 12 }}>
             {ticket.event_image && <img src={ticket.event_image} alt={ticket.event_name} style={{ width: "100%", height: 140, objectFit: "cover" }} />}

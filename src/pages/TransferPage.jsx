@@ -19,6 +19,7 @@ export default function TransferPage() {
   const navigate = useNavigate();
   const [transfer, setTransfer] = useState(null);
   const [ticket, setTicket] = useState(null);
+  const [senderName, setSenderName] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [step, setStep] = useState("loading"); // loading | review | auth_required | confirm | processing | accepted | declined | expired | invalid
@@ -83,7 +84,24 @@ export default function TransferPage() {
       if (list.length === 0) { setStep("invalid"); setLoading(false); return; }
       const rec = list[0];
       setTransfer(rec);
-      try { setTicket(JSON.parse(rec.ticket_snapshot)); } catch { setStep("invalid"); setLoading(false); return; }
+      let parsedTicket = null;
+      try {
+        parsedTicket = JSON.parse(rec.ticket_snapshot);
+        setTicket(parsedTicket);
+      } catch { setStep("invalid"); setLoading(false); return; }
+
+      // Resolve sender's saved profile name without exposing email
+      const cleanName = (val) => (val && !val.includes("@") ? val.trim() : "");
+      let resolvedName = cleanName(parsedTicket?.sender_name) || cleanName(parsedTicket?.holder_name);
+      try {
+        const senderProfiles = await base44.entities.UserProfile.filter({ user_email: rec.sender_email });
+        const p = senderProfiles[0];
+        if (p?.first_name) resolvedName = `${p.first_name}${p.last_name ? " " + p.last_name : ""}`.trim();
+      } catch (e) {}
+      if (!resolvedName && rec.sender_email) {
+        resolvedName = rec.sender_email.split("@")[0].replace(/[._-]+/g, " ").replace(/\d+/g, "").trim().replace(/\b\w/g, c => c.toUpperCase());
+      }
+      setSenderName(resolvedName || "Ticketek Member");
 
       // Check expiration
       if (rec.status === "expired" || (rec.status === "pending" && new Date(rec.expires_at) < new Date())) {
@@ -416,7 +434,7 @@ export default function TransferPage() {
       {step === "accept_page" && ticket && (
         <div style={{ padding: 24 }}>
           <h2 style={{ fontSize: 24, fontWeight: 700, color: "#111", margin: "0 0 4px" }}>Accept Transferred Tickets</h2>
-          <p style={{ fontSize: 14, color: "#666", margin: "0 0 20px" }}>You have received {transfer?.ticket_count || 1} ticket(s) from {ticket?.sender_name || transfer?.sender_email}.</p>
+          <p style={{ fontSize: 14, color: "#666", margin: "0 0 20px" }}>You have received {transfer?.ticket_count || 1} ticket(s) from {senderName || "Ticketek Member"}.</p>
 
           {renderTicketCard(ticket)}
 
@@ -440,7 +458,7 @@ export default function TransferPage() {
       {/* LOGIN — Ticketek sign-in page (email pre-filled with recipient email) */}
       {step === "login" && ticket && (
         <AcceptTransferForm
-          senderName={ticket?.sender_name || "the sender"}
+          senderName={senderName || "Ticketek Member"}
           eventName={ticket.event_name || "event"}
           recipientEmail={transfer?.recipient_email || ""}
           orderNumber={ticket.order_number}

@@ -41,7 +41,17 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
 
       const token = generateSecureToken();
       const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(); // 48 hours
-      const senderName = user?.display_name || user?.full_name || "";
+      let senderName = "";
+      try {
+        const profiles = await base44.entities.UserProfile.filter({ user_email: user.email });
+        if (profiles[0]?.first_name) {
+          senderName = `${profiles[0].first_name}${profiles[0].last_name ? " " + profiles[0].last_name : ""}`.trim();
+        }
+      } catch (e) {}
+      if (!senderName) {
+        const fallback = user?.display_name || user?.full_name || ticket?.holder_name || "";
+        senderName = fallback && !fallback.includes("@") ? fallback : "";
+      }
       const ticketSnapshot = JSON.stringify({ ...ticket, recipient_name: recipientName.trim(), sender_name: senderName });
       const url = buildTransferUrl(token);
 

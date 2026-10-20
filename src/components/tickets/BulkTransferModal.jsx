@@ -36,10 +36,21 @@ export default function BulkTransferModal({ tickets, user, senderName, onClose }
       const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
       const transfers = [];
 
+      // Resolve sender's saved profile name
+      let resolvedSenderName = senderName && !senderName.includes("@") ? senderName.trim() : "";
+      if (!resolvedSenderName) {
+        try {
+          const profiles = await base44.entities.UserProfile.filter({ user_email: user.email });
+          if (profiles[0]?.first_name) {
+            resolvedSenderName = `${profiles[0].first_name}${profiles[0].last_name ? " " + profiles[0].last_name : ""}`.trim();
+          }
+        } catch (e) {}
+      }
+
       // Create one transfer record per ticket
       for (const ticket of tickets) {
         const token = generateSecureToken();
-        const snapshot = JSON.stringify({ ...ticket, recipient_name: recipientName.trim() });
+        const snapshot = JSON.stringify({ ...ticket, recipient_name: recipientName.trim(), sender_name: resolvedSenderName || ticket.holder_name || "" });
         const url = buildTransferUrl(token);
         const transfer = await base44.entities.TicketTransfer.create({
           secure_token: token,

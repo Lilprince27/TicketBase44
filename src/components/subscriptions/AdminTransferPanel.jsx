@@ -96,6 +96,31 @@ export default function AdminTransferPanel() {
     } catch (e) { alert("Could not resend email."); }
   };
 
+  const handleDelete = async (transfer) => {
+    if (!window.confirm(`Delete this transfer (${transfer.event_name || "Unknown event"} → ${transfer.recipient_email})?`)) return;
+    try {
+      await base44.entities.TicketTransfer.delete(transfer.id);
+      setTransfers(prev => prev.filter(item => item.id !== transfer.id));
+    } catch (e) {
+      alert("Could not delete transfer.");
+    }
+  };
+
+  const handleDeleteFiltered = async () => {
+    const listToDelete = filter === "all" ? transfers : transfers.filter(t => t.status === filter);
+    if (listToDelete.length === 0) return;
+    const label = filter === "all" ? "ALL" : filter.toUpperCase();
+    if (!window.confirm(`Delete ${listToDelete.length} ${label} transfer record(s)? This cannot be undone.`)) return;
+    try {
+      for (const t of listToDelete) {
+        await base44.entities.TicketTransfer.delete(t.id);
+      }
+      await loadTransfers();
+    } catch (e) {
+      alert("Could not delete transfers.");
+    }
+  };
+
   const filtered = filter === "all" ? transfers : transfers.filter(t => t.status === filter);
 
   const statusColors = {
@@ -108,7 +133,17 @@ export default function AdminTransferPanel() {
 
   return (
     <div style={{ background: "#fff", borderRadius: 12, padding: 20, marginBottom: 20 }}>
-      <h3 style={{ fontSize: 18, fontWeight: 700, color: "#111", margin: "0 0 16px" }}>Ticket Transfers</h3>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+        <h3 style={{ fontSize: 18, fontWeight: 700, color: "#111", margin: 0 }}>Ticket Transfers</h3>
+        {filtered.length > 0 && (
+          <button
+            onClick={handleDeleteFiltered}
+            style={{ padding: "6px 12px", borderRadius: 8, background: "#fef2f2", color: "#dc2626", fontWeight: 600, fontSize: 12, border: "1px solid #fecaca", cursor: "pointer" }}
+          >
+            Delete {filter === "all" ? `All (${filtered.length})` : `${filter.charAt(0).toUpperCase() + filter.slice(1)} (${filtered.length})`}
+          </button>
+        )}
+      </div>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
         {["all", "pending", "accepted", "declined", "expired", "cancelled"].map(s => (
@@ -142,14 +177,15 @@ export default function AdminTransferPanel() {
                 <p style={{ margin: "0 0 2px" }}><strong>Expires:</strong> {t.expires_at ? new Date(t.expires_at).toLocaleString() : "-"}</p>
                 {t.accepted_at && <p style={{ margin: "0 0 2px" }}><strong>Accepted:</strong> {new Date(t.accepted_at).toLocaleString()}</p>}
               </div>
-              {(t.status === "pending" || t.status === "accepted") && (
-                <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
-                  {t.status === "pending" && (
-                    <button onClick={() => handleResend(t)} style={{ flex: 1, padding: "8px 0", borderRadius: 6, background: "#f0f4ff", color: TK_NAVY, fontWeight: 600, fontSize: 13, border: "none", cursor: "pointer" }}>Resend Email</button>
-                  )}
+              <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                {t.status === "pending" && (
+                  <button onClick={() => handleResend(t)} style={{ flex: 1, padding: "8px 0", borderRadius: 6, background: "#f0f4ff", color: TK_NAVY, fontWeight: 600, fontSize: 13, border: "none", cursor: "pointer" }}>Resend Email</button>
+                )}
+                {(t.status === "pending" || t.status === "accepted") && (
                   <button onClick={() => handleCancel(t)} style={{ flex: 1, padding: "8px 0", borderRadius: 6, background: "transparent", color: "#ef4444", fontWeight: 600, fontSize: 13, border: "1px solid #ef4444", cursor: "pointer" }}>Cancel Transfer</button>
-                </div>
-              )}
+                )}
+                <button onClick={() => handleDelete(t)} style={{ flex: 1, padding: "8px 0", borderRadius: 6, background: "#fef2f2", color: "#dc2626", fontWeight: 600, fontSize: 13, border: "1px solid #fecaca", cursor: "pointer" }}>Delete</button>
+              </div>
             </div>
           ))}
         </div>
