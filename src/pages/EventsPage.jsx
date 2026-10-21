@@ -6,6 +6,7 @@ import EventHeroCarousel from "../components/events/EventHeroCarousel";
 import EventHorizontalScroll from "../components/events/EventHorizontalScroll";
 import EventListItem from "../components/events/EventListItem";
 import { TICKETEK_HERO, TICKETEK_FEATURED, TICKETEK_TRENDING, TICKETEK_WAITLISTS, TICKETEK_NZ_FEATURED, TICKETEK_NZ_TRENDING, TICKETEK_NZ_WAITLISTS } from "../components/events/ticketekEvents";
+import { getLocalOverride } from "../components/events/localEventOverrides";
 import TicketekLogo from "../components/TicketekLogo";
 import StellaChat from "../components/stella/StellaChat";
 import PullToRefresh from "../components/PullToRefresh";
@@ -113,7 +114,19 @@ export default function EventsPage() {
       };
     });
 
-    if (replace) { setEvents(mapped); }
+    const localMatches = (replace && query) ? (getLocalOverride(query) || []).map(le => ({
+      id: le.id,
+      title: le.title,
+      date: le.date || "",
+      rawDate: le.date || "",
+      venue: le.venue ? `${le.venue}${le.city ? `, ${le.city}` : ""}` : "",
+      image: le.image,
+      category: "Music",
+      description: "",
+      raw: le,
+    })) : [];
+
+    if (replace) { setEvents([...localMatches, ...mapped]); }
     else { setEvents(prev => [...prev, ...mapped]); }
     setHasMore(merged.length >= 15);
     setOffset(currentOffset + merged.length);

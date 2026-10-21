@@ -1,7 +1,9 @@
 // Real Ticketek AU events — sourced from premier.ticketek.com.au homepage (Oct 2026)
 const CDN = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages";
+const ZACH_BRYAN_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/d41417852_IMG_8679.jpeg";
 
 export const TICKETEK_HERO = [
+  { id: "zachbryan", title: "Zach Bryan", subtitle: "Young Manhood & Other Donatable Organs Tour 2027", image: ZACH_BRYAN_IMG, venue: "Marvel Stadium, Accor Stadium & Suncorp Stadium" },
   { id: "bonjovi", title: "Bon Jovi", subtitle: "The Forever Tour 2027", image: `${CDN}/sfx369779.jpg`, venue: "Various venues, Australia" },
   { id: "bensonboone", title: "Benson Boone", subtitle: "Wanted Man Tour 2026", image: `${CDN}/sfx363901.jpg`, venue: "Various venues, Australia" },
   { id: "asaprocky", title: "A$AP Rocky", subtitle: "Don't Be Dumb World Tour", image: `${CDN}/sfx368777.jpg`, venue: "Various venues, Australia" },
@@ -11,6 +13,7 @@ export const TICKETEK_HERO = [
 ];
 
 export const TICKETEK_FEATURED = [
+  { id: "zachbryan", title: "Zach Bryan", subtitle: "Young Manhood & Other Donatable Organs Tour 2027", image: ZACH_BRYAN_IMG, venue: "Marvel Stadium, Accor Stadium & Suncorp Stadium" },
   { id: "bonjovi", title: "Bon Jovi", subtitle: "The Forever Tour 2027", image: `${CDN}/sfx369779.jpg`, venue: "Various venues, Australia" },
   { id: "eckharttolle", title: "An Evening with Eckhart Tolle", subtitle: "Live in Australia", image: `${CDN}/sfx369791.jpg`, venue: "Various venues, Australia" },
   { id: "bensonboone", title: "Benson Boone", subtitle: "Wanted Man Tour 2026", image: `${CDN}/sfx363901.jpg`, venue: "Various venues, Australia" },
@@ -45,6 +48,7 @@ export const TICKETEK_WAITLISTS = [
 const NZ_CDN = "https://d19py84rdi4j91.cloudfront.net/dbimages";
 
 export const TICKETEK_NZ_FEATURED = [
+  { id: "zachbryannz", title: "Zach Bryan", subtitle: "Young Manhood & Other Donatable Organs Tour 2027", image: ZACH_BRYAN_IMG, venue: "Eden Park, Auckland, New Zealand" },
   { id: "nzcricket", title: "NZ Cricket 2026-27", subtitle: "", image: `${NZ_CDN}/sfx101972.jpg`, venue: "Various venues, New Zealand" },
   { id: "rockthebowl", title: "Rock the Bowl 2026", subtitle: "", image: `${NZ_CDN}/sfx101976.jpg`, venue: "Various venues, New Zealand" },
   { id: "wellingtonphoenix", title: "Wellington Phoenix FC Season 2026-2027", subtitle: "A-League Women & A-League Men", image: `${NZ_CDN}/sfx102171.jpg`, venue: "Various venues, New Zealand" },
