@@ -6,6 +6,7 @@ import TicketekLogo from "@/components/TicketekLogo";
 import AppleWalletModal from "@/components/tickets/AppleWalletModal";
 import AcceptTransferForm from "@/components/tickets/AcceptTransferForm";
 import TransferTicketDetail from "@/components/tickets/TransferTicketDetail";
+import TicketDoneAnimationModal from "@/components/tickets/TicketDoneAnimationModal";
 import { buildRecipientAcceptEmail } from "@/lib/recipientAcceptEmail";
 import { buildTicketAvailabilityEmail } from "@/lib/ticketAvailabilityEmail";
 
@@ -24,6 +25,7 @@ export default function SharedTicketPage() {
   const [step, setStep] = useState("loading"); // loading | accept | processing | ticket_detail | declined | invalid
   const [busy, setBusy] = useState(false);
   const [showWallet, setShowWallet] = useState(null);
+  const [showDoneAnim, setShowDoneAnim] = useState(false);
   const [senderName, setSenderName] = useState("");
 
   useEffect(() => {
@@ -229,11 +231,27 @@ export default function SharedTicketPage() {
   return (
     <div style={{ minHeight: "100vh", background: "#f5f5f5", fontFamily: "-apple-system, system-ui, sans-serif", maxWidth: 500, margin: "0 auto" }}>
       {showWallet && <AppleWalletModal ticket={showWallet} onClose={() => setShowWallet(null)} />}
+      {showDoneAnim && ticket && (
+        <TicketDoneAnimationModal
+          ticket={ticket}
+          onComplete={() => setShowDoneAnim(false)}
+        />
+      )}
 
       {/* Header */}
       <div style={{ background: TK_NAVY, padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Link to="/" style={{ textDecoration: "none" }}><TicketekLogo size={26} variant="white" /></Link>
-        <Link to="/" style={{ color: "#fff", fontSize: 16, fontWeight: 600, textDecoration: "none" }}>Done</Link>
+        {step === "ticket_detail" && ticket ? (
+          <button
+            type="button"
+            onClick={() => setShowDoneAnim(true)}
+            style={{ background: "none", border: "none", padding: 0, color: "#fff", fontSize: 16, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+          >
+            Done
+          </button>
+        ) : (
+          <Link to="/" style={{ color: "#fff", fontSize: 16, fontWeight: 600, textDecoration: "none" }}>Done</Link>
+        )}
       </div>
 
       {/* LOADING */}
