@@ -1080,6 +1080,15 @@ const TICKETEK_LOCAL_EVENTS = [
   { title: "Phoebe Bridgers (Waitlist)", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx360771.jpg`, keys: ["phoebe bridgers"] },
   { title: "U2 (Waitlist)", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx296129.jpg`, keys: ["u2"] },
   { title: "John Mayer (Waitlist)", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx294283.jpg`, keys: ["john mayer"] },
+  { title: "Bryson Tiller — The Neo Trapsoul Tour", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx361701.jpg`, keys: ["bryson tiller", "neo trapsoul"] },
+  { title: "Ali Wong — ALI WONG: LIVE", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx370089.jpg`, keys: ["ali wong"] },
+  { title: "Louis Tomlinson — How Did We Get Here? Australia Tour 2026", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx356364.jpg`, keys: ["louis tomlinson", "how did we get here"] },
+  { title: "An evening with CELTIC THUNDER", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx368098.jpg`, keys: ["celtic thunder"] },
+  { title: "Monster Truck Mania Live", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx368432.jpg`, keys: ["monster truck mania", "monster truck"] },
+  { title: "Crash Test Dummies (Canada)", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx366542.jpg`, keys: ["crash test dummies"] },
+  { title: "Arthur Hill", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx367236.jpg`, keys: ["arthur hill"] },
+  { title: "An Evening with Lee Asher", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx368652.jpg`, keys: ["lee asher", "evening with lee asher"] },
+  { title: "Hungry Jacks NBL", date: "", venue: "Various venues, Australia", image: `${TK_CDN}/sfx366108.jpg`, keys: ["hungry jacks nbl", "nbl"] },
 ];
 
 // === Ticketek New Zealand events — sourced from premier.ticketek.co.nz (Oct 2026) ===
@@ -1117,6 +1126,7 @@ const TICKETEK_NZ_LOCAL_EVENTS = [
   { title: "Wicked — The Musical", date: "2026/27 Season", venue: "The Civic, Auckland, New Zealand", image: `${NZ_CDN}/sfx102358.png`, keys: ["wicked", "wicked nz", "wicked musical"] },
   { title: "Geese — Getting Killed Again Tour", date: "Feb 2027", venue: "NZICC Te Paepae Theatre, Auckland, NZ", image: `${NZ_CDN}/sfx102232.jpg`, keys: ["geese", "getting killed again"] },
   { title: "The Sweet Caroline Tour", date: "Thu 12 Nov 2026 - Fri 11 Dec 2026", venue: "Clarence St Theatre, Hamilton & Various NZ Venues", image: `${NZ_CDN}/sfx99921.jpg`, keys: ["sweet caroline", "the sweet caroline tour"] },
+  { title: "2026 WM New Zealand Netball Series", date: "2026 Season", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx102458.jpg`, keys: ["wm new zealand netball", "nz netball series", "silver ferns"] },
 ];
 
 const TK_LOCAL_FORMATTED = [...TICKETEK_LOCAL_EVENTS, ...TICKETEK_NZ_LOCAL_EVENTS, ...getFormattedDbEvents()].map((m, i) => ({
