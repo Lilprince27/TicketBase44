@@ -3,7 +3,6 @@ const CDN = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages";
 const ZACH_BRYAN_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/d41417852_IMG_8679.jpeg";
 
 export const TICKETEK_HERO = [
-  { id: "bonjovi", title: "Bon Jovi", subtitle: "The Forever Tour 2027", image: `${CDN}/sfx370305.jpg`, venue: "Various venues, Australia" },
   { id: "brysontiller", title: "Bryson Tiller", subtitle: "The Neo Trapsoul Tour", image: `${CDN}/sfx361701.jpg`, venue: "Various venues, Australia" },
   { id: "aliwong", title: "Ali Wong", subtitle: "ALI WONG: LIVE", image: `${CDN}/sfx370089.jpg`, venue: "Various venues, Australia" },
   { id: "louistomlinson", title: "Louis Tomlinson", subtitle: "How Did We Get Here? Australia Tour 2026", image: `${CDN}/sfx356364.jpg`, venue: "Various venues, Australia" },
@@ -11,11 +10,11 @@ export const TICKETEK_HERO = [
   { id: "celticthunder", title: "An evening with CELTIC THUNDER", subtitle: "", image: `${CDN}/sfx368098.jpg`, venue: "Various venues, Australia" },
   { id: "aleagues2027", title: "A-Leagues 2026/27 Season", subtitle: "", image: `${CDN}/sfx368706.png`, venue: "Various venues, Australia" },
   { id: "supercars", title: "Repco Supercars Championship", subtitle: "", image: `${CDN}/sfx317196.jpg`, venue: "Various venues, Australia" },
+  { id: "bonjovi", title: "Bon Jovi", subtitle: "The Forever Tour 2027", image: `${CDN}/sfx370305.jpg`, venue: "Various venues, Australia" },
   { id: "zachbryan", title: "Zach Bryan", subtitle: "Young Manhood & Other Donatable Organs Tour 2027", image: ZACH_BRYAN_IMG, venue: "Marvel Stadium, Accor Stadium & Suncorp Stadium" },
 ];
 
 export const TICKETEK_FEATURED = [
-  { id: "bonjovi", title: "Bon Jovi", subtitle: "The Forever Tour 2027", image: `${CDN}/sfx370305.jpg`, venue: "Various venues, Australia" },
   { id: "brysontiller", title: "Bryson Tiller", subtitle: "The Neo Trapsoul Tour", image: `${CDN}/sfx361701.jpg`, venue: "Various venues, Australia" },
   { id: "aliwong", title: "Ali Wong", subtitle: "ALI WONG: LIVE", image: `${CDN}/sfx370089.jpg`, venue: "Various venues, Australia" },
   { id: "louistomlinson", title: "Louis Tomlinson", subtitle: "How Did We Get Here? Australia Tour 2026", image: `${CDN}/sfx356364.jpg`, venue: "Various venues, Australia" },
@@ -23,6 +22,7 @@ export const TICKETEK_FEATURED = [
   { id: "celticthunder", title: "An evening with CELTIC THUNDER", subtitle: "", image: `${CDN}/sfx368098.jpg`, venue: "Various venues, Australia" },
   { id: "aleagues2027", title: "A-Leagues 2026/27 Season", subtitle: "", image: `${CDN}/sfx368706.png`, venue: "Various venues, Australia" },
   { id: "supercars", title: "Repco Supercars Championship", subtitle: "", image: `${CDN}/sfx317196.jpg`, venue: "Various venues, Australia" },
+  { id: "bonjovi", title: "Bon Jovi", subtitle: "The Forever Tour 2027", image: `${CDN}/sfx370305.jpg`, venue: "Various venues, Australia" },
   { id: "zachbryan", title: "Zach Bryan", subtitle: "Young Manhood & Other Donatable Organs Tour 2027", image: ZACH_BRYAN_IMG, venue: "Marvel Stadium, Accor Stadium & Suncorp Stadium" },
   { id: "asaprocky", title: "A$AP Rocky", subtitle: "Don't Be Dumb World Tour", image: `${CDN}/sfx368777.jpg`, venue: "Various venues, Australia" },
   { id: "zaralarsson", title: "Zara Larsson", subtitle: "Midnight Sun Tour 2026", image: `${CDN}/sfx355845.jpg`, venue: "Various venues, Australia" },

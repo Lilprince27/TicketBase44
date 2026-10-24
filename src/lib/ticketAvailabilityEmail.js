@@ -63,7 +63,7 @@ export function buildTicketAvailabilityEmail({ ticket, senderEmail, recipientEma
   }
 
   const seatBlock = seatLines.length > 0
-    ? seatLines.map((line) => `<div style="font-size:14px;color:#ffffff;font-weight:500;line-height:1.5;">${line}</div>`).join("")
+    ? seatLines.map((line) => `<div style="font-size:14px;color:#111827;font-weight:600;line-height:1.5;">${line}</div>`).join("")
     : "";
 
   const bodyCopy =
@@ -79,9 +79,9 @@ export function buildTicketAvailabilityEmail({ ticket, senderEmail, recipientEma
       <div style="width:46px;height:46px;border-radius:50%;background-color:#001f2d;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;">
         ${iconSvg}
       </div>
-      <div style="font-size:12px;font-weight:600;color:#ffffff;letter-spacing:0.3px;">${label}</div>
+      <div style="font-size:12px;font-weight:600;color:#111827;letter-spacing:0.3px;">${label}</div>
     </td>`;
-  const connector = `<td style="width:8px;"><div style="height:2px;background-color:#001f2d;margin-top:22px;"></div></td>`;
+  const connector = `<td style="width:8px;"><div style="height:2px;background-color:#d1d5db;margin-top:22px;"></div></td>`;
 
   const progressBar = `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 24px;max-width:340px;">
@@ -101,38 +101,38 @@ export function buildTicketAvailabilityEmail({ ticket, senderEmail, recipientEma
        </div>`
     : "";
 
-  // Event info card with seat details (matches reference design)
+  // Event info card with seat details (white/light surface on white email background)
   const eventInfoCard = `
-    <div style="background-color:#003352;border:1px solid #004070;border-radius:12px;padding:20px;margin:0 0 24px;">
+    <div style="background-color:#f4f6f8;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin:0 0 24px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td style="vertical-align:top;width:28px;padding-top:2px;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4b5563" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
           </td>
           <td style="vertical-align:top;padding-left:4px;">
-            <div style="font-size:17px;font-weight:700;color:#ffffff;line-height:1.3;margin-bottom:6px;">${eventName}</div>
-            ${eventDate ? `<div style="font-size:13px;color:#cccccc;line-height:1.5;">${eventDate.toUpperCase()}</div>` : ""}
-            ${venue ? `<div style="font-size:13px;color:#cccccc;line-height:1.5;">${venue}</div>` : ""}
+            <div style="font-size:17px;font-weight:700;color:#111827;line-height:1.3;margin-bottom:6px;">${eventName}</div>
+            ${eventDate ? `<div style="font-size:13px;color:#4b5563;line-height:1.5;">${eventDate.toUpperCase()}</div>` : ""}
+            ${venue ? `<div style="font-size:13px;color:#4b5563;line-height:1.5;">${venue}</div>` : ""}
           </td>
         </tr>
         ${seatBlock ? `
         <tr>
           <td colspan="2" style="padding:14px 0 10px;">
-            <div style="border-top:1px solid #004070;"></div>
+            <div style="border-top:1px solid #e5e7eb;"></div>
           </td>
         </tr>
         <tr>
           <td style="vertical-align:top;width:28px;padding-top:2px;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l3-3 3 3"/><path d="M2 15l3 3 3-3"/><path d="M2 12h6"/><path d="M22 9l-3-3-3 3"/><path d="M22 15l-3 3-3-3"/><path d="M22 12h-6"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4b5563" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l3-3 3 3"/><path d="M2 15l3 3 3-3"/><path d="M2 12h6"/><path d="M22 9l-3-3-3 3"/><path d="M22 15l-3 3-3-3"/><path d="M22 12h-6"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg>
           </td>
           <td style="vertical-align:top;padding-left:4px;">
-            ${ticketType ? `<div style="font-size:13px;color:#cccccc;margin-bottom:4px;">${ticketType}</div>` : ""}
+            ${ticketType ? `<div style="font-size:13px;color:#4b5563;margin-bottom:4px;">${ticketType}</div>` : ""}
             ${seatBlock}
           </td>
         </tr>
         <tr>
           <td colspan="2" style="padding-top:14px;">
-            <div style="display:inline-block;background-color:#1b5e20;color:#a5d6a7;font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;letter-spacing:0.3px;">✓ Transfer Complete</div>
+            <div style="display:inline-block;background-color:#4e783e;color:#ffffff;font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;letter-spacing:0.3px;">✓ Transfer Complete</div>
           </td>
         </tr>
         ` : ""}
@@ -142,16 +142,16 @@ export function buildTicketAvailabilityEmail({ ticket, senderEmail, recipientEma
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background-color:#001f2d;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#001f2d;">
+<body style="margin:0;padding:0;background-color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff;">
     <tr>
       <td align="center" style="padding:32px 16px;">
-        <table role="presentation" width="500" cellpadding="0" cellspacing="0" border="0" style="max-width:500px;width:100%;">
+        <table role="presentation" width="500" cellpadding="0" cellspacing="0" border="0" style="max-width:500px;width:100%;background-color:#ffffff;">
 
           <!-- Header -->
           <tr>
             <td style="padding:0 8px 24px;text-align:center;">
-              <h1 style="margin:0;font-size:22px;font-weight:700;color:#ffffff;line-height:1.35;letter-spacing:0.2px;">${headerLine}</h1>
+              <h1 style="margin:0;font-size:22px;font-weight:700;color:#111827;line-height:1.35;letter-spacing:0.2px;">${headerLine}</h1>
             </td>
           </tr>
 
@@ -168,13 +168,13 @@ export function buildTicketAvailabilityEmail({ ticket, senderEmail, recipientEma
           <!-- What's Next heading -->
           <tr>
             <td style="padding:0 8px 12px;">
-              <h2 style="margin:0;font-size:18px;font-weight:700;color:#ffffff;">What's Next?</h2>
+              <h2 style="margin:0;font-size:18px;font-weight:700;color:#111827;">What's Next?</h2>
             </td>
           </tr>
 
           <!-- Body copy -->
           <tr>
-            <td style="padding:0 8px;font-size:15px;color:#cccccc;line-height:1.6;">
+            <td style="padding:0 8px;font-size:15px;color:#374151;line-height:1.6;">
               ${bodyCopy}
             </td>
           </tr>
@@ -186,7 +186,7 @@ export function buildTicketAvailabilityEmail({ ticket, senderEmail, recipientEma
 
           <!-- Footer -->
           <tr>
-            <td style="padding:28px 8px 0;font-size:11px;color:#9aa0a6;line-height:1.5;">
+            <td style="padding:28px 8px 0;font-size:11px;color:#6b7280;line-height:1.5;">
               Ticketek Pty Limited ABN 92 010 129 110
             </td>
           </tr>
