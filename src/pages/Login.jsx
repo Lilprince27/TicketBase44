@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import TicketekLogo from "@/components/TicketekLogo";
+import { claimSingleDeviceSession } from "@/lib/singleDeviceSession";
 
 const TK_NAVY = "#0e1e2d";
 const TK_GOLD = "#fcc93b";
@@ -51,6 +52,7 @@ export default function Login() {
     setError("");
     try {
       await base44.auth.loginViaEmailPassword(email.trim(), password);
+      await claimSingleDeviceSession(email.trim());
       window.location.href = nextUrl;
     } catch (e) {
       setError(e.message || "Invalid email or password. Please try again.");
@@ -81,6 +83,7 @@ export default function Login() {
     try {
       await base44.auth.verifyOtp({ email: email.trim(), otpCode: otp });
       await base44.auth.loginViaEmailPassword(email.trim(), password);
+      await claimSingleDeviceSession(email.trim());
       window.location.href = nextUrl;
     } catch (e) {
       setError(e.message || "Invalid verification code. Please try again.");

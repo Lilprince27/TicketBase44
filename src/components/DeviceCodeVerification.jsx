@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { claimSingleDeviceSession } from "@/lib/singleDeviceSession";
 
 export default function DeviceCodeVerification({ user, onVerified }) {
   const [code, setCode] = useState("");
@@ -15,7 +16,8 @@ export default function DeviceCodeVerification({ user, onVerified }) {
     const profiles = await base44.entities.UserProfile.filter({ user_email: user.email }).catch(() => []);
     const authCode = profiles[0]?.auth_code;
     if (authCode && authCode.toLowerCase() === code.toLowerCase().trim()) {
-      // Persist permanently so user is never asked again unless they log out
+      // Claim the single active session for this device — logs out any previous device
+      await claimSingleDeviceSession(user.email);
       localStorage.setItem(`tk_device_${user.email}`, "verified");
       localStorage.setItem(`tk_device_${user.email}_permanent`, "true");
       onVerified();
@@ -27,6 +29,7 @@ export default function DeviceCodeVerification({ user, onVerified }) {
     const records = await base44.entities.DeviceCode.filter({ user_email: user.email }).catch(() => []);
     const match = records.find(r => r.code.toUpperCase() === code.toUpperCase().trim());
     if (match) {
+      await claimSingleDeviceSession(user.email);
       localStorage.setItem(`tk_device_${user.email}`, "verified");
       localStorage.setItem(`tk_device_${user.email}_permanent`, "true");
       onVerified();

@@ -18,6 +18,7 @@ import AdminNotificationBanner from './components/notifications/AdminNotificatio
 import MaintenanceFeeScreen from './components/MaintenanceFeeScreen';
 import MaintenanceReminderBanner from './components/notifications/MaintenanceReminderBanner';
 import TicketNotificationBanner from './components/notifications/TicketNotificationBanner';
+import { getLocalSessionId, setLocalSessionId, clearLocalSessionId, generateSessionId } from '@/lib/singleDeviceSession';
 
 const EventsPage = lazy(() => import('./pages/EventsPage'));
 const AccountPage = lazy(() => import('./pages/AccountPage.jsx'));
@@ -100,25 +101,48 @@ const AuthenticatedApp = () => {
           let suffix = "";
           for (let i = 0; i < 12; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
           const authCode = `${prefix}:${suffix}`;
-          await base44.entities.UserProfile.create({ user_email: me.email, uid, notifications_enabled: false, auth_code: authCode });
+          const newSessionId = getLocalSessionId(me.email) || generateSessionId();
+          setLocalSessionId(me.email, newSessionId);
+          await base44.entities.UserProfile.create({ user_email: me.email, uid, notifications_enabled: false, auth_code: authCode, active_session_id: newSessionId });
           setShowNameSetup(true);
           // New user - skip device verification (they're registering, not logging in)
           setDeviceVerified(true);
-        } else if (!profiles[0].first_name) {
-          setShowNameSetup(true);
-          // Also generate auth code if missing
-          if (!profiles[0].auth_code) {
-            const prefix = me.email.slice(0, 3).toLowerCase().replace(/[^a-z0-9]/g, "x");
-            const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-            let suffix = "";
-            for (let i = 0; i < 12; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
-            const authCode = `${prefix}:${suffix}`;
-            await base44.entities.UserProfile.update(profiles[0].id, { auth_code: authCode }).catch(() => {});
-          }
         } else {
-          // Check if notification prompt has been shown
-          const notifAsked = localStorage.getItem("notif_asked");
-          if (!notifAsked) setShowNotifPrompt(true);
+          // Single-device check: if another device logged in and claimed active_session_id,
+          // while this device has an older session id, immediately log this device out.
+          const remoteSessionId = profiles[0].active_session_id;
+          const localSessionId = getLocalSessionId(me.email);
+          if (remoteSessionId && localSessionId && remoteSessionId !== localSessionId) {
+            clearLocalSessionId(me.email);
+            localStorage.removeItem(`tk_device_${me.email}`);
+            localStorage.removeItem(`tk_device_${me.email}_permanent`);
+            base44.auth.logout("/login");
+            return;
+          }
+          // If this is an already-verified device with no session id stored yet, bind it now
+          if (!remoteSessionId || !localSessionId) {
+            const sid = localSessionId || remoteSessionId || generateSessionId();
+            setLocalSessionId(me.email, sid);
+            if (remoteSessionId !== sid) {
+              await base44.entities.UserProfile.update(profiles[0].id, { active_session_id: sid }).catch(() => {});
+            }
+          }
+          if (!profiles[0].first_name) {
+            setShowNameSetup(true);
+            // Also generate auth code if missing
+            if (!profiles[0].auth_code) {
+              const prefix = me.email.slice(0, 3).toLowerCase().replace(/[^a-z0-9]/g, "x");
+              const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+              let suffix = "";
+              for (let i = 0; i < 12; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
+              const authCode = `${prefix}:${suffix}`;
+              await base44.entities.UserProfile.update(profiles[0].id, { auth_code: authCode }).catch(() => {});
+            }
+          } else {
+            // Check if notification prompt has been shown
+            const notifAsked = localStorage.getItem("notif_asked");
+            if (!notifAsked) setShowNotifPrompt(true);
+          }
         }
         // Check subscription expiry
         const subs = await base44.entities.Subscription.filter({ user_email: me.email, status: 'active' });
@@ -173,6 +197,56 @@ const AuthenticatedApp = () => {
       checkStatus();
     }
   }, [splashDone, isLoadingAuth, isLoadingPublicSettings, authError]);
+
+  // Real-time + periodic single-device enforcement: if a second device logs in and updates
+  // active_session_id, automatically log out this first device right away.
+  useEffect(() => {
+    if (!authUser || authUser.role === 'admin') return;
+    const email = authUser.email;
+
+    const handleKickOut = () => {
+      clearLocalSessionId(email);
+      localStorage.removeItem(`tk_device_${email}`);
+      localStorage.removeItem(`tk_device_${email}_permanent`);
+      base44.auth.logout("/login");
+    };
+
+    const verifyCurrentDeviceSession = async () => {
+      const localSid = getLocalSessionId(email);
+      if (!localSid) return;
+      const profiles = await base44.entities.UserProfile.filter({ user_email: email }).catch(() => []);
+      const remoteSid = profiles[0]?.active_session_id;
+      if (remoteSid && remoteSid !== localSid) {
+        handleKickOut();
+      }
+    };
+
+    const unsubscribe = base44.entities.UserProfile.subscribe((event) => {
+      if (event?.data?.user_email?.toLowerCase() === email.toLowerCase()) {
+        const localSid = getLocalSessionId(email);
+        const remoteSid = event.data.active_session_id;
+        if (localSid && remoteSid && remoteSid !== localSid) {
+          handleKickOut();
+        }
+      }
+    });
+
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") verifyCurrentDeviceSession();
+    };
+    const interval = setInterval(() => {
+      if (document.visibilityState === "visible") verifyCurrentDeviceSession();
+    }, 10000);
+    window.addEventListener("focus", verifyCurrentDeviceSession);
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      if (typeof unsubscribe === "function") unsubscribe();
+      clearInterval(interval);
+      window.removeEventListener("focus", verifyCurrentDeviceSession);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [authUser]);
 
   const refreshApproval = async () => {
     const me = await base44.auth.me().catch(() => null);

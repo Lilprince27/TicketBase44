@@ -22,6 +22,10 @@
       "type": "string",
       "title": "Authentication Code"
     },
+    "active_session_id": {
+      "type": "string",
+      "title": "Active Device Session ID"
+    },
     "push_token": {
       "type": "string",
       "title": "FCM Push Token"
