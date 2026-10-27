@@ -1,6 +1,7 @@
 // Real Ticketek AU events — sourced from premier.ticketek.com.au homepage (Oct 2026)
 const CDN = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages";
 const ZACH_BRYAN_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/d41417852_IMG_8679.jpeg";
+const SOAD_FAITH_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/db6bcc4b5_IMG_8841.jpeg";
 
 export const TICKETEK_HERO = [
   { id: "brysontiller", title: "Bryson Tiller", subtitle: "The Neo Trapsoul Tour", image: `${CDN}/sfx361701.jpg`, venue: "Various venues, Australia" },
@@ -12,6 +13,7 @@ export const TICKETEK_HERO = [
   { id: "supercars", title: "Repco Supercars Championship", subtitle: "", image: `${CDN}/sfx317196.jpg`, venue: "Various venues, Australia" },
   { id: "bonjovi", title: "Bon Jovi", subtitle: "The Forever Tour 2027", image: `${CDN}/sfx370305.jpg`, venue: "Various venues, Australia" },
   { id: "zachbryan", title: "Zach Bryan", subtitle: "Young Manhood & Other Donatable Organs Tour 2027", image: ZACH_BRYAN_IMG, venue: "Marvel Stadium, Accor Stadium & Suncorp Stadium" },
+  { id: "soadfaith", title: "System of a Down & Faith No More", subtitle: "Australia & New Zealand Tour 2027", image: SOAD_FAITH_IMG, venue: "Accor Stadium, Marvel Stadium & Suncorp Stadium" },
 ];
 
 export const TICKETEK_FEATURED = [
@@ -24,6 +26,7 @@ export const TICKETEK_FEATURED = [
   { id: "supercars", title: "Repco Supercars Championship", subtitle: "", image: `${CDN}/sfx317196.jpg`, venue: "Various venues, Australia" },
   { id: "bonjovi", title: "Bon Jovi", subtitle: "The Forever Tour 2027", image: `${CDN}/sfx370305.jpg`, venue: "Various venues, Australia" },
   { id: "zachbryan", title: "Zach Bryan", subtitle: "Young Manhood & Other Donatable Organs Tour 2027", image: ZACH_BRYAN_IMG, venue: "Marvel Stadium, Accor Stadium & Suncorp Stadium" },
+  { id: "soadfaith", title: "System of a Down & Faith No More", subtitle: "Australia & New Zealand Tour 2027", image: SOAD_FAITH_IMG, venue: "Accor Stadium, Marvel Stadium & Suncorp Stadium" },
   { id: "asaprocky", title: "A$AP Rocky", subtitle: "Don't Be Dumb World Tour", image: `${CDN}/sfx368777.jpg`, venue: "Various venues, Australia" },
   { id: "zaralarsson", title: "Zara Larsson", subtitle: "Midnight Sun Tour 2026", image: `${CDN}/sfx355845.jpg`, venue: "Various venues, Australia" },
 ];
@@ -58,6 +61,7 @@ export const TICKETEK_NZ_FEATURED = [
   { id: "allwhites", title: "All Whites v India Series 2026", subtitle: "", image: `${NZ_CDN}/sfx101693.jpg`, venue: "Various venues, New Zealand" },
   { id: "thefray", title: "The Fray", subtitle: "Summer of Light Tour", image: `${NZ_CDN}/sfx102392.jpg`, venue: "Various venues, New Zealand" },
   { id: "nznetball", title: "2026 WM New Zealand Netball Series", subtitle: "", image: `${NZ_CDN}/sfx102458.jpg`, venue: "Various venues, New Zealand" },
+  { id: "soadfaithnz", title: "System of a Down & Faith No More", subtitle: "New Zealand 2027", image: SOAD_FAITH_IMG, venue: "Hnry Stadium, Wellington, New Zealand" },
   { id: "zachbryannz", title: "Zach Bryan", subtitle: "Young Manhood & Other Donatable Organs Tour 2027", image: ZACH_BRYAN_IMG, venue: "Eden Park, Auckland, New Zealand" },
   { id: "oliviadean", title: "Olivia Dean", subtitle: "The Art of Loving Live", image: `${NZ_CDN}/sfx101979.png`, venue: "Western Springs, Auckland" },
   { id: "zaralarssonnz", title: "Zara Larsson", subtitle: "Midnight Sun Tour 2026", image: `${CDN}/sfx355845.jpg`, venue: "Spark Arena, Auckland, New Zealand" },

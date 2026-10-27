@@ -15,6 +15,7 @@ const HILARY_DUFF_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb
 const ZARA_LARSSON_IMAGE = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages/sfx355845.jpg";
 const ASAP_ROCKY_IMAGE = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages/sfx368777.jpg";
 const ZACH_BRYAN_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/d41417852_IMG_8679.jpeg";
+const SOAD_FAITH_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/db6bcc4b5_IMG_8841.jpeg";
 const BON_JOVI_IMAGE = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages/sfx369779.jpg";
 const BENSON_BOONE_IMAGE = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages/sfx363901.jpg";
 const NIALL_HORAN_IMAGE = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages/sfx362150.jpg";
@@ -708,6 +709,138 @@ export const LOCAL_EVENT_OVERRIDES = {
       },
     },
   ],
+  "system of a down": [
+    {
+      id: "local-soad-fnm-1",
+      title: "System of a Down & Faith No More",
+      date: "Fri 22 Jan 2027 · 6:00pm",
+      venue: "Accor Stadium",
+      city: "Sydney Olympic Park",
+      image: SOAD_FAITH_IMAGE,
+      local: true,
+      localData: {
+        event_name: "System of a Down & Faith No More",
+        event_date: "Fri 22 Jan 2027 · 6:00pm",
+        venue_name: "Accor Stadium, Sydney Olympic Park, NSW",
+        event_image_url: SOAD_FAITH_IMAGE,
+        presenter: "TEG Live",
+      },
+    },
+    {
+      id: "local-soad-fnm-2",
+      title: "System of a Down & Faith No More",
+      date: "Wed 27 Jan 2027 · 6:00pm",
+      venue: "Marvel Stadium",
+      city: "Melbourne",
+      image: SOAD_FAITH_IMAGE,
+      local: true,
+      localData: {
+        event_name: "System of a Down & Faith No More",
+        event_date: "Wed 27 Jan 2027 · 6:00pm",
+        venue_name: "Marvel Stadium, Melbourne, VIC",
+        event_image_url: SOAD_FAITH_IMAGE,
+        presenter: "TEG Live",
+      },
+    },
+    {
+      id: "local-soad-fnm-3",
+      title: "System of a Down & Faith No More",
+      date: "Mon 1 Feb 2027 · 6:00pm",
+      venue: "Suncorp Stadium",
+      city: "Brisbane",
+      image: SOAD_FAITH_IMAGE,
+      local: true,
+      localData: {
+        event_name: "System of a Down & Faith No More",
+        event_date: "Mon 1 Feb 2027 · 6:00pm",
+        venue_name: "Suncorp Stadium, Brisbane, QLD",
+        event_image_url: SOAD_FAITH_IMAGE,
+        presenter: "TEG Live",
+      },
+    },
+    {
+      id: "local-soad-fnm-nz-1",
+      title: "System of a Down & Faith No More",
+      date: "Sun 7 Feb 2027 · 6:00pm",
+      venue: "Hnry Stadium (Sky Stadium)",
+      city: "Wellington, New Zealand",
+      image: SOAD_FAITH_IMAGE,
+      local: true,
+      localData: {
+        event_name: "System of a Down & Faith No More",
+        event_date: "Sun 7 Feb 2027 · 6:00pm",
+        venue_name: "Hnry Stadium, Wellington, New Zealand",
+        event_image_url: SOAD_FAITH_IMAGE,
+        presenter: "TEG Live",
+      },
+    },
+  ],
+  "faith no more": [
+    {
+      id: "local-fnm-soad-1",
+      title: "System of a Down & Faith No More",
+      date: "Fri 22 Jan 2027 · 6:00pm",
+      venue: "Accor Stadium",
+      city: "Sydney Olympic Park",
+      image: SOAD_FAITH_IMAGE,
+      local: true,
+      localData: {
+        event_name: "System of a Down & Faith No More",
+        event_date: "Fri 22 Jan 2027 · 6:00pm",
+        venue_name: "Accor Stadium, Sydney Olympic Park, NSW",
+        event_image_url: SOAD_FAITH_IMAGE,
+        presenter: "TEG Live",
+      },
+    },
+    {
+      id: "local-fnm-soad-2",
+      title: "System of a Down & Faith No More",
+      date: "Wed 27 Jan 2027 · 6:00pm",
+      venue: "Marvel Stadium",
+      city: "Melbourne",
+      image: SOAD_FAITH_IMAGE,
+      local: true,
+      localData: {
+        event_name: "System of a Down & Faith No More",
+        event_date: "Wed 27 Jan 2027 · 6:00pm",
+        venue_name: "Marvel Stadium, Melbourne, VIC",
+        event_image_url: SOAD_FAITH_IMAGE,
+        presenter: "TEG Live",
+      },
+    },
+    {
+      id: "local-fnm-soad-3",
+      title: "System of a Down & Faith No More",
+      date: "Mon 1 Feb 2027 · 6:00pm",
+      venue: "Suncorp Stadium",
+      city: "Brisbane",
+      image: SOAD_FAITH_IMAGE,
+      local: true,
+      localData: {
+        event_name: "System of a Down & Faith No More",
+        event_date: "Mon 1 Feb 2027 · 6:00pm",
+        venue_name: "Suncorp Stadium, Brisbane, QLD",
+        event_image_url: SOAD_FAITH_IMAGE,
+        presenter: "TEG Live",
+      },
+    },
+    {
+      id: "local-fnm-soad-nz-1",
+      title: "System of a Down & Faith No More",
+      date: "Sun 7 Feb 2027 · 6:00pm",
+      venue: "Hnry Stadium (Sky Stadium)",
+      city: "Wellington, New Zealand",
+      image: SOAD_FAITH_IMAGE,
+      local: true,
+      localData: {
+        event_name: "System of a Down & Faith No More",
+        event_date: "Sun 7 Feb 2027 · 6:00pm",
+        venue_name: "Hnry Stadium, Wellington, New Zealand",
+        event_image_url: SOAD_FAITH_IMAGE,
+        presenter: "TEG Live",
+      },
+    },
+  ],
   "bon jovi": [
     {
       id: "local-bon-jovi-1",
@@ -1061,6 +1194,7 @@ const TICKETEK_LOCAL_EVENTS = [
   { title: "Adelaide United v Công an Hà Nội FC — AFC Champions League Elite", date: "Tue 11 Aug 2026", venue: "Coopers Stadium, Hindmarsh, SA", image: `${TK_CDN}/sfx364359.png`, keys: ["adelaide united", "cong an ha noi"] },
   { title: "Zara Larsson — Midnight Sun Tour 2026", date: "Oct 2026", venue: "Various venues, Australia", image: `${TK_CDN}/sfx355845.jpg`, keys: ["zara larsson", "midnight sun tour"] },
   { title: "A$AP Rocky — Don't Be Dumb World Tour", date: "Dec 2026", venue: "Various venues, Australia", image: `${TK_CDN}/sfx368777.jpg`, keys: ["asap rocky", "a$ap rocky", "dont be dumb", "don't be dumb"] },
+  { title: "System of a Down & Faith No More — Australia & New Zealand Tour 2027", date: "Jan - Feb 2027", venue: "Accor Stadium Sydney, Marvel Stadium Melbourne & Suncorp Stadium Brisbane", image: SOAD_FAITH_IMAGE, keys: ["system of a down", "faith no more", "soad"] },
   { title: "Zach Bryan — Young Manhood & Other Donatable Organs Tour 2027", date: "Dec 2027", venue: "Marvel Stadium, Accor Stadium & Suncorp Stadium", image: ZACH_BRYAN_IMAGE, keys: ["zach bryan", "young manhood", "donatable organs"] },
   { title: "Bon Jovi — The Forever Tour 2027", date: "Feb 2027", venue: "Various venues, Australia", image: `${TK_CDN}/sfx369779.jpg`, keys: ["bon jovi", "forever tour"] },
   { title: "Benson Boone — Wanted Man Tour 2026", date: "Nov 2026", venue: "Various venues, Australia", image: `${TK_CDN}/sfx363901.jpg`, keys: ["benson boone", "wanted man"] },
@@ -1093,6 +1227,7 @@ const TICKETEK_LOCAL_EVENTS = [
 
 // === Ticketek New Zealand events — sourced from premier.ticketek.co.nz (Oct 2026) ===
 const TICKETEK_NZ_LOCAL_EVENTS = [
+  { title: "System of a Down & Faith No More", date: "Sun 7 Feb 2027 · 6:00pm", venue: "Hnry Stadium, Wellington, New Zealand", image: SOAD_FAITH_IMAGE, keys: ["system of a down nz", "faith no more nz", "system of a down wellington", "soad nz"] },
   { title: "Zach Bryan — Young Manhood & Other Donatable Organs Tour 2027", date: "Tue 21 Dec 2027 · 6:00pm", venue: "Eden Park, Auckland, New Zealand", image: ZACH_BRYAN_IMAGE, keys: ["zach bryan nz", "zach bryan new zealand", "zach bryan auckland", "zach bryan eden park"] },
   { title: "Olivia Dean — The Art of Loving Live", date: "Sat 17 Oct 2026 · 6:00pm", venue: "Western Springs, Auckland, NZ", image: `${NZ_CDN}/sfx101979.png`, keys: ["olivia dean nz", "olivia dean new zealand", "olivia dean western springs", "olivia dean auckland"] },
   { title: "LEGO Star Wars: The Exhibition", date: "", venue: "Various venues, New Zealand", image: `${NZ_CDN}/sfx100725.png`, keys: ["lego star wars", "lego star wars exhibition"] },
