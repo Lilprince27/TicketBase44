@@ -4,86 +4,84 @@ const ZACH_BRYAN_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d2
 const SOAD_FAITH_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/db6bcc4b5_IMG_8841.jpeg";
 
 export const TICKETEK_HERO = [
-  { id: "brysontiller", title: "Bryson Tiller", subtitle: "The Neo Trapsoul Tour", image: `${CDN}/sfx361701.jpg`, venue: "Various venues, Australia" },
-  { id: "aliwong", title: "Ali Wong", subtitle: "ALI WONG: LIVE", image: `${CDN}/sfx370089.jpg`, venue: "Various venues, Australia" },
-  { id: "louistomlinson", title: "Louis Tomlinson", subtitle: "How Did We Get Here? Australia Tour 2026", image: `${CDN}/sfx356364.jpg`, venue: "Various venues, Australia" },
-  { id: "comealive", title: "Come Alive!", subtitle: "The Greatest Showman Circus Spectacular", image: `${CDN}/sfx351232.jpg`, venue: "Various venues, Australia" },
-  { id: "celticthunder", title: "An evening with CELTIC THUNDER", subtitle: "", image: `${CDN}/sfx368098.jpg`, venue: "Various venues, Australia" },
-  { id: "aleagues2027", title: "A-Leagues 2026/27 Season", subtitle: "", image: `${CDN}/sfx368706.png`, venue: "Various venues, Australia" },
-  { id: "supercars", title: "Repco Supercars Championship", subtitle: "", image: `${CDN}/sfx317196.jpg`, venue: "Various venues, Australia" },
-  { id: "bonjovi", title: "Bon Jovi", subtitle: "The Forever Tour 2027", image: `${CDN}/sfx370305.jpg`, venue: "Various venues, Australia" },
-  { id: "zachbryan", title: "Zach Bryan", subtitle: "Young Manhood & Other Donatable Organs Tour 2027", image: ZACH_BRYAN_IMG, venue: "Marvel Stadium, Accor Stadium & Suncorp Stadium" },
+  { id: "bbl27", title: "Big Bash League", subtitle: "2026/2027", image: `${CDN}/sfx365327.jpg`, venue: "Various venues, Australia" },
+  { id: "mammamiaparty", title: "Mamma Mia The Party", subtitle: "", image: `${CDN}/sfx370076.jpg`, venue: "Sydney, NSW" },
+  { id: "jonahmarais", title: "Jonah Marais", subtitle: "", image: `${CDN}/sfx364628.jpg`, venue: "Various venues, Australia" },
+  { id: "ironmaiden", title: "Iron Maiden", subtitle: "Run For Your Lives World Tour 2026", image: `${CDN}/sfx357158.jpg`, venue: "RAC Arena, AAMI Park, Allianz Stadium & Brisbane Entertainment Centre" },
+  { id: "bensonboone", title: "Benson Boone", subtitle: "Wanted Man Tour 2026", image: `${CDN}/sfx363901.jpg`, venue: "RAC Arena, Rod Laver Arena, Afterpay Arena & Brisbane Entertainment Centre" },
+  { id: "joji", title: "Joji", subtitle: "SOLARIS", image: `${CDN}/sfx357321.jpg`, venue: "Afterpay Arena, Rod Laver Arena & Brisbane Entertainment Centre" },
+  { id: "hannahferguson", title: "Hannah Ferguson", subtitle: "CHEEK LIVE: State of the Nation", image: `${CDN}/sfx363383.jpg`, venue: "Various venues, Australia" },
+  { id: "radiohead", title: "Radiohead", subtitle: "Australia 2027", image: `${CDN}/sfx367540.jpg`, venue: "RAC Arena Perth, Rod Laver Arena Melbourne & Afterpay Arena Sydney" },
   { id: "soadfaith", title: "System of a Down & Faith No More", subtitle: "Australia & New Zealand Tour 2027", image: SOAD_FAITH_IMG, venue: "Accor Stadium, Marvel Stadium & Suncorp Stadium" },
+  { id: "zachbryan", title: "Zach Bryan", subtitle: "Young Manhood & Other Donatable Organs Tour 2027", image: ZACH_BRYAN_IMG, venue: "Marvel Stadium, Accor Stadium & Suncorp Stadium" },
 ];
 
 export const TICKETEK_FEATURED = [
-  { id: "brysontiller", title: "Bryson Tiller", subtitle: "The Neo Trapsoul Tour", image: `${CDN}/sfx361701.jpg`, venue: "Various venues, Australia" },
-  { id: "aliwong", title: "Ali Wong", subtitle: "ALI WONG: LIVE", image: `${CDN}/sfx370089.jpg`, venue: "Various venues, Australia" },
-  { id: "louistomlinson", title: "Louis Tomlinson", subtitle: "How Did We Get Here? Australia Tour 2026", image: `${CDN}/sfx356364.jpg`, venue: "Various venues, Australia" },
-  { id: "comealive", title: "Come Alive!", subtitle: "The Greatest Showman Circus Spectacular", image: `${CDN}/sfx351232.jpg`, venue: "Various venues, Australia" },
-  { id: "celticthunder", title: "An evening with CELTIC THUNDER", subtitle: "", image: `${CDN}/sfx368098.jpg`, venue: "Various venues, Australia" },
-  { id: "aleagues2027", title: "A-Leagues 2026/27 Season", subtitle: "", image: `${CDN}/sfx368706.png`, venue: "Various venues, Australia" },
-  { id: "supercars", title: "Repco Supercars Championship", subtitle: "", image: `${CDN}/sfx317196.jpg`, venue: "Various venues, Australia" },
-  { id: "bonjovi", title: "Bon Jovi", subtitle: "The Forever Tour 2027", image: `${CDN}/sfx370305.jpg`, venue: "Various venues, Australia" },
-  { id: "zachbryan", title: "Zach Bryan", subtitle: "Young Manhood & Other Donatable Organs Tour 2027", image: ZACH_BRYAN_IMG, venue: "Marvel Stadium, Accor Stadium & Suncorp Stadium" },
+  { id: "bbl27", title: "Big Bash League", subtitle: "2026/2027", image: `${CDN}/sfx365327.jpg`, venue: "Various venues, Australia" },
+  { id: "mammamiaparty", title: "Mamma Mia The Party", subtitle: "", image: `${CDN}/sfx370076.jpg`, venue: "Sydney, NSW" },
+  { id: "jonahmarais", title: "Jonah Marais", subtitle: "", image: `${CDN}/sfx364628.jpg`, venue: "Various venues, Australia" },
+  { id: "ironmaiden", title: "Iron Maiden", subtitle: "Run For Your Lives World Tour 2026", image: `${CDN}/sfx357158.jpg`, venue: "RAC Arena, AAMI Park, Allianz Stadium & Brisbane Entertainment Centre" },
+  { id: "bensonboone", title: "Benson Boone", subtitle: "Wanted Man Tour 2026", image: `${CDN}/sfx363901.jpg`, venue: "RAC Arena, Rod Laver Arena, Afterpay Arena & Brisbane Entertainment Centre" },
+  { id: "joji", title: "Joji", subtitle: "SOLARIS", image: `${CDN}/sfx357321.jpg`, venue: "Afterpay Arena, Rod Laver Arena & Brisbane Entertainment Centre" },
+  { id: "hannahferguson", title: "Hannah Ferguson", subtitle: "CHEEK LIVE: State of the Nation", image: `${CDN}/sfx363383.jpg`, venue: "Various venues, Australia" },
+  { id: "radiohead", title: "Radiohead", subtitle: "Australia 2027", image: `${CDN}/sfx367540.jpg`, venue: "RAC Arena Perth, Rod Laver Arena Melbourne & Afterpay Arena Sydney" },
   { id: "soadfaith", title: "System of a Down & Faith No More", subtitle: "Australia & New Zealand Tour 2027", image: SOAD_FAITH_IMG, venue: "Accor Stadium, Marvel Stadium & Suncorp Stadium" },
-  { id: "asaprocky", title: "A$AP Rocky", subtitle: "Don't Be Dumb World Tour", image: `${CDN}/sfx368777.jpg`, venue: "Various venues, Australia" },
-  { id: "zaralarsson", title: "Zara Larsson", subtitle: "Midnight Sun Tour 2026", image: `${CDN}/sfx355845.jpg`, venue: "Various venues, Australia" },
+  { id: "zachbryan", title: "Zach Bryan", subtitle: "Young Manhood & Other Donatable Organs Tour 2027", image: ZACH_BRYAN_IMG, venue: "Marvel Stadium, Accor Stadium & Suncorp Stadium" },
+  { id: "bonjovi", title: "Bon Jovi", subtitle: "The Forever Tour 2027", image: `${CDN}/sfx370305.jpg`, venue: "Marvel Stadium, Accor Stadium & Suncorp Stadium" },
+  { id: "brysontiller", title: "Bryson Tiller", subtitle: "The Neo Trapsoul Tour", image: `${CDN}/sfx361701.jpg`, venue: "Various venues, Australia" },
 ];
 
 export const TICKETEK_TRENDING = [
-  { id: "monstertruck", title: "Monster Truck Mania Live", subtitle: "", image: `${CDN}/sfx368432.jpg`, venue: "Various venues, Australia" },
-  { id: "summerofcricket", title: "Summer of Cricket", subtitle: "", image: `${CDN}/sfx361049.jpg`, venue: "Various venues, Australia" },
-  { id: "crashtestdummies", title: "Crash Test Dummies (Canada)", subtitle: "", image: `${CDN}/sfx366542.jpg`, venue: "Various venues, Australia" },
-  { id: "dirtydancing", title: "Dirty Dancing In Concert", subtitle: "", image: `${CDN}/sfx362379.jpg`, venue: "Various venues, Australia" },
-  { id: "arthurhill", title: "Arthur Hill", subtitle: "", image: `${CDN}/sfx367236.jpg`, venue: "Various venues, Australia" },
-  { id: "undertale", title: "UNDERTALE", subtitle: "", image: `${CDN}/sfx359175.jpg`, venue: "Various venues, Australia" },
-  { id: "leeasher", title: "An Evening with Lee Asher", subtitle: "", image: `${CDN}/sfx368652.jpg`, venue: "Various venues, Australia" },
+  { id: "weezer", title: "Weezer", subtitle: "", image: `${CDN}/sfx370328.jpg`, venue: "Various venues, Australia" },
+  { id: "ashanti", title: "Ashanti", subtitle: "", image: `${CDN}/sfx361768.jpg`, venue: "Various venues, Australia" },
   { id: "hungryjacksnbl", title: "Hungry Jacks NBL", subtitle: "", image: `${CDN}/sfx366108.jpg`, venue: "Various venues, Australia" },
+  { id: "summerofcricket", title: "Summer of Cricket", subtitle: "", image: `${CDN}/sfx361049.jpg`, venue: "Various venues, Australia" },
+  { id: "eclipse", title: "ECLIPSE", subtitle: "", image: `${CDN}/sfx357072.jpg`, venue: "Various venues, Australia" },
+  { id: "daraobriain", title: "Dara Ó Briain", subtitle: "", image: `${CDN}/sfx363563.jpg`, venue: "Various venues, Australia" },
+  { id: "supercars", title: "Repco Supercars Championship", subtitle: "", image: `${CDN}/sfx317198.jpg`, venue: "Various venues, Australia" },
+  { id: "dabbledarts", title: "Dabble Darts ANZ Premier League", subtitle: "", image: `${CDN}/sfx362077.jpg`, venue: "Various venues, Australia" },
+  { id: "brysontillertrending", title: "Bryson Tiller", subtitle: "", image: `${CDN}/sfx361703.jpg`, venue: "Various venues, Australia" },
 ];
 
 export const TICKETEK_WAITLISTS = [
   { id: "cinderella", title: "Cinderella", subtitle: "Waitlist", image: `${CDN}/sfx367187.jpg`, venue: "Various venues, Australia" },
-  { id: "johnmayer", title: "John Mayer", subtitle: "Waitlist", image: `${CDN}/sfx294283.jpg`, venue: "Various venues, Australia" },
-  { id: "phoebebridgers", title: "Phoebe Bridgers", subtitle: "Waitlist", image: `${CDN}/sfx360771.jpg`, venue: "Various venues, Australia" },
-  { id: "nineinchnails", title: "Nine Inch Nails", subtitle: "Waitlist", image: `${CDN}/sfx369527.jpg`, venue: "Various venues, Australia" },
-  { id: "u2", title: "U2", subtitle: "Waitlist", image: `${CDN}/sfx296129.jpg`, venue: "Various venues, Australia" },
+  { id: "netballwc2027", title: "The Netball World Cup Sydney 2027", subtitle: "Waitlist", image: `${CDN}/sfx362771.png`, venue: "Sydney, NSW" },
+  { id: "doechii", title: "Doechii", subtitle: "Waitlist", image: `${CDN}/sfx331728.jpg`, venue: "Various venues, Australia" },
+  { id: "tatemcrae", title: "Tate McRae", subtitle: "Waitlist", image: `${CDN}/sfx266052.jpg`, venue: "Various venues, Australia" },
+  { id: "oliviadeanwait", title: "Olivia Dean", subtitle: "Waitlist", image: `${CDN}/sfx317667.jpg`, venue: "Various venues, Australia" },
 ];
 
 // === Ticketek New Zealand events — sourced from premier.ticketek.co.nz (Oct 2026) ===
 const NZ_CDN = "https://d19py84rdi4j91.cloudfront.net/dbimages";
 
 export const TICKETEK_NZ_FEATURED = [
-  { id: "nzcricket", title: "NZ Cricket 2026-27", subtitle: "", image: `${NZ_CDN}/sfx101972.jpg`, venue: "Various venues, New Zealand" },
-  { id: "rockthebowl", title: "Rock the Bowl 2026", subtitle: "", image: `${NZ_CDN}/sfx101976.jpg`, venue: "Various venues, New Zealand" },
-  { id: "wellingtonphoenix", title: "Wellington Phoenix FC Season 2026-2027", subtitle: "A-League Women & A-League Men", image: `${NZ_CDN}/sfx102171.jpg`, venue: "Various venues, New Zealand" },
-  { id: "legosw", title: "LEGO Star Wars: The Exhibition", subtitle: "", image: `${NZ_CDN}/sfx100725.png`, venue: "Various venues, New Zealand" },
+  { id: "chasestatus", title: "Chase & Status", subtitle: "", image: `${NZ_CDN}/sfx102829.png`, venue: "Various venues, New Zealand" },
   { id: "allwhites", title: "All Whites v India Series 2026", subtitle: "", image: `${NZ_CDN}/sfx101693.jpg`, venue: "Various venues, New Zealand" },
-  { id: "thefray", title: "The Fray", subtitle: "Summer of Light Tour", image: `${NZ_CDN}/sfx102392.jpg`, venue: "Various venues, New Zealand" },
-  { id: "nznetball", title: "2026 WM New Zealand Netball Series", subtitle: "", image: `${NZ_CDN}/sfx102458.jpg`, venue: "Various venues, New Zealand" },
+  { id: "freestylekings", title: "Freestyle Kings Live", subtitle: "", image: `${NZ_CDN}/sfx101862.jpg`, venue: "Various venues, New Zealand" },
+  { id: "wobil", title: "WOBIL", subtitle: "Wise Old Bugger in Lycra by Greg Cooper", image: `${NZ_CDN}/sfx101797.jpg`, venue: "Various venues, New Zealand" },
+  { id: "beegees", title: "Best of the Bee Gees: Greatest Show", subtitle: "with Special Guests", image: `${NZ_CDN}/sfx101128.jpg`, venue: "Various venues, New Zealand" },
+  { id: "moviemagic", title: "Movie Magic", subtitle: "", image: `${NZ_CDN}/sfx101622.jpg`, venue: "Various venues, New Zealand" },
+  { id: "nzcricket", title: "NZ Cricket 2026-27", subtitle: "", image: `${NZ_CDN}/sfx101972.jpg`, venue: "Various venues, New Zealand" },
   { id: "soadfaithnz", title: "System of a Down & Faith No More", subtitle: "New Zealand 2027", image: SOAD_FAITH_IMG, venue: "Hnry Stadium, Wellington, New Zealand" },
   { id: "zachbryannz", title: "Zach Bryan", subtitle: "Young Manhood & Other Donatable Organs Tour 2027", image: ZACH_BRYAN_IMG, venue: "Eden Park, Auckland, New Zealand" },
-  { id: "oliviadean", title: "Olivia Dean", subtitle: "The Art of Loving Live", image: `${NZ_CDN}/sfx101979.png`, venue: "Western Springs, Auckland" },
-  { id: "zaralarssonnz", title: "Zara Larsson", subtitle: "Midnight Sun Tour 2026", image: `${CDN}/sfx355845.jpg`, venue: "Spark Arena, Auckland, New Zealand" },
-  { id: "asaprockynz", title: "A$AP Rocky", subtitle: "Don't Be Dumb World Tour", image: `${CDN}/sfx368777.jpg`, venue: "Spark Arena, Auckland, New Zealand" },
 ];
 
 export const TICKETEK_NZ_TRENDING = [
-  { id: "nzrugby", title: "New Zealand Rugby 2026 Season", subtitle: "", image: `${NZ_CDN}/sfx101833.jpg`, venue: "Various venues, New Zealand" },
-  { id: "chopper", title: "Heath Franklin's Chopper", subtitle: "", image: `${NZ_CDN}/sfx101895.jpg`, venue: "Various venues, New Zealand" },
-  { id: "lennyrave", title: "Lenny's Toddler Rave World Tour: CHRISTCHURCH", subtitle: "", image: `${NZ_CDN}/sfx102134.jpg`, venue: "Christchurch, New Zealand" },
-  { id: "beatlemania", title: "Beatlemania On Tour", subtitle: "", image: `${NZ_CDN}/sfx99921.jpg`, venue: "Various venues, New Zealand" },
+  { id: "tayloreras", title: "TAYLOR: A Tribute to the Eras", subtitle: "", image: `${NZ_CDN}/sfx100938.jpg`, venue: "Various venues, New Zealand" },
   { id: "twopsychics", title: "Two Psychics and A Medium", subtitle: "", image: `${NZ_CDN}/sfx101908.jpeg`, venue: "Various venues, New Zealand" },
-  { id: "arthurhill", title: "Arthur Hill", subtitle: "", image: `${NZ_CDN}/sfx102232.jpg`, venue: "Various venues, New Zealand" },
-  { id: "daraobriainnz", title: "Dara Ó Briain", subtitle: "", image: `${NZ_CDN}/sfx101500.jpg`, venue: "Various venues, New Zealand" },
-  { id: "dunedincbf", title: "Dunedin Craft Beer & Food Festival 2026", subtitle: "", image: `${NZ_CDN}/sfx101363.jpg`, venue: "Dunedin, New Zealand" },
-  { id: "wicked", title: "Wicked", subtitle: "", image: `${NZ_CDN}/sfx102358.png`, venue: "Various venues, New Zealand" },
+  { id: "nzrugby", title: "New Zealand Rugby 2026 Season", subtitle: "", image: `${NZ_CDN}/sfx101833.jpg`, venue: "Various venues, New Zealand" },
+  { id: "mainlandpouakai", title: "Mainland Pouākai 2026 Season", subtitle: "", image: `${NZ_CDN}/sfx101581.jpg`, venue: "Various venues, New Zealand" },
+  { id: "rnzb", title: "Royal New Zealand Ballet", subtitle: "", image: `${NZ_CDN}/sfx99002.jpg`, venue: "Various venues, New Zealand" },
+  { id: "lennyrave", title: "Lenny's Toddler Rave World Tour: CHRISTCHURCH", subtitle: "", image: `${NZ_CDN}/sfx102134.jpg`, venue: "Wolfbrook Arena, Christchurch, New Zealand" },
+  { id: "legosw", title: "LEGO® Star Wars™: The Exhibition", subtitle: "", image: `${NZ_CDN}/sfx100812.png`, venue: "Various venues, New Zealand" },
+  { id: "ispshanda", title: "ISPS HANDA Japan-Australasia Championship", subtitle: "", image: `${NZ_CDN}/sfx102778.png`, venue: "Royal Auckland and Grange Golf Club, Auckland" },
+  { id: "divaschristmas", title: "DIVAS! Christmas Special", subtitle: "", image: `${NZ_CDN}/sfx102427.jpg`, venue: "Various venues, New Zealand" },
 ];
 
 export const TICKETEK_NZ_WAITLISTS = [
   { id: "badbunny", title: "Bad Bunny", subtitle: "Waitlist", image: `${NZ_CDN}/sfx99194.jpg`, venue: "Various venues, New Zealand" },
   { id: "morganwallen", title: "Morgan Wallen", subtitle: "Waitlist", image: `${NZ_CDN}/sfx97344.jpg`, venue: "Various venues, New Zealand" },
-  { id: "warbirds", title: "Warbirds Over Wanaka 2028", subtitle: "Waitlist", image: `${NZ_CDN}/sfx101380.jpg`, venue: "Wanaka, New Zealand" },
+  { id: "warbirds", title: "Warbirds Over Wānaka 2028", subtitle: "Waitlist", image: `${NZ_CDN}/sfx101380.jpg`, venue: "Wanaka, New Zealand" },
   { id: "mileycyrus", title: "Miley Cyrus", subtitle: "Waitlist", image: `${NZ_CDN}/sfx99239.jpg`, venue: "Various venues, New Zealand" },
   { id: "sabrinacarpenter", title: "Sabrina Carpenter", subtitle: "Waitlist", image: `${NZ_CDN}/sfx97365.jpg`, venue: "Various venues, New Zealand" },
 ];
