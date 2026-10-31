@@ -241,7 +241,7 @@ export default function SharedTicketPage() {
       {/* Header */}
       <div style={{ background: TK_NAVY, padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Link to="/" style={{ textDecoration: "none" }}><TicketekLogo size={26} variant="white" /></Link>
-        {step === "ticket_detail" && ticket ? (
+        {(step === "ticket_detail" || step === "accept_page" || step === "declined") && ticket ? (
           <button
             type="button"
             onClick={() => setShowDoneAnim(true)}
@@ -344,7 +344,11 @@ export default function SharedTicketPage() {
           </div>
           <h2 style={{ fontSize: 22, fontWeight: 700, color: "#111", margin: "0 0 8px" }}>Ticket Declined</h2>
           <p style={{ fontSize: 14, color: "#666", margin: "0 0 24px" }}>You have declined this ticket. The sender has been notified.</p>
-          <Link to="/" style={{ display: "inline-block", padding: "14px 32px", borderRadius: 8, background: TK_NAVY, color: "#fff", fontWeight: 700, fontSize: 16, textDecoration: "none" }}>Done</Link>
+          {ticket ? (
+            <button type="button" onClick={() => setShowDoneAnim(true)} style={{ display: "inline-block", padding: "14px 32px", borderRadius: 8, background: TK_NAVY, color: "#fff", fontWeight: 700, fontSize: 16, border: "none", cursor: "pointer", fontFamily: "inherit" }}>Done</button>
+          ) : (
+            <Link to="/" style={{ display: "inline-block", padding: "14px 32px", borderRadius: 8, background: TK_NAVY, color: "#fff", fontWeight: 700, fontSize: 16, textDecoration: "none" }}>Done</Link>
+          )}
         </div>
       )}
 
