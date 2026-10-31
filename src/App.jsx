@@ -15,8 +15,6 @@ import InstallPrompt from './components/InstallPrompt';
 import NameSetupModal from './components/onboarding/NameSetupModal';
 import NotificationPermissionModal from './components/onboarding/NotificationPermissionModal';
 import AdminNotificationBanner from './components/notifications/AdminNotificationBanner';
-import MaintenanceFeeScreen from './components/MaintenanceFeeScreen';
-import MaintenanceReminderBanner from './components/notifications/MaintenanceReminderBanner';
 import TicketNotificationBanner from './components/notifications/TicketNotificationBanner';
 import { getLocalSessionId, setLocalSessionId, clearLocalSessionId, generateSessionId } from '@/lib/singleDeviceSession';
 
@@ -74,7 +72,6 @@ const AuthenticatedApp = () => {
   const [daysRemaining, setDaysRemaining] = useState(null);
   const [showNameSetup, setShowNameSetup] = useState(false);
   const [showNotifPrompt, setShowNotifPrompt] = useState(false);
-  const [maintenanceLocked, setMaintenanceLocked] = useState(false);
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -146,17 +143,6 @@ const AuthenticatedApp = () => {
         }
         // Check subscription expiry
         const subs = await base44.entities.Subscription.filter({ user_email: me.email, status: 'active' });
-        const lifetimeSub = subs.find(s => s.duration === 'lifetime');
-        if (lifetimeSub) {
-          // Check monthly maintenance approval
-          const now = new Date();
-          const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-          if (lifetimeSub.maintenance_approved_month !== currentMonth) {
-            setMaintenanceLocked(true);
-            setCheckingApproval(false);
-            return;
-          }
-        }
         const activeSub = subs.find(s => s.duration === 'lifetime' || new Date(s.end_date) > new Date());
         if (!activeSub) {
           // Check if they ever had a subscription (expired)
@@ -306,10 +292,6 @@ const AuthenticatedApp = () => {
     );
   }
 
-  if (maintenanceLocked) {
-    return <MaintenanceFeeScreen />;
-  }
-
   if (approvalStatus === 'rejected') {
     return (
       <div className="fixed inset-0 bg-white flex flex-col items-center justify-center px-6 text-center">
@@ -414,7 +396,6 @@ const AuthenticatedApp = () => {
     {showNameSetup && <NameSetupModal onComplete={handleNameSetup} />}
     {showNotifPrompt && !showNameSetup && <NotificationPermissionModal onAllow={handleNotifAllow} onSkip={handleNotifSkip} />}
     {authUser && <AdminNotificationBanner userEmail={authUser.email} />}
-    {authUser && <MaintenanceReminderBanner userEmail={authUser.email} />}
     {authUser && <TicketNotificationBanner userEmail={authUser.email} />}
     <InstallPrompt />
     <Routes>
