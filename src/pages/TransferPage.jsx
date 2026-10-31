@@ -135,7 +135,7 @@ export default function TransferPage() {
       const fresh = await base44.entities.TicketTransfer.filter({ secure_token: token });
       const rec = fresh[0];
       if (!rec) { setStep("invalid"); setBusy(false); return; }
-      if (rec.status === "accepted") { setStep("accepted"); setBusy(false); return; }
+      if (rec.status === "accepted") { setStep("ticket_detail"); setBusy(false); return; }
       if (rec.status !== "pending") { setError("This transfer is no longer available."); setStep("invalid"); setBusy(false); return; }
       if (new Date(rec.expires_at) < new Date()) { setStep("expired"); setBusy(false); return; }
 
@@ -498,7 +498,7 @@ export default function TransferPage() {
 
       {/* TICKET DETAIL — full ticket view after acceptance, with only Apple Wallet button */}
       {step === "ticket_detail" && ticket && (
-        <TransferTicketDetail ticket={ticket} onBack={() => navigate("/")} />
+        <TransferTicketDetail ticket={ticket} onBack={() => setStep("accept_page")} />
       )}
 
       {/* DECLINED */}

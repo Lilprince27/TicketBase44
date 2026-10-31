@@ -333,7 +333,7 @@ export default function SharedTicketPage() {
 
       {/* TICKET DETAIL — same TransferTicketDetail as transfer flow, with only Apple Wallet button */}
       {step === "ticket_detail" && ticket && (
-        <TransferTicketDetail ticket={ticket} onBack={() => navigate("/")} />
+        <TransferTicketDetail ticket={ticket} onBack={() => setStep("accept_page")} />
       )}
 
       {/* DECLINED */}
