@@ -837,7 +837,18 @@ export function getLocalOverride(query) {
   const nflResult = getNflOverride(query);
   if (nflResult) return nflResult;
   for (const [key, events] of Object.entries(LOCAL_EVENT_OVERRIDES)) {
-    if (normalized.includes(key) || (normalized.length >= 3 && key.includes(normalized))) return events;
+    if (normalized.includes(key) || (normalized.length >= 3 && key.includes(normalized))) {
+      const extra = normalized.replace(key, "").trim();
+      if (extra.length >= 2) {
+        const cityFiltered = events.filter(ev =>
+          (ev.city || "").toLowerCase().includes(extra) ||
+          (ev.venue || "").toLowerCase().includes(extra) ||
+          (ev.localData?.venue_name || "").toLowerCase().includes(extra)
+        );
+        if (cityFiltered.length > 0) return cityFiltered;
+      }
+      return events;
+    }
   }
   // AFL — filter matches by search term (team name, "grand final", etc.)
   if (AFL_KEYWORDS.some(k => normalized.includes(k))) {

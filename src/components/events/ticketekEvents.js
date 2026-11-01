@@ -27,6 +27,7 @@ export const TICKETEK_FEATURED = [
   { id: "radiohead", title: "Radiohead", subtitle: "Australia 2027", image: `${CDN}/sfx367540.jpg`, venue: "RAC Arena Perth, Rod Laver Arena Melbourne & Afterpay Arena Sydney" },
   { id: "soadfaith", title: "System of a Down & Faith No More", subtitle: "Australia & New Zealand Tour 2027", image: SOAD_FAITH_IMG, venue: "Accor Stadium, Marvel Stadium & Suncorp Stadium" },
   { id: "zachbryan", title: "Zach Bryan", subtitle: "Young Manhood & Other Donatable Organs Tour 2027", image: ZACH_BRYAN_IMG, venue: "Marvel Stadium, Accor Stadium & Suncorp Stadium" },
+  { id: "nickelback", title: "Nickelback", subtitle: "Everything Under The Sun World Tour", image: `${CDN}/sfx369095.jpg`, venue: "Brisbane Entertainment Centre, RAC Arena, Rod Laver Arena & Afterpay Arena" },
   { id: "bonjovi", title: "Bon Jovi", subtitle: "The Forever Tour 2027", image: `${CDN}/sfx370305.jpg`, venue: "Marvel Stadium, Accor Stadium & Suncorp Stadium" },
   { id: "brysontiller", title: "Bryson Tiller", subtitle: "The Neo Trapsoul Tour", image: `${CDN}/sfx361701.jpg`, venue: "Various venues, Australia" },
 ];

@@ -34,6 +34,7 @@ const SOAD_FAITH_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9
 
 export const TICKETEK_DB_EVENTS = [
   // === CONCERTS ===
+  { title: "Nickelback — Everything Under The Sun World Tour", subtitle: "Everything Under The Sun World Tour", date: "Tue 12 Oct 2027 · 8:00pm", venue: "Brisbane Entertainment Centre, Brisbane, QLD", image: `${TK_CDN}/sfx369095.jpg`, keys: ["nickelback", "everything under the sun"] },
   { title: "System of a Down & Faith No More", date: "Fri 22 Jan 2027 - Sun 7 Feb 2027", venue: "Accor Stadium Sydney, Marvel Stadium Melbourne, Suncorp Stadium Brisbane & Hnry Stadium Wellington", image: SOAD_FAITH_IMAGE, keys: ["system of a down", "faith no more", "soad"] },
   { title: "Zach Bryan — Young Manhood & Other Donatable Organs Tour 2027", date: "Fri 3 Dec 2027 - Sat 18 Dec 2027", venue: "Marvel Stadium Melbourne, Accor Stadium Sydney & Suncorp Stadium Brisbane", image: ZACH_BRYAN_IMAGE, keys: ["zach bryan", "young manhood", "donatable organs"] },
   { title: "Radiohead — Australia 2027", subtitle: "Australia 2027", date: "Mon 3 May 2027 - Tue 1 Jun 2027 · 7:30pm", venue: "RAC Arena Perth, Rod Laver Arena Melbourne & Afterpay Arena Sydney", image: `${TK_CDN}/sfx367540.jpg`, keys: ["radiohead"] },
