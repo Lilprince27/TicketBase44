@@ -3,8 +3,59 @@ const SOAD_FAITH_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9
 const BON_JOVI_IMAGE = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages/sfx369779.jpg";
 const RADIOHEAD_IMAGE = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages/sfx367540.jpg";
 const NICKELBACK_IMAGE = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages/sfx369095.jpg";
+const KATSEYE_IMAGE = "https://base44.app/api/apps/6a29092b3d99cb9d297711be/files/mp/public/6a29092b3d99cb9d297711be/7895be4fa_katseye.jpeg";
 
 export const TOUR_2027_OVERRIDES = {
+  "katseye": [
+    {
+      id: "local-katseye-sydney-1",
+      title: "KATSEYE — THE WILDWORLD TOUR",
+      date: "Sun 28 Feb 2027 · 8:00pm",
+      venue: "Afterpay Arena, formerly known as Qudos Bank Arena",
+      city: "Sydney Olympic Park, NSW",
+      image: KATSEYE_IMAGE,
+      local: true,
+      localData: {
+        event_name: "KATSEYE",
+        event_date: "Sun 28 Feb 2027 · 8:00pm",
+        venue_name: "Afterpay Arena, formerly known as Qudos Bank Arena, Sydney Olympic Park, NSW",
+        event_image_url: KATSEYE_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+    {
+      id: "local-katseye-melbourne-1",
+      title: "KATSEYE — THE WILDWORLD TOUR",
+      date: "Wed 24 Feb 2027 · 8:00pm",
+      venue: "Rod Laver Arena",
+      city: "Melbourne, VIC",
+      image: KATSEYE_IMAGE,
+      local: true,
+      localData: {
+        event_name: "KATSEYE",
+        event_date: "Wed 24 Feb 2027 · 8:00pm",
+        venue_name: "Rod Laver Arena, Melbourne, VIC",
+        event_image_url: KATSEYE_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+    {
+      id: "local-katseye-auckland-1",
+      title: "KATSEYE — THE WILDWORLD TOUR",
+      date: "Fri 5 Mar 2027 · 7:00pm",
+      venue: "Spark Arena",
+      city: "Auckland, New Zealand",
+      image: KATSEYE_IMAGE,
+      local: true,
+      localData: {
+        event_name: "KATSEYE",
+        event_date: "Fri 5 Mar 2027 · 7:00pm",
+        venue_name: "Spark Arena, Auckland, New Zealand",
+        event_image_url: KATSEYE_IMAGE,
+        presenter: "Live Nation",
+      },
+    },
+  ],
   "nickelback": [
     {
       id: "local-nickelback-brisbane-1",

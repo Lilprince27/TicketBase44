@@ -2,8 +2,10 @@
 const CDN = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages";
 const ZACH_BRYAN_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/d41417852_IMG_8679.jpeg";
 const SOAD_FAITH_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/db6bcc4b5_IMG_8841.jpeg";
+const KATSEYE_IMG = "https://base44.app/api/apps/6a29092b3d99cb9d297711be/files/mp/public/6a29092b3d99cb9d297711be/7895be4fa_katseye.jpeg";
 
 export const TICKETEK_HERO = [
+  { id: "katseye", title: "KATSEYE", subtitle: "THE WILDWORLD TOUR", image: KATSEYE_IMG, venue: "Afterpay Arena, formerly known as Qudos Bank Arena, Sydney Olympic Park, NSW" },
   { id: "bbl27", title: "Big Bash League", subtitle: "2026/2027", image: `${CDN}/sfx365327.jpg`, venue: "Various venues, Australia" },
   { id: "mammamiaparty", title: "Mamma Mia The Party", subtitle: "", image: `${CDN}/sfx370076.jpg`, venue: "Sydney, NSW" },
   { id: "jonahmarais", title: "Jonah Marais", subtitle: "", image: `${CDN}/sfx364628.jpg`, venue: "Various venues, Australia" },
@@ -17,6 +19,7 @@ export const TICKETEK_HERO = [
 ];
 
 export const TICKETEK_FEATURED = [
+  { id: "katseye", title: "KATSEYE", subtitle: "THE WILDWORLD TOUR", image: KATSEYE_IMG, venue: "Afterpay Arena, formerly known as Qudos Bank Arena, Sydney Olympic Park, NSW" },
   { id: "bbl27", title: "Big Bash League", subtitle: "2026/2027", image: `${CDN}/sfx365327.jpg`, venue: "Various venues, Australia" },
   { id: "mammamiaparty", title: "Mamma Mia The Party", subtitle: "", image: `${CDN}/sfx370076.jpg`, venue: "Sydney, NSW" },
   { id: "jonahmarais", title: "Jonah Marais", subtitle: "", image: `${CDN}/sfx364628.jpg`, venue: "Various venues, Australia" },

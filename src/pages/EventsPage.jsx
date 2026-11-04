@@ -70,6 +70,29 @@ export default function EventsPage() {
     if (replace && !silent) setLoading(true);
     else if (!replace) setLoadingMore(true);
 
+    if (replace && query) {
+      const localOverride = getLocalOverride(query);
+      if (localOverride && localOverride.length > 0) {
+        const localMatches = localOverride.map(le => ({
+          id: le.id,
+          title: le.title,
+          date: le.date || "",
+          rawDate: le.date || "",
+          venue: le.venue ? `${le.venue}${le.city ? `, ${le.city}` : ""}` : "",
+          image: le.image,
+          category: "Music",
+          description: "",
+          raw: le,
+        }));
+        setEvents(localMatches);
+        setHasMore(false);
+        setOffset(localMatches.length);
+        setLoading(false);
+        setLoadingMore(false);
+        return;
+      }
+    }
+
     const baseParams = new URLSearchParams({ apikey: TM_API_KEY, size: "15", page: String(Math.floor(currentOffset / 15)), countryCode: "AU", sort: "relevance,desc" });
 
     // Apply category filter (segmentName for segments, keyword for non-segments like Comedy)
