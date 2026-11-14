@@ -54,19 +54,26 @@ export default function Login() {
   const passwordValid = password.length >= 6;
 
   const handleSignIn = async () => {
-    if (!emailValid || !passwordValid || busy) return;
-    setBusy(true);
-    setError("");
-    try {
-      await base44.auth.loginViaEmailPassword(email.trim(), password);
-      await claimSingleDeviceSession(email.trim());
-      window.location.href = nextUrl;
-    } catch (e) {
-      setError(e.message || "Invalid email or password. Please try again.");
-    } finally {
-      setBusy(false);
-    }
-  };
+  if (!emailValid || !passwordValid || busy) return;
+
+  setBusy(true);
+  setError("");
+
+  try {
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password
+    });
+
+    if (signInError) throw signInError;
+
+    window.location.href = nextUrl;
+  } catch (e) {
+    setError(e.message || "Invalid email or password. Please try again.");
+  } finally {
+    setBusy(false);
+  }
+};
 
   const handleSignUp = async () => {
     if (!emailValid || !passwordValid || busy) return;
