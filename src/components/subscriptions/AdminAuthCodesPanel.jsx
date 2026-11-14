@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function AdminAuthCodesPanel() {
   const [profiles, setProfiles] = useState([]);
@@ -7,13 +7,56 @@ export default function AdminAuthCodesPanel() {
   const [loaded, setLoaded] = useState(false);
   const [copied, setCopied] = useState(null);
   const [search, setSearch] = useState("");
+  const [error, setError] = useState("");
 
   const load = async () => {
     setLoading(true);
-    const all = await base44.entities.UserProfile.list().catch(() => []);
-    setProfiles(all);
-    setLoading(false);
-    setLoaded(true);
+    setError("");
+
+    try {
+      const { data: isAdmin, error: adminError } =
+        await supabase.rpc("is_app_admin");
+
+      if (adminError) throw adminError;
+      if (isAdmin !== true) {
+        throw new Error("Administrator access required.");
+      }
+
+      const [
+        { data: profileData, error: profileError },
+        { data: codeData, error: codeError }
+      ] = await Promise.all([
+        supabase
+          .from("User Profile")
+          .select("id, user_email, first_name, last_name, uid"),
+        supabase.rpc("get_admin_auth_codes")
+      ]);
+
+      if (profileError) throw profileError;
+      if (codeError) throw codeError;
+
+      const codesByEmail = new Map(
+        (codeData || []).map(item => [
+          item.user_email.toLowerCase(),
+          item.auth_code
+        ])
+      );
+
+      const combined = (profileData || []).map(profile => ({
+        ...profile,
+        auth_code: codesByEmail.get(
+          (profile.user_email || "").toLowerCase()
+        ) || null
+      }));
+
+      setProfiles(combined);
+      setLoaded(true);
+    } catch (err) {
+      console.error("Could not load authentication codes:", err);
+      setError(err.message || "Unable to load authentication codes.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCopy = (code, id) => {
@@ -24,7 +67,9 @@ export default function AdminAuthCodesPanel() {
 
   const filtered = profiles.filter(p => {
     if (!search.trim()) return true;
+
     const q = search.toLowerCase();
+
     return (
       (p.user_email || "").toLowerCase().includes(q) ||
       (p.first_name || "").toLowerCase().includes(q) ||
@@ -35,8 +80,17 @@ export default function AdminAuthCodesPanel() {
 
   return (
     <div className="border border-gray-200 rounded-xl p-5 mt-6">
-      <h3 className="text-base font-bold text-gray-800 mb-1">User Authentication Codes</h3>
-      <p className="text-xs text-gray-400 mb-4">View all registered users and their authentication codes.</p>
+      <h3 className="text-base font-bold text-gray-800 mb-1">
+        User Authentication Codes
+      </h3>
+
+      <p className="text-xs text-gray-400 mb-4">
+        View all registered users and their authentication codes.
+      </p>
+
+      {error && (
+        <p className="text-sm text-red-500 mb-3">{error}</p>
+      )}
 
       {!loaded ? (
         <button
@@ -56,25 +110,46 @@ export default function AdminAuthCodesPanel() {
             placeholder="Search by name, email or UID..."
             className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm outline-none mb-4 text-gray-800"
           />
+
           <div className="space-y-3 max-h-[400px] overflow-y-auto">
             {filtered.length === 0 && (
-              <div className="text-sm text-gray-400 text-center py-4">No users found.</div>
+              <div className="text-sm text-gray-400 text-center py-4">
+                No users found.
+              </div>
             )}
+
             {filtered.map(p => (
-              <div key={p.id} className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+              <div
+                key={p.id}
+                className="bg-gray-50 border border-gray-200 rounded-xl p-4"
+              >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="text-sm font-bold text-gray-800 truncate">
-                      {p.first_name || p.last_name ? `${p.first_name || ""} ${p.last_name || ""}`.trim() : "Unnamed"}
+                      {p.first_name || p.last_name
+                        ? `${p.first_name || ""} ${p.last_name || ""}`.trim()
+                        : "Unnamed"}
                     </div>
-                    <div className="text-xs text-gray-500 truncate">{p.user_email}</div>
-                    <div className="text-xs text-gray-400 font-mono truncate">{p.uid || "No UID"}</div>
+
+                    <div className="text-xs text-gray-500 truncate">
+                      {p.user_email}
+                    </div>
+
+                    <div className="text-xs text-gray-400 font-mono truncate">
+                      {p.uid || "No UID"}
+                    </div>
                   </div>
                 </div>
+
                 <div className="mt-3 flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-2">
                   <span className="flex-1 font-mono text-xs text-gray-700 break-all">
-                    {p.auth_code || <span className="text-gray-400 italic">No auth code</span>}
+                    {p.auth_code || (
+                      <span className="text-gray-400 italic">
+                        No auth code
+                      </span>
+                    )}
                   </span>
+
                   {p.auth_code && (
                     <button
                       onClick={() => handleCopy(p.auth_code, p.id)}
@@ -88,6 +163,7 @@ export default function AdminAuthCodesPanel() {
               </div>
             ))}
           </div>
+
           <button
             onClick={load}
             disabled={loading}
