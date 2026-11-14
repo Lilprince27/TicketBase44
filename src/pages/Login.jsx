@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { supabase } from "@/lib/supabaseClient";
+import { base44 } from "@/api/base44Client";
 import TicketekLogo from "@/components/TicketekLogo";
 import { claimSingleDeviceSession } from "@/lib/singleDeviceSession";
 
@@ -23,18 +23,11 @@ export default function Login() {
   const [info, setInfo] = useState("");
   const [countdown, setCountdown] = useState(513); // 8:33
 
- useEffect(() => {
-  supabase.auth.getSession().then(({ data, error }) => {
-    if (error) {
-      setError(error.message);
-      return;
-    }
-
-    if (data.session) {
-      window.location.href = nextUrl;
-    }
-  });
-}, []);
+  useEffect(() => {
+    base44.auth.isAuthenticated().then(authed => {
+      if (authed) window.location.href = nextUrl;
+    });
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -54,26 +47,19 @@ export default function Login() {
   const passwordValid = password.length >= 6;
 
   const handleSignIn = async () => {
-  if (!emailValid || !passwordValid || busy) return;
-
-  setBusy(true);
-  setError("");
-
-  try {
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password
-    });
-
-    if (signInError) throw signInError;
-
-    window.location.href = nextUrl;
-  } catch (e) {
-    setError(e.message || "Invalid email or password. Please try again.");
-  } finally {
-    setBusy(false);
-  }
-};
+    if (!emailValid || !passwordValid || busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      await base44.auth.loginViaEmailPassword(email.trim(), password);
+      await claimSingleDeviceSession(email.trim());
+      window.location.href = nextUrl;
+    } catch (e) {
+      setError(e.message || "Invalid email or password. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const handleSignUp = async () => {
     if (!emailValid || !passwordValid || busy) return;
