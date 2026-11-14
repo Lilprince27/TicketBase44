@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { Link } from "react-router-dom";
+import { supabase } from "@/lib/supabaseClient";
 import TicketekLogo from "@/components/TicketekLogo";
-import { claimSingleDeviceSession } from "@/lib/singleDeviceSession";
 
 const TK_NAVY = "#0e1e2d";
 const TK_GOLD = "#fcc93b";
@@ -10,29 +9,48 @@ const TK_GREEN = "#56773c";
 const TK_BLUE = "#0055aa";
 
 export default function Login() {
-  const navigate = useNavigate();
   const searchParams = new URLSearchParams(window.location.search);
-  const nextUrl = searchParams.get("next") || "/";
+  const requestedNextUrl = searchParams.get("next") || "/";
+  const nextUrl =
+    requestedNextUrl.startsWith("/") && !requestedNextUrl.startsWith("//")
+      ? requestedNextUrl
+      : "/";
 
-  const [mode, setMode] = useState("signin"); // signin | signup | otp
+  const [mode, setMode] = useState("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
-  const [countdown, setCountdown] = useState(513); // 8:33
+  const [countdown, setCountdown] = useState(513);
 
   useEffect(() => {
-    base44.auth.isAuthenticated().then(authed => {
-      if (authed) window.location.href = nextUrl;
+    let mounted = true;
+
+    supabase.auth.getSession().then(({ data, error }) => {
+      if (!mounted) return;
+
+      if (error) {
+        setError(error.message);
+        return;
+      }
+
+      if (data.session) {
+        window.location.href = nextUrl;
+      }
     });
-  }, []);
+
+    return () => {
+      mounted = false;
+    };
+  }, [nextUrl]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCountdown(prev => Math.max(0, prev - 1));
     }, 1000);
+
     return () => clearInterval(interval);
   }, []);
 
@@ -48,11 +66,19 @@ export default function Login() {
 
   const handleSignIn = async () => {
     if (!emailValid || !passwordValid || busy) return;
+
     setBusy(true);
     setError("");
+
     try {
-      await base44.auth.loginViaEmailPassword(email.trim(), password);
-      await claimSingleDeviceSession(email.trim());
+      const { error: signInError } =
+        await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password
+        });
+
+      if (signInError) throw signInError;
+
       window.location.href = nextUrl;
     } catch (e) {
       setError(e.message || "Invalid email or password. Please try again.");
@@ -63,11 +89,28 @@ export default function Login() {
 
   const handleSignUp = async () => {
     if (!emailValid || !passwordValid || busy) return;
+
     setBusy(true);
     setError("");
+    setInfo("");
+
     try {
-      await base44.auth.register({ email: email.trim(), password });
-      setInfo("A verification code has been sent to your email. Enter it below.");
+      const { data, error: signUpError } =
+        await supabase.auth.signUp({
+          email: email.trim(),
+          password
+        });
+
+      if (signUpError) throw signUpError;
+
+      if (data.session) {
+        window.location.href = nextUrl;
+        return;
+      }
+
+      setInfo(
+        "A six-digit verification code has been sent to your email. Enter it below."
+      );
       setMode("otp");
     } catch (e) {
       setError(e.message || "Could not create account. Please try again.");
@@ -77,13 +120,21 @@ export default function Login() {
   };
 
   const handleVerifyOtp = async () => {
-    if (!otp || busy) return;
+    if (!emailValid || otp.trim().length !== 6 || busy) return;
+
     setBusy(true);
     setError("");
+
     try {
-      await base44.auth.verifyOtp({ email: email.trim(), otpCode: otp });
-      await base44.auth.loginViaEmailPassword(email.trim(), password);
-      await claimSingleDeviceSession(email.trim());
+      const { error: verifyError } =
+        await supabase.auth.verifyOtp({
+          email: email.trim(),
+          token: otp.trim(),
+          type: "signup"
+        });
+
+      if (verifyError) throw verifyError;
+
       window.location.href = nextUrl;
     } catch (e) {
       setError(e.message || "Invalid verification code. Please try again.");
@@ -93,9 +144,15 @@ export default function Login() {
   };
 
   const inputStyle = {
-    width: "100%", padding: "14px 16px", borderRadius: 8, border: "1px solid #d0d0d0",
-    color: "#000", fontSize: 16, outline: "none", boxSizing: "border-box",
-    background: "#fff",
+    width: "100%",
+    padding: "14px 16px",
+    borderRadius: 8,
+    border: "1px solid #d0d0d0",
+    color: "#000",
+    fontSize: 16,
+    outline: "none",
+    boxSizing: "border-box",
+    background: "#fff"
   };
 
   return (
@@ -107,23 +164,36 @@ export default function Login() {
             <TicketekLogo size={22} variant="white" />
             <span style={{ color: "#fff", fontSize: 16, fontWeight: 800, letterSpacing: 1 }}>TICKETEK</span>
           </Link>
+
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.5">
-              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+              <circle cx="9" cy="21" r="1"/>
+              <circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
             </svg>
+
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.5">
-              <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
             </svg>
           </div>
         </div>
+
         {/* Search bar */}
         <Link to="/" style={{ textDecoration: "none", display: "flex" }}>
           <div style={{ display: "flex", alignItems: "center", background: "#fff", borderRadius: 6, overflow: "hidden", width: "100%" }}>
-            <input type="text" placeholder="Search comedy shows" readOnly
-              style={{ flex: 1, padding: "10px 14px", border: "none", outline: "none", fontSize: 14, color: "#999", background: "transparent", cursor: "pointer" }} />
+            <input
+              type="text"
+              placeholder="Search comedy shows"
+              readOnly
+              style={{ flex: 1, padding: "10px 14px", border: "none", outline: "none", fontSize: 14, color: "#999", background: "transparent", cursor: "pointer" }}
+            />
+
             <div style={{ background: "#e9e9e9", padding: "10px 14px", display: "flex", alignItems: "center" }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2">
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
             </div>
           </div>
@@ -132,7 +202,9 @@ export default function Login() {
 
       {/* Gold timer banner */}
       <div style={{ background: TK_GOLD, padding: "10px 18px", textAlign: "center" }}>
-        <span style={{ fontSize: 14, fontWeight: 600, color: TK_NAVY }}>Time remaining&nbsp;&nbsp;{formatTime(countdown)}</span>
+        <span style={{ fontSize: 14, fontWeight: 600, color: TK_NAVY }}>
+          Time remaining&nbsp;&nbsp;{formatTime(countdown)}
+        </span>
       </div>
 
       {/* Form area */}
@@ -156,8 +228,11 @@ export default function Login() {
 
             {error && <p style={{ fontSize: 13, color: "#ef4444", textAlign: "center", margin: "0 0 16px" }}>{error}</p>}
 
-            <button onClick={handleSignIn} disabled={!emailValid || !passwordValid || busy}
-              style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: emailValid && passwordValid && !busy ? TK_GREEN : "#9cb89a", color: "#fff", fontWeight: 700, fontSize: 17, border: "none", cursor: emailValid && passwordValid && !busy ? "pointer" : "default" }}>
+            <button
+              onClick={handleSignIn}
+              disabled={!emailValid || !passwordValid || busy}
+              style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: emailValid && passwordValid && !busy ? TK_GREEN : "#9cb89a", color: "#fff", fontWeight: 700, fontSize: 17, border: "none", cursor: emailValid && passwordValid && !busy ? "pointer" : "default" }}
+            >
               {busy ? "Signing in..." : "Sign In"}
             </button>
 
@@ -165,12 +240,12 @@ export default function Login() {
               <span style={{ color: TK_BLUE, fontSize: 15, fontWeight: 500, cursor: "pointer" }}>Reset Password</span>
             </div>
 
-            {/* Divider */}
             <div style={{ height: 1, background: "#e1e1e1", margin: "32px 0" }} />
 
-            {/* Sign up outline button — gray border, black text (matches reference) */}
-            <button onClick={() => { setMode("signup"); setError(""); }}
-              style={{ width: "100%", padding: "15px 0", borderRadius: 8, border: "1px solid #cccccc", background: "#fff", color: "#000", fontWeight: 600, fontSize: 16, cursor: "pointer" }}>
+            <button
+              onClick={() => { setMode("signup"); setError(""); setInfo(""); }}
+              style={{ width: "100%", padding: "15px 0", borderRadius: 8, border: "1px solid #cccccc", background: "#fff", color: "#000", fontWeight: 600, fontSize: 16, cursor: "pointer" }}
+            >
               Sign up
             </button>
           </>
@@ -195,16 +270,20 @@ export default function Login() {
 
             {error && <p style={{ fontSize: 13, color: "#ef4444", textAlign: "center", margin: "0 0 16px" }}>{error}</p>}
 
-            <button onClick={handleSignUp} disabled={!emailValid || !passwordValid || busy}
-              style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: emailValid && passwordValid && !busy ? TK_GREEN : "#9cb89a", color: "#fff", fontWeight: 700, fontSize: 17, border: "none", cursor: emailValid && passwordValid && !busy ? "pointer" : "default" }}>
+            <button
+              onClick={handleSignUp}
+              disabled={!emailValid || !passwordValid || busy}
+              style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: emailValid && passwordValid && !busy ? TK_GREEN : "#9cb89a", color: "#fff", fontWeight: 700, fontSize: 17, border: "none", cursor: emailValid && passwordValid && !busy ? "pointer" : "default" }}
+            >
               {busy ? "Creating..." : "Sign Up"}
             </button>
 
-            {/* Divider */}
             <div style={{ height: 1, background: "#e1e1e1", margin: "32px 0" }} />
 
-            <button onClick={() => { setMode("signin"); setError(""); }}
-              style={{ width: "100%", padding: "15px 0", borderRadius: 8, border: "1px solid #cccccc", background: "#fff", color: "#000", fontWeight: 600, fontSize: 16, cursor: "pointer" }}>
+            <button
+              onClick={() => { setMode("signin"); setError(""); setInfo(""); }}
+              style={{ width: "100%", padding: "15px 0", borderRadius: 8, border: "1px solid #cccccc", background: "#fff", color: "#000", fontWeight: 600, fontSize: 16, cursor: "pointer" }}
+            >
               Sign in
             </button>
           </>
@@ -219,19 +298,34 @@ export default function Login() {
 
             <div style={{ marginBottom: 22 }}>
               <label style={{ display: "block", fontSize: 14, fontWeight: 500, color: "#333", marginBottom: 8 }}>Verification code*</label>
-              <input type="text" value={otp} onChange={e => setOtp(e.target.value)} placeholder="Enter 6-digit code" maxLength={6}
-                style={{ ...inputStyle, textAlign: "center", letterSpacing: 4, fontSize: 18 }} />
+              <input
+                type="text"
+                inputMode="numeric"
+                value={otp}
+                onChange={e => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                placeholder="Enter 6-digit code"
+                maxLength={6}
+                style={{ ...inputStyle, textAlign: "center", letterSpacing: 4, fontSize: 18 }}
+              />
             </div>
 
             {error && <p style={{ fontSize: 13, color: "#ef4444", textAlign: "center", margin: "0 0 16px" }}>{error}</p>}
 
-            <button onClick={handleVerifyOtp} disabled={!otp || busy}
-              style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: otp && !busy ? TK_GREEN : "#9cb89a", color: "#fff", fontWeight: 700, fontSize: 17, border: "none", cursor: otp && !busy ? "pointer" : "default" }}>
+            <button
+              onClick={handleVerifyOtp}
+              disabled={otp.trim().length !== 6 || busy}
+              style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: otp.trim().length === 6 && !busy ? TK_GREEN : "#9cb89a", color: "#fff", fontWeight: 700, fontSize: 17, border: "none", cursor: otp.trim().length === 6 && !busy ? "pointer" : "default" }}
+            >
               {busy ? "Verifying..." : "Verify"}
             </button>
 
             <div style={{ textAlign: "center", marginTop: 22 }}>
-              <span onClick={() => { setMode("signin"); setError(""); }} style={{ color: TK_BLUE, fontSize: 15, fontWeight: 500, cursor: "pointer" }}>Back to sign in</span>
+              <span
+                onClick={() => { setMode("signin"); setError(""); setInfo(""); }}
+                style={{ color: TK_BLUE, fontSize: 15, fontWeight: 500, cursor: "pointer" }}
+              >
+                Back to sign in
+              </span>
             </div>
           </>
         )}
@@ -246,7 +340,7 @@ export default function Login() {
         </p>
       </div>
 
-      {/* Chat widget — floating blue circle with smiling face */}
+      {/* Chat widget */}
       <div style={{ position: "fixed", bottom: 24, right: 20, width: 52, height: 52, borderRadius: "50%", background: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(37,99,235,0.4)", cursor: "pointer", zIndex: 9999 }}>
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10"/>
