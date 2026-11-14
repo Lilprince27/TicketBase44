@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { base44 } from "@/api/base44Client";
-import { claimSingleDeviceSession } from "@/lib/singleDeviceSession";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function DeviceCodeVerification({ user, onVerified }) {
   const [code, setCode] = useState("");
@@ -9,34 +8,41 @@ export default function DeviceCodeVerification({ user, onVerified }) {
 
   const handleVerify = async () => {
     if (!code.trim()) return;
+
     setVerifying(true);
     setError("");
 
-    // Check auth code from UserProfile
-    const profiles = await base44.entities.UserProfile.filter({ user_email: user.email }).catch(() => []);
-    const authCode = profiles[0]?.auth_code;
-    if (authCode && authCode.toLowerCase() === code.toLowerCase().trim()) {
-      // Claim the single active session for this device — logs out any previous device
-      await claimSingleDeviceSession(user.email);
-      localStorage.setItem(`tk_device_${user.email}`, "verified");
-      localStorage.setItem(`tk_device_${user.email}_permanent`, "true");
-      onVerified();
-      setVerifying(false);
-      return;
-    }
+    try {
+      const sessionId = `sess_${Date.now()}_${Math.random().toString(36).slice(2, 12)}`;
 
-    // Fallback: check DeviceCode records
-    const records = await base44.entities.DeviceCode.filter({ user_email: user.email }).catch(() => []);
-    const match = records.find(r => r.code.toUpperCase() === code.toUpperCase().trim());
-    if (match) {
-      await claimSingleDeviceSession(user.email);
+      const { data, error: verifyError } = await supabase.rpc(
+        "verify_device_code",
+        {
+          p_code: code.trim(),
+          p_session_id: sessionId
+        }
+      );
+
+      if (verifyError) {
+        throw verifyError;
+      }
+
+      if (data !== true) {
+        setError("Incorrect code or your account has not yet been approved.");
+        return;
+      }
+
+      localStorage.setItem(`tk_active_session_${user.email.toLowerCase()}`, sessionId);
       localStorage.setItem(`tk_device_${user.email}`, "verified");
       localStorage.setItem(`tk_device_${user.email}_permanent`, "true");
+
       onVerified();
-    } else {
-      setError("Incorrect code. Please check your Authentication Code.");
+    } catch (err) {
+      console.error("Device verification error:", err);
+      setError("Verification failed. Please try again.");
+    } finally {
+      setVerifying(false);
     }
-    setVerifying(false);
   };
 
   return (
@@ -79,7 +85,10 @@ export default function DeviceCodeVerification({ user, onVerified }) {
       </a>
 
       <button
-        onClick={() => base44.auth.logout()}
+        onClick={async () => {
+          await supabase.auth.signOut();
+          window.location.href = "/login";
+        }}
         className="mt-6 text-sm text-gray-400 underline cursor-pointer bg-transparent border-none"
       >
         Sign out
