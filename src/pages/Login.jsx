@@ -23,11 +23,18 @@ export default function Login() {
   const [info, setInfo] = useState("");
   const [countdown, setCountdown] = useState(513); // 8:33
 
-  useEffect(() => {
-    base44.auth.isAuthenticated().then(authed => {
-      if (authed) window.location.href = nextUrl;
-    });
-  }, []);
+ useEffect(() => {
+  supabase.auth.getSession().then(({ data, error }) => {
+    if (error) {
+      setError(error.message);
+      return;
+    }
+
+    if (data.session) {
+      window.location.href = nextUrl;
+    }
+  });
+}, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
