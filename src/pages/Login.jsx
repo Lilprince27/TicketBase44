@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/lib/supabaseClient";
 import TicketekLogo from "@/components/TicketekLogo";
 import { claimSingleDeviceSession } from "@/lib/singleDeviceSession";
 
