@@ -1,35 +1,44 @@
-import { Toaster } from "@/components/ui/toaster"
-import { QueryClientProvider } from '@tanstack/react-query'
-import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
-import { Suspense, lazy, useState, useEffect } from 'react';
-import PageNotFound from './lib/PageNotFound';
-import SplashScreen from './components/SplashScreen';
-import { base44 } from '@/api/base44Client';
-import WaitingApproval from './components/WaitingApproval.jsx';
-import DeviceCodeVerification from './components/DeviceCodeVerification.jsx';
-import { AuthProvider, useAuth } from '@/lib/AuthContext';
-import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-import Layout from './components/Layout';
-import InstallPrompt from './components/InstallPrompt';
-import NameSetupModal from './components/onboarding/NameSetupModal';
-import NotificationPermissionModal from './components/onboarding/NotificationPermissionModal';
-import AdminNotificationBanner from './components/notifications/AdminNotificationBanner';
-import TicketNotificationBanner from './components/notifications/TicketNotificationBanner';
-import { getLocalSessionId, setLocalSessionId, clearLocalSessionId, generateSessionId } from '@/lib/singleDeviceSession';
+import { Toaster } from "@/components/ui/toaster";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClientInstance } from "@/lib/query-client";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useLocation
+} from "react-router-dom";
+import { Suspense, lazy, useState, useEffect, useCallback } from "react";
 
-const EventsPage = lazy(() => import('./pages/EventsPage'));
-const AccountPage = lazy(() => import('./pages/AccountPage.jsx'));
-const TicketsPage = lazy(() => import('./pages/TicketsPage'));
-const TicketDetailPage = lazy(() => import('./pages/TicketDetailPage.jsx'));
-const CreateTicketPage = lazy(() => import('./pages/CreateTicketPage.jsx'));
-const SubscriptionPage = lazy(() => import('./pages/SubscriptionPage'));
-const ProfilePage = lazy(() => import('./pages/ProfilePage'));
-const HelpPage = lazy(() => import('./pages/HelpPage'));
-const SharedTicketPage = lazy(() => import('./pages/SharedTicketPage'));
-const TransferPage = lazy(() => import('./pages/TransferPage'));
-const ManageTransferPage = lazy(() => import('./pages/ManageTransferPage'));
-const LoginPage = lazy(() => import('./pages/Login'));
+import { supabase } from "@/lib/supabaseClient";
+import PageNotFound from "./lib/PageNotFound";
+import SplashScreen from "./components/SplashScreen";
+import WaitingApproval from "./components/WaitingApproval.jsx";
+import DeviceCodeVerification from "./components/DeviceCodeVerification.jsx";
+import { AuthProvider, useAuth } from "@/lib/AuthContext";
+import UserNotRegisteredError from "@/components/UserNotRegisteredError";
+import Layout from "./components/Layout";
+import InstallPrompt from "./components/InstallPrompt";
+import NameSetupModal from "./components/onboarding/NameSetupModal";
+import NotificationPermissionModal from "./components/onboarding/NotificationPermissionModal";
+import AdminNotificationBanner from "./components/notifications/AdminNotificationBanner";
+import TicketNotificationBanner from "./components/notifications/TicketNotificationBanner";
+import {
+  getLocalSessionId,
+  clearLocalSessionId
+} from "@/lib/singleDeviceSession";
+
+const EventsPage = lazy(() => import("./pages/EventsPage"));
+const AccountPage = lazy(() => import("./pages/AccountPage.jsx"));
+const TicketsPage = lazy(() => import("./pages/TicketsPage"));
+const TicketDetailPage = lazy(() => import("./pages/TicketDetailPage.jsx"));
+const CreateTicketPage = lazy(() => import("./pages/CreateTicketPage.jsx"));
+const SubscriptionPage = lazy(() => import("./pages/SubscriptionPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const HelpPage = lazy(() => import("./pages/HelpPage"));
+const SharedTicketPage = lazy(() => import("./pages/SharedTicketPage"));
+const TransferPage = lazy(() => import("./pages/TransferPage"));
+const ManageTransferPage = lazy(() => import("./pages/ManageTransferPage"));
+const LoginPage = lazy(() => import("./pages/Login"));
 
 const PageLoader = () => (
   <div className="fixed inset-0 flex items-center justify-center">
@@ -41,28 +50,27 @@ function LoginGate({ navigateToLogin }) {
   useEffect(() => {
     navigateToLogin();
   }, [navigateToLogin]);
-  return (
-    <div className="fixed inset-0 flex items-center justify-center">
-      <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-    </div>
-  );
+
+  return <PageLoader />;
 }
 
-// Sync system dark mode to the <html> element
 function useDarkMode() {
   useEffect(() => {
     const apply = (dark) => {
       document.documentElement.classList.toggle("dark", dark);
     };
+
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     apply(mq.matches);
     mq.addEventListener("change", (e) => apply(e.matches));
+
     return () => mq.removeEventListener("change", (e) => apply(e.matches));
   }, []);
 }
 
 const AuthenticatedApp = () => {
   useDarkMode();
+
   const [splashDone, setSplashDone] = useState(false);
   const [authUser, setAuthUser] = useState(null);
   const [approvalStatus, setApprovalStatus] = useState(null);
@@ -72,173 +80,311 @@ const AuthenticatedApp = () => {
   const [daysRemaining, setDaysRemaining] = useState(null);
   const [showNameSetup, setShowNameSetup] = useState(false);
   const [showNotifPrompt, setShowNotifPrompt] = useState(false);
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, isAuthenticated } = useAuth();
+  const [isAdmin, setIsAdmin] = useState(false);
 
+  const {
+    user,
+    isLoadingAuth,
+    isLoadingPublicSettings,
+    authError,
+    navigateToLogin,
+    isAuthenticated,
+    logout
+  } = useAuth();
+
+  const email = user?.email?.toLowerCase().trim();
+
+  const handleLogout = useCallback(async () => {
+    if (email) {
+      clearLocalSessionId(email);
+      localStorage.removeItem(`tk_device_${email}`);
+      localStorage.removeItem(`tk_device_${email}_permanent`);
+    }
+
+    await logout();
+  }, [email, logout]);
+
+  // Check Supabase account, administrator status, profile,
+  // approval, subscription and device verification.
   useEffect(() => {
-    if (splashDone && !isLoadingAuth && !authError && !isLoadingPublicSettings) {
-      async function checkStatus() {
-        setCheckingApproval(true);
-        const me = await base44.auth.me().catch(() => null);
-        if (!me) { setCheckingApproval(false); return; }
-        setAuthUser(me);
-        if (me.role === 'admin') {
-          setApprovalStatus('approved');
+    if (
+      !splashDone ||
+      isLoadingAuth ||
+      isLoadingPublicSettings ||
+      authError ||
+      !isAuthenticated ||
+      !user?.email
+    ) {
+      return;
+    }
+
+    let cancelled = false;
+
+    async function checkStatus() {
+      setCheckingApproval(true);
+      setSubscriptionExpired(false);
+      setApprovalStatus(null);
+      setDeviceVerified(false);
+      setAuthUser(user);
+
+      try {
+        const normalizedEmail = user.email.toLowerCase().trim();
+
+        // Administrator check
+        const { data: adminResult, error: adminError } =
+          await supabase.rpc("is_app_admin");
+
+        if (adminError) throw adminError;
+
+        if (cancelled) return;
+
+        const admin = adminResult === true;
+        setIsAdmin(admin);
+
+        if (admin) {
+          setApprovalStatus("approved");
           setDeviceVerified(true);
           setCheckingApproval(false);
           return;
         }
-        // Check if user needs name setup
-        const profiles = await base44.entities.UserProfile.filter({ user_email: me.email }).catch(() => []);
-        if (profiles.length === 0) {
-          // Generate 21-digit UID
-          const uid = "UID:" + Array.from({ length: 21 }, () => "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random() * 36)]).join("");
-          // Generate auth code for new user
-          const prefix = me.email.slice(0, 3).toLowerCase().replace(/[^a-z0-9]/g, "x");
-          const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-          let suffix = "";
-          for (let i = 0; i < 12; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
-          const authCode = `${prefix}:${suffix}`;
-          const newSessionId = getLocalSessionId(me.email) || generateSessionId();
-          setLocalSessionId(me.email, newSessionId);
-          await base44.entities.UserProfile.create({ user_email: me.email, uid, notifications_enabled: false, auth_code: authCode, active_session_id: newSessionId });
-          setShowNameSetup(true);
-          // New user - skip device verification (they're registering, not logging in)
+
+        // Load the user's profile
+        const { data: profile, error: profileError } = await supabase
+          .from("User Profile")
+          .select(
+            "id, user_email, first_name, last_name, uid, active_session_id, notifications_enabled"
+          )
+          .eq("user_email", normalizedEmail)
+          .maybeSingle();
+
+        if (profileError) throw profileError;
+
+        if (cancelled) return;
+
+        if (!profile) {
+          setApprovalStatus("pending");
+          setCheckingApproval(false);
+          return;
+        }
+
+        // Check approval
+        const { data: approval, error: approvalError } = await supabase
+          .from("User approval")
+          .select("status")
+          .eq("user_email", normalizedEmail)
+          .maybeSingle();
+
+        if (approvalError) throw approvalError;
+
+        if (cancelled) return;
+
+        const status = approval?.status?.toLowerCase() || "pending";
+        setApprovalStatus(status);
+
+        // Check the user's subscription
+        const { data: subscriptions, error: subscriptionError } =
+          await supabase
+            .from("Subscription")
+            .select("duration, end_date, status")
+            .eq("user_email", normalizedEmail);
+
+        if (subscriptionError) throw subscriptionError;
+
+        if (cancelled) return;
+
+        const now = new Date();
+
+        const activeSubscription = (subscriptions || []).find((sub) => {
+          if (sub.status?.toLowerCase() !== "active") return false;
+
+          if (sub.duration?.toLowerCase() === "lifetime") {
+            return true;
+          }
+
+          return sub.end_date && new Date(sub.end_date) > now;
+        });
+
+        if (!activeSubscription && (subscriptions || []).length > 0) {
+          setSubscriptionExpired(true);
+          setCheckingApproval(false);
+          return;
+        }
+
+        if (activeSubscription) {
+          if (activeSubscription.duration?.toLowerCase() === "lifetime") {
+            setDaysRemaining(null);
+          } else {
+            const days = Math.max(
+              0,
+              Math.ceil(
+                (new Date(activeSubscription.end_date) - now) /
+                  (1000 * 60 * 60 * 24)
+              )
+            );
+            setDaysRemaining(days);
+          }
+        }
+
+        // Check if the current device has already been verified.
+        const localSessionId = getLocalSessionId(normalizedEmail);
+        const remoteSessionId = profile.active_session_id;
+
+        if (
+          localSessionId &&
+          remoteSessionId &&
+          localSessionId === remoteSessionId
+        ) {
           setDeviceVerified(true);
         } else {
-          // Single-device check: if another device logged in and claimed active_session_id,
-          // while this device has an older session id, immediately log this device out.
-          const remoteSessionId = profiles[0].active_session_id;
-          const localSessionId = getLocalSessionId(me.email);
-          if (remoteSessionId && localSessionId && remoteSessionId !== localSessionId) {
-            clearLocalSessionId(me.email);
-            localStorage.removeItem(`tk_device_${me.email}`);
-            localStorage.removeItem(`tk_device_${me.email}_permanent`);
-            base44.auth.logout("/login");
-            return;
-          }
-          // If this is an already-verified device with no session id stored yet, bind it now
-          if (!remoteSessionId || !localSessionId) {
-            const sid = localSessionId || remoteSessionId || generateSessionId();
-            setLocalSessionId(me.email, sid);
-            if (remoteSessionId !== sid) {
-              await base44.entities.UserProfile.update(profiles[0].id, { active_session_id: sid }).catch(() => {});
-            }
-          }
-          if (!profiles[0].first_name) {
-            setShowNameSetup(true);
-            // Also generate auth code if missing
-            if (!profiles[0].auth_code) {
-              const prefix = me.email.slice(0, 3).toLowerCase().replace(/[^a-z0-9]/g, "x");
-              const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-              let suffix = "";
-              for (let i = 0; i < 12; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
-              const authCode = `${prefix}:${suffix}`;
-              await base44.entities.UserProfile.update(profiles[0].id, { auth_code: authCode }).catch(() => {});
-            }
-          } else {
-            // Check if notification prompt has been shown
-            const notifAsked = localStorage.getItem("notif_asked");
-            if (!notifAsked) setShowNotifPrompt(true);
+          setDeviceVerified(false);
+        }
+
+        // Check whether the user needs to enter their name.
+        if (!profile.first_name) {
+          setShowNameSetup(true);
+        } else if (!localStorage.getItem("notif_asked")) {
+          setShowNotifPrompt(true);
+        }
+
+        // Automatically claim accepted shared tickets.
+        if (status === "approved") {
+          const { error: claimError } = await supabase.rpc(
+            "claim_my_shared_tickets"
+          );
+
+          if (claimError) {
+            console.error("Shared ticket claiming failed:", claimError);
           }
         }
-        // Check subscription expiry
-        const subs = await base44.entities.Subscription.filter({ user_email: me.email, status: 'active' });
-        const activeSub = subs.find(s => s.duration === 'lifetime' || new Date(s.end_date) > new Date());
-        if (!activeSub) {
-          // Check if they ever had a subscription (expired)
-          const allSubs = await base44.entities.Subscription.filter({ user_email: me.email });
-          if (allSubs.length > 0) {
-            setSubscriptionExpired(true);
-            setCheckingApproval(false);
-            return;
-          }
-        } else {
-          const days = Math.max(0, Math.ceil((new Date(activeSub.end_date) - new Date()) / (1000 * 60 * 60 * 24)));
-          setDaysRemaining(days);
-        }
-        const records = await base44.entities.UserApproval.filter({ user_email: me.email });
-        if (records.length === 0) {
-          await base44.entities.UserApproval.create({ user_email: me.email, full_name: me.full_name || me.email, status: 'pending' });
-          setApprovalStatus('pending');
-        } else {
-          setApprovalStatus(records[0].status);
-          // Auto-claim accepted shared tickets into the user's wallet
-          if (records[0].status === 'approved') {
-            try {
-              const shares = await base44.entities.SharedTicket.filter({ accepted_by: me.email });
-              for (const share of shares) {
-                if (share.claimed_date) continue;
-                const ticketData = JSON.parse(share.ticket_snapshot);
-                await base44.entities.Ticket.create({
-                  ...ticketData,
-                  owner_email: me.email,
-                });
-                await base44.entities.SharedTicket.update(share.id, { claimed_date: new Date().toISOString() });
-              }
-            } catch (e) {}
-          }
-        }
+
         setCheckingApproval(false);
+      } catch (error) {
+        console.error("Account status check failed:", error);
+
+        if (!cancelled) {
+          setCheckingApproval(false);
+        }
       }
-      checkStatus();
     }
-  }, [splashDone, isLoadingAuth, isLoadingPublicSettings, authError]);
 
-  // Real-time + periodic single-device enforcement: if a second device logs in and updates
-  // active_session_id, automatically log out this first device right away.
-  useEffect(() => {
-    if (!authUser || authUser.role === 'admin') return;
-    const email = authUser.email;
+    checkStatus();
 
-    const handleKickOut = () => {
-      clearLocalSessionId(email);
-      localStorage.removeItem(`tk_device_${email}`);
-      localStorage.removeItem(`tk_device_${email}_permanent`);
-      base44.auth.logout("/login");
+    return () => {
+      cancelled = true;
     };
+  }, [
+    splashDone,
+    isLoadingAuth,
+    isLoadingPublicSettings,
+    authError,
+    isAuthenticated,
+    user
+  ]);
+
+  // Single-device protection.
+  // A different session ID means another device has taken over.
+  useEffect(() => {
+    if (!authUser?.email || isAdmin || !deviceVerified) return;
+
+    const normalizedEmail = authUser.email.toLowerCase().trim();
+
+    const handleKickOut = async () => {
+      clearLocalSessionId(normalizedEmail);
+      localStorage.removeItem(`tk_device_${normalizedEmail}`);
+      localStorage.removeItem(`tk_device_${normalizedEmail}_permanent`);
+      await logout();
+    };
+
+    let kickedOut = false;
 
     const verifyCurrentDeviceSession = async () => {
-      const localSid = getLocalSessionId(email);
+      if (kickedOut) return;
+
+      const localSid = getLocalSessionId(normalizedEmail);
       if (!localSid) return;
-      const profiles = await base44.entities.UserProfile.filter({ user_email: email }).catch(() => []);
-      const remoteSid = profiles[0]?.active_session_id;
-      if (remoteSid && remoteSid !== localSid) {
-        handleKickOut();
+
+      const { data: profile, error } = await supabase
+        .from("User Profile")
+        .select("active_session_id")
+        .eq("user_email", normalizedEmail)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Device session check failed:", error);
+        return;
+      }
+
+      if (
+        profile?.active_session_id &&
+        profile.active_session_id !== localSid
+      ) {
+        kickedOut = true;
+        await handleKickOut();
       }
     };
 
-    const unsubscribe = base44.entities.UserProfile.subscribe((event) => {
-      if (event?.data?.user_email?.toLowerCase() === email.toLowerCase()) {
-        const localSid = getLocalSessionId(email);
-        const remoteSid = event.data.active_session_id;
-        if (localSid && remoteSid && remoteSid !== localSid) {
-          handleKickOut();
+    const channel = supabase
+      .channel(`device-session-${normalizedEmail}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "User Profile",
+          filter: `user_email=eq.${normalizedEmail}`
+        },
+        (payload) => {
+          const localSid = getLocalSessionId(normalizedEmail);
+          const remoteSid = payload.new?.active_session_id;
+
+          if (localSid && remoteSid && remoteSid !== localSid) {
+            kickedOut = true;
+            handleKickOut();
+          }
         }
-      }
-    });
+      )
+      .subscribe();
 
     const onVisibility = () => {
-      if (document.visibilityState === "visible") verifyCurrentDeviceSession();
+      if (document.visibilityState === "visible") {
+        verifyCurrentDeviceSession();
+      }
     };
+
     const interval = setInterval(() => {
-      if (document.visibilityState === "visible") verifyCurrentDeviceSession();
+      if (document.visibilityState === "visible") {
+        verifyCurrentDeviceSession();
+      }
     }, 10000);
+
     window.addEventListener("focus", verifyCurrentDeviceSession);
     document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
-      if (typeof unsubscribe === "function") unsubscribe();
+      supabase.removeChannel(channel);
       clearInterval(interval);
       window.removeEventListener("focus", verifyCurrentDeviceSession);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [authUser]);
+  }, [authUser, isAdmin, deviceVerified, logout]);
 
   const refreshApproval = async () => {
-    const me = await base44.auth.me().catch(() => null);
-    if (!me) return;
-    const records = await base44.entities.UserApproval.filter({ user_email: me.email });
-    if (records.length > 0) setApprovalStatus(records[0].status);
+    if (!email) return;
+
+    const { data, error } = await supabase
+      .from("User approval")
+      .select("status")
+      .eq("user_email", email)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Approval refresh failed:", error);
+      return;
+    }
+
+    if (data?.status) {
+      setApprovalStatus(data.status.toLowerCase());
+    }
   };
 
   if (!splashDone) {
@@ -246,30 +392,35 @@ const AuthenticatedApp = () => {
   }
 
   if (isLoadingPublicSettings || isLoadingAuth) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   if (authError) {
-    if (authError.type === 'user_not_registered') {
+    if (authError.type === "user_not_registered") {
       return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
+    }
+
+    if (authError.type === "auth_required") {
       navigateToLogin();
       return null;
     }
   }
 
-  // App is public — if user is not logged in, show Events only; gate other routes behind login
+  // Public access: visitors can view events without logging in.
   if (!isAuthenticated && !authError) {
     return (
       <>
         <InstallPrompt />
         <Routes>
           <Route element={<Layout />}>
-            <Route path="/" element={<Suspense fallback={<PageLoader />}><EventsPage /></Suspense>} />
+            <Route
+              path="/"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <EventsPage />
+                </Suspense>
+              }
+            />
             <Route path="/account" element={<LoginGate navigateToLogin={navigateToLogin} />} />
             <Route path="/tickets" element={<LoginGate navigateToLogin={navigateToLogin} />} />
             <Route path="/subscriptions" element={<LoginGate navigateToLogin={navigateToLogin} />} />
@@ -284,31 +435,35 @@ const AuthenticatedApp = () => {
     );
   }
 
-  if (checkingApproval) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-      </div>
-    );
+  if (checkingApproval || !authUser) {
+    return <PageLoader />;
   }
 
-  if (approvalStatus === 'rejected') {
+  if (approvalStatus === "rejected") {
     return (
       <div className="fixed inset-0 bg-white flex flex-col items-center justify-center px-6 text-center">
         <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-5">
           <svg className="w-8 h-8 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+            <circle cx="12" cy="12" r="10" />
+            <line x1="15" y1="9" x2="9" y2="15" />
+            <line x1="9" y1="9" x2="15" y2="15" />
           </svg>
         </div>
         <h2 className="text-xl font-bold text-gray-900 mb-2">Access Denied</h2>
-        <p className="text-gray-500 mb-6">Your registration has been declined. Please contact admin if you believe this is an error.</p>
-        <a href="https://wa.me/2347026855490" target="_blank" rel="noopener noreferrer"
+        <p className="text-gray-500 mb-6">
+          Your registration has been declined. Please contact admin if you believe this is an error.
+        </p>
+        <a
+          href="https://wa.me/2347026855490"
+          target="_blank"
+          rel="noopener noreferrer"
           className="w-full max-w-xs py-4 rounded-xl text-white font-bold mb-3 flex items-center justify-center gap-2 no-underline"
-          style={{ backgroundColor: "#25d366" }}>
+          style={{ backgroundColor: "#25d366" }}
+        >
           Contact Admin on WhatsApp
         </a>
         <button
-          onClick={() => base44.auth.logout()}
+          onClick={handleLogout}
           className="w-full max-w-xs py-4 rounded-xl font-bold border-2 bg-white cursor-pointer"
           style={{ color: "#003057", borderColor: "#003057" }}
         >
@@ -318,71 +473,95 @@ const AuthenticatedApp = () => {
     );
   }
 
-  if (approvalStatus === 'pending') {
+  if (approvalStatus === "pending") {
     return <WaitingApproval user={authUser} onRefresh={refreshApproval} />;
   }
 
   if (subscriptionExpired) {
-    // Auto-logout on subscription expiry — data is preserved, user can log back in after renewal
-    base44.auth.logout();
     return (
       <div className="fixed inset-0 bg-white flex flex-col items-center justify-center px-6 text-center">
         <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-5">
           <svg className="w-8 h-8 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
           </svg>
         </div>
         <h2 className="text-xl font-bold text-gray-900 mb-2">Subscription Expired</h2>
-        <p className="text-gray-500 mb-6">Your subscription has expired. Please contact admin to renew your access.</p>
-        <a href="https://wa.me/2347026855490" target="_blank" rel="noopener noreferrer"
+        <p className="text-gray-500 mb-6">
+          Your subscription has expired. Please contact admin to renew your access.
+        </p>
+        <a
+          href="https://wa.me/2347026855490"
+          target="_blank"
+          rel="noopener noreferrer"
           className="w-full max-w-xs py-4 rounded-xl text-white font-bold mb-3 flex items-center justify-center gap-2 no-underline"
-          style={{ backgroundColor: "#25d366" }}>
+          style={{ backgroundColor: "#25d366" }}
+        >
           Contact Admin on WhatsApp
         </a>
-        <a href="https://t.me/+2347026855490" target="_blank" rel="noopener noreferrer"
-          className="w-full max-w-xs py-4 rounded-xl text-white font-bold mb-3 flex items-center justify-center gap-2 no-underline"
-          style={{ backgroundColor: "#0088cc" }}>
-          Contact Admin on Telegram
-        </a>
+        <button
+          onClick={handleLogout}
+          className="w-full max-w-xs py-4 rounded-xl font-bold border-2 bg-white cursor-pointer"
+        >
+          Log Out
+        </button>
       </div>
     );
   }
 
-  if (authUser && !deviceVerified) {
-    // Check permanent verification — only ask once ever, not on every login
-    const isPermanentlyVerified =
-      localStorage.getItem(`tk_device_${authUser.email}`) === "verified" ||
-      localStorage.getItem(`tk_device_${authUser.email}_permanent`) === "true";
-    if (isPermanentlyVerified) {
-      setTimeout(() => setDeviceVerified(true), 0);
-      return null;
-    }
-    return <DeviceCodeVerification user={authUser} onVerified={() => setDeviceVerified(true)} />;
+  if (!deviceVerified && !isAdmin) {
+    return (
+      <DeviceCodeVerification
+        user={authUser}
+        onVerified={() => setDeviceVerified(true)}
+      />
+    );
   }
 
   const handleNameSetup = async (firstName, lastName) => {
     if (!authUser) return;
-    const profiles = await base44.entities.UserProfile.filter({ user_email: authUser.email }).catch(() => []);
-    if (profiles.length > 0) {
-      await base44.entities.UserProfile.update(profiles[0].id, { first_name: firstName, last_name: lastName });
+
+    const { data, error } = await supabase.rpc("update_my_profile", {
+      p_first_name: firstName,
+      p_last_name: lastName,
+      p_notifications_enabled: null
+    });
+
+    if (error || data !== true) {
+      console.error("Profile update failed:", error);
+      return;
     }
-    await base44.auth.updateMe({ display_name: `${firstName} ${lastName}` });
+
+    await supabase.auth.updateUser({
+      data: {
+        display_name: `${firstName} ${lastName}`
+      }
+    });
+
     setShowNameSetup(false);
-    const notifAsked = localStorage.getItem("notif_asked");
-    if (!notifAsked) setShowNotifPrompt(true);
+
+    if (!localStorage.getItem("notif_asked")) {
+      setShowNotifPrompt(true);
+    }
   };
 
   const handleNotifAllow = async () => {
     localStorage.setItem("notif_asked", "1");
     setShowNotifPrompt(false);
+
     if ("Notification" in window) {
       await Notification.requestPermission();
     }
-    if (authUser) {
-      const profiles = await base44.entities.UserProfile.filter({ user_email: authUser.email }).catch(() => []);
-      if (profiles.length > 0) {
-        await base44.entities.UserProfile.update(profiles[0].id, { notifications_enabled: true });
-      }
+
+    const { error } = await supabase.rpc("update_my_profile", {
+      p_first_name: null,
+      p_last_name: null,
+      p_notifications_enabled: true
+    });
+
+    if (error) {
+      console.error("Notification preference update failed:", error);
     }
   };
 
@@ -393,47 +572,86 @@ const AuthenticatedApp = () => {
 
   return (
     <>
-    {showNameSetup && <NameSetupModal onComplete={handleNameSetup} />}
-    {showNotifPrompt && !showNameSetup && <NotificationPermissionModal onAllow={handleNotifAllow} onSkip={handleNotifSkip} />}
-    {authUser && <AdminNotificationBanner userEmail={authUser.email} />}
-    {authUser && <TicketNotificationBanner userEmail={authUser.email} />}
-    <InstallPrompt />
-    <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<Suspense fallback={<PageLoader />}><EventsPage /></Suspense>} />
-        <Route path="/account" element={<Suspense fallback={<PageLoader />}><AccountPage /></Suspense>} />
-        <Route path="/tickets" element={<Suspense fallback={<PageLoader />}><TicketsPage /></Suspense>} />
-        <Route path="/subscriptions" element={<Suspense fallback={<PageLoader />}><SubscriptionPage /></Suspense>} />
-        <Route path="/create-ticket" element={<Suspense fallback={<PageLoader />}><CreateTicketPage /></Suspense>} />
-        <Route path="/profile" element={<Suspense fallback={<PageLoader />}><ProfilePage /></Suspense>} />
-        <Route path="/help" element={<Suspense fallback={<PageLoader />}><HelpPage /></Suspense>} />
-      </Route>
-      <Route path="/ticket-detail/:id" element={<Suspense fallback={<PageLoader />}><TicketDetailPage /></Suspense>} />
-      <Route path="/manage-transfer/:id" element={<Suspense fallback={<PageLoader />}><ManageTransferPage /></Suspense>} />
+      {showNameSetup && (
+        <NameSetupModal onComplete={handleNameSetup} />
+      )}
 
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
+      {showNotifPrompt && !showNameSetup && (
+        <NotificationPermissionModal
+          onAllow={handleNotifAllow}
+          onSkip={handleNotifSkip}
+        />
+      )}
+
+      {authUser && (
+        <AdminNotificationBanner userEmail={authUser.email} />
+      )}
+
+      {authUser && (
+        <TicketNotificationBanner userEmail={authUser.email} />
+      )}
+
+      <InstallPrompt />
+
+      <Routes>
+        <Route element={<Layout />}>
+          <Route
+            path="/"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <EventsPage />
+              </Suspense>
+            }
+          />
+          <Route path="/account" element={<Suspense fallback={<PageLoader />}><AccountPage /></Suspense>} />
+          <Route path="/tickets" element={<Suspense fallback={<PageLoader />}><TicketsPage /></Suspense>} />
+          <Route path="/subscriptions" element={<Suspense fallback={<PageLoader />}><SubscriptionPage /></Suspense>} />
+          <Route path="/create-ticket" element={<Suspense fallback={<PageLoader />}><CreateTicketPage /></Suspense>} />
+          <Route path="/profile" element={<Suspense fallback={<PageLoader />}><ProfilePage /></Suspense>} />
+          <Route path="/help" element={<Suspense fallback={<PageLoader />}><HelpPage /></Suspense>} />
+        </Route>
+
+        <Route
+          path="/ticket-detail/:id"
+          element={<Suspense fallback={<PageLoader />}><TicketDetailPage /></Suspense>}
+        />
+
+        <Route
+          path="/manage-transfer/:id"
+          element={<Suspense fallback={<PageLoader />}><ManageTransferPage /></Suspense>}
+        />
+
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
     </>
   );
 };
 
-
 function AppShell() {
   const location = useLocation();
+
   if (location.pathname.startsWith("/shared-ticket")) {
     return (
       <Routes>
-        <Route path="/shared-ticket/:token/*" element={<Suspense fallback={<PageLoader />}><SharedTicketPage /></Suspense>} />
+        <Route
+          path="/shared-ticket/:token/*"
+          element={<Suspense fallback={<PageLoader />}><SharedTicketPage /></Suspense>}
+        />
       </Routes>
     );
   }
+
   if (location.pathname.startsWith("/transfer/")) {
     return (
       <Routes>
-        <Route path="/transfer/:token" element={<Suspense fallback={<PageLoader />}><TransferPage /></Suspense>} />
+        <Route
+          path="/transfer/:token"
+          element={<Suspense fallback={<PageLoader />}><TransferPage /></Suspense>}
+        />
       </Routes>
     );
   }
+
   if (location.pathname === "/login") {
     return (
       <Suspense fallback={<PageLoader />}>
@@ -441,6 +659,7 @@ function AppShell() {
       </Suspense>
     );
   }
+
   return <AuthenticatedApp />;
 }
 
@@ -454,7 +673,7 @@ function App() {
         <Toaster />
       </QueryClientProvider>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;
