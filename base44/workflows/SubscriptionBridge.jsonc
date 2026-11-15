@@ -1,0 +1,41 @@
+{
+  "name": "Subscription Bridge",
+  "description": "Mirrors every new or changed subscription in Ticketek AU across to the AXS app",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "Subscription",
+      "events": [
+        "create",
+        "update"
+      ]
+    },
+    "condition": "${ (.trigger.data.synced_from_axs // false) == false }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "subscription_bridge",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "push_to_axs": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "syncSubscriptionToAxs",
+            "args": {
+              "subscription_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Send subscription to AXS",
+            "description": "Same plan for the same email"
+          }
+        }
+      }
+    ]
+  }
+}

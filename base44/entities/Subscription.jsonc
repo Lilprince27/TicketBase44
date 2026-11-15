@@ -45,6 +45,11 @@
     "maintenance_approved_month": {
       "type": "string",
       "title": "Maintenance Approved Month (YYYY-MM)"
+    },
+    "synced_from_axs": {
+      "type": "boolean",
+      "title": "Arrived From AXS Bridge",
+      "default": false
     }
   },
   "required": [
