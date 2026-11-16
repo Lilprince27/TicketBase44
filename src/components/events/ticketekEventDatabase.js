@@ -32,9 +32,11 @@ export const NFL_MELBOURNE_GAME = {
 const ZACH_BRYAN_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/d41417852_IMG_8679.jpeg";
 const SOAD_FAITH_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/db6bcc4b5_IMG_8841.jpeg";
 const KATSEYE_IMAGE = "https://base44.app/api/apps/6a29092b3d99cb9d297711be/files/mp/public/6a29092b3d99cb9d297711be/7895be4fa_katseye.jpeg";
+const SIENNA_SPIRO_IMAGE = "https://base44.app/api/apps/6a29092b3d99cb9d297711be/files/mp/public/6a29092b3d99cb9d297711be/f67b56a3a_sienna-spiro-my-house-tour.jpg";
 
 export const TICKETEK_DB_EVENTS = [
   // === CONCERTS ===
+  { title: "Sienna Spiro — My House Tour", subtitle: "My House Tour", date: "", venue: "Lion Arts Factory Adelaide, Max Watts Melbourne, Metro Theatre Sydney, The Zoo Brisbane & Astor Theatre Perth", image: SIENNA_SPIRO_IMAGE, keys: ["sienna spiro", "sienna", "my house tour", "my house"] },
   { title: "KATSEYE", subtitle: "THE WILDWORLD TOUR", date: "Sun 28 Feb 2027 · 8:00pm", venue: "Afterpay Arena, formerly known as Qudos Bank Arena, Sydney Olympic Park, NSW", image: KATSEYE_IMAGE, keys: ["katseye", "wildworld tour", "the wildworld tour"] },
   { title: "Stewart Copeland", date: "2027", venue: "Various venues, Australia", image: `${TK_CDN}/sfx369621.jpg`, keys: ["stewart copeland", "copeland"] },
   { title: "Nazeem Hussain — I AM BEING CALM!", subtitle: "I AM BEING CALM!", date: "2027", venue: "Various venues, Australia", image: `${TK_CDN}/sfx371212.jpg`, keys: ["nazeem hussain", "i am being calm"] },

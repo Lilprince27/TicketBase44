@@ -20,8 +20,34 @@ const NIALL_HORAN_IMAGE = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages/sfx362
 const IRON_MAIDEN_IMAGE = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages/sfx357159.jpg";
 const NZ_CDN = "https://d19py84rdi4j91.cloudfront.net/dbimages";
 
+const SIENNA_SPIRO_IMAGE = "https://base44.app/api/apps/6a29092b3d99cb9d297711be/files/mp/public/6a29092b3d99cb9d297711be/f67b56a3a_sienna-spiro-my-house-tour.jpg";
+
+const SIENNA_SPIRO_SHOWS = [
+  { city: "Adelaide", venue: "Lion Arts Factory", region: "Adelaide, SA" },
+  { city: "Melbourne", venue: "Max Watts", region: "Melbourne, VIC" },
+  { city: "Sydney", venue: "Metro Theatre", region: "Sydney, NSW" },
+  { city: "Brisbane", venue: "The Zoo", region: "Brisbane, QLD" },
+  { city: "Perth", venue: "Astor Theatre", region: "Perth, WA" },
+].map((show, i) => ({
+  id: `local-sienna-spiro-${i + 1}`,
+  title: "Sienna Spiro — My House Tour",
+  date: "",
+  venue: show.venue,
+  city: show.city,
+  image: SIENNA_SPIRO_IMAGE,
+  local: true,
+  localData: {
+    event_name: "Sienna Spiro",
+    event_date: "",
+    venue_name: `${show.venue}, ${show.region}`,
+    event_image_url: SIENNA_SPIRO_IMAGE,
+    presenter: "Frontier Touring",
+  },
+}));
+
 export const LOCAL_EVENT_OVERRIDES = {
   ...TOUR_2027_OVERRIDES,
+  "sienna spiro": SIENNA_SPIRO_SHOWS,
   "olivia dean": [
     {
       id: "local-olivia-dean-1",

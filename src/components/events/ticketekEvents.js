@@ -3,6 +3,7 @@ const CDN = "https://d35kvm5iuwjt9t.cloudfront.net/dbimages";
 const ZACH_BRYAN_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/d41417852_IMG_8679.jpeg";
 const SOAD_FAITH_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/db6bcc4b5_IMG_8841.jpeg";
 const KATSEYE_IMG = "https://base44.app/api/apps/6a29092b3d99cb9d297711be/files/mp/public/6a29092b3d99cb9d297711be/7895be4fa_katseye.jpeg";
+const SIENNA_SPIRO_IMG = "https://base44.app/api/apps/6a29092b3d99cb9d297711be/files/mp/public/6a29092b3d99cb9d297711be/f67b56a3a_sienna-spiro-my-house-tour.jpg";
 
 export const TICKETEK_HERO = [
   { id: "gabrieliglesias", title: "Gabriel Iglesias", subtitle: "The 1976 Tour: A Fluffy Celebration", image: `${CDN}/sfx363550.jpg`, venue: "Various venues, Australia" },
@@ -33,6 +34,7 @@ export const TICKETEK_FEATURED = [
   { id: "bonjovi", title: "Bon Jovi", subtitle: "The Forever Tour 2027", image: `${CDN}/sfx370305.jpg`, venue: "Marvel Stadium, Accor Stadium & Suncorp Stadium" },
   { id: "ironmaiden", title: "Iron Maiden", subtitle: "Run For Your Lives World Tour 2026", image: `${CDN}/sfx357158.jpg`, venue: "RAC Arena, AAMI Park, Allianz Stadium & Brisbane Entertainment Centre" },
   { id: "bensonboone", title: "Benson Boone", subtitle: "Wanted Man Tour 2026", image: `${CDN}/sfx363901.jpg`, venue: "RAC Arena, Rod Laver Arena, Afterpay Arena & Brisbane Entertainment Centre" },
+  { id: "siennaspiro", title: "Sienna Spiro", subtitle: "My House Tour", image: SIENNA_SPIRO_IMG, venue: "Lion Arts Factory Adelaide, Max Watts Melbourne, Metro Theatre Sydney, The Zoo Brisbane & Astor Theatre Perth" },
 ];
 
 export const TICKETEK_TRENDING = [
