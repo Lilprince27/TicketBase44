@@ -23,22 +23,24 @@ const NZ_CDN = "https://d19py84rdi4j91.cloudfront.net/dbimages";
 const SIENNA_SPIRO_IMAGE = "https://base44.app/api/apps/6a29092b3d99cb9d297711be/files/mp/public/6a29092b3d99cb9d297711be/f67b56a3a_sienna-spiro-my-house-tour.jpg";
 
 const SIENNA_SPIRO_SHOWS = [
-  { city: "Adelaide", venue: "Lion Arts Factory", region: "Adelaide, SA" },
-  { city: "Melbourne", venue: "Max Watts", region: "Melbourne, VIC" },
-  { city: "Sydney", venue: "Metro Theatre", region: "Sydney, NSW" },
-  { city: "Brisbane", venue: "The Zoo", region: "Brisbane, QLD" },
-  { city: "Perth", venue: "Astor Theatre", region: "Perth, WA" },
+  { date: "Fri 15 Jan 2027 · 6:00pm", venue: "Fremantle Arts Centre", city: "Perth", region: "Walyalup Fremantle, WA" },
+  { date: "Sat 16 Jan 2027 · 6:00pm", venue: "Fremantle Arts Centre", city: "Perth", region: "Walyalup Fremantle, WA" },
+  { date: "Tue 19 Jan 2027 · 7:00pm", venue: "Festival Hall", city: "Melbourne", region: "West Melbourne, VIC" },
+  { date: "Wed 20 Jan 2027 · 7:00pm", venue: "Festival Hall", city: "Melbourne", region: "West Melbourne, VIC" },
+  { date: "Fri 22 Jan 2027 · 8:00pm", venue: "The Hordern Pavilion", city: "Sydney", region: "Moore Park, NSW" },
+  { date: "Sat 23 Jan 2027 · 8:00pm", venue: "The Hordern Pavilion", city: "Sydney", region: "Moore Park, NSW" },
+  { date: "Mon 25 Jan 2027 · 7:00pm", venue: "Fortitude Music Hall", city: "Brisbane", region: "Fortitude Valley, QLD" },
 ].map((show, i) => ({
   id: `local-sienna-spiro-${i + 1}`,
   title: "Sienna Spiro — My House Tour",
-  date: "",
+  date: show.date,
   venue: show.venue,
   city: show.city,
   image: SIENNA_SPIRO_IMAGE,
   local: true,
   localData: {
     event_name: "Sienna Spiro",
-    event_date: "",
+    event_date: show.date,
     venue_name: `${show.venue}, ${show.region}`,
     event_image_url: SIENNA_SPIRO_IMAGE,
     presenter: "Frontier Touring",

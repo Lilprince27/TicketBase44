@@ -34,7 +34,7 @@ export const TICKETEK_FEATURED = [
   { id: "bonjovi", title: "Bon Jovi", subtitle: "The Forever Tour 2027", image: `${CDN}/sfx370305.jpg`, venue: "Marvel Stadium, Accor Stadium & Suncorp Stadium" },
   { id: "ironmaiden", title: "Iron Maiden", subtitle: "Run For Your Lives World Tour 2026", image: `${CDN}/sfx357158.jpg`, venue: "RAC Arena, AAMI Park, Allianz Stadium & Brisbane Entertainment Centre" },
   { id: "bensonboone", title: "Benson Boone", subtitle: "Wanted Man Tour 2026", image: `${CDN}/sfx363901.jpg`, venue: "RAC Arena, Rod Laver Arena, Afterpay Arena & Brisbane Entertainment Centre" },
-  { id: "siennaspiro", title: "Sienna Spiro", subtitle: "My House Tour", image: SIENNA_SPIRO_IMG, venue: "Lion Arts Factory Adelaide, Max Watts Melbourne, Metro Theatre Sydney, The Zoo Brisbane & Astor Theatre Perth" },
+  { id: "siennaspiro", title: "Sienna Spiro", subtitle: "My House Tour 2027", image: SIENNA_SPIRO_IMG, venue: "Fremantle Arts Centre, Festival Hall, The Hordern Pavilion & Fortitude Music Hall" },
 ];
 
 export const TICKETEK_TRENDING = [
