@@ -36,7 +36,7 @@ const SIENNA_SPIRO_IMAGE = "https://base44.app/api/apps/6a29092b3d99cb9d297711be
 
 export const TICKETEK_DB_EVENTS = [
   // === CONCERTS ===
-  { title: "Sienna Spiro — My House Tour", subtitle: "My House Tour", date: "Fri 15 Jan 2027 - Mon 25 Jan 2027", venue: "Fremantle Arts Centre Perth, Festival Hall Melbourne, The Hordern Pavilion Sydney & Fortitude Music Hall Brisbane", image: SIENNA_SPIRO_IMAGE, keys: ["sienna spiro", "sienna", "my house tour", "my house"] },
+  { title: "Sienna Spiro — My House Tour", subtitle: "My House Tour", date: "Fri 15 Jan 2027 - Mon 25 Jan 2027", venue: "Fremantle Arts Centre Perth, Lion Arts Factory Adelaide, Festival Hall Melbourne, The Hordern Pavilion Sydney & Fortitude Music Hall Brisbane", image: SIENNA_SPIRO_IMAGE, keys: ["sienna spiro", "sienna", "my house tour", "my house"] },
   { title: "KATSEYE", subtitle: "THE WILDWORLD TOUR", date: "Sun 28 Feb 2027 · 8:00pm", venue: "Afterpay Arena, formerly known as Qudos Bank Arena, Sydney Olympic Park, NSW", image: KATSEYE_IMAGE, keys: ["katseye", "wildworld tour", "the wildworld tour"] },
   { title: "Stewart Copeland", date: "2027", venue: "Various venues, Australia", image: `${TK_CDN}/sfx369621.jpg`, keys: ["stewart copeland", "copeland"] },
   { title: "Nazeem Hussain — I AM BEING CALM!", subtitle: "I AM BEING CALM!", date: "2027", venue: "Various venues, Australia", image: `${TK_CDN}/sfx371212.jpg`, keys: ["nazeem hussain", "i am being calm"] },

@@ -23,8 +23,9 @@ const NZ_CDN = "https://d19py84rdi4j91.cloudfront.net/dbimages";
 const SIENNA_SPIRO_IMAGE = "https://base44.app/api/apps/6a29092b3d99cb9d297711be/files/mp/public/6a29092b3d99cb9d297711be/f67b56a3a_sienna-spiro-my-house-tour.jpg";
 
 const SIENNA_SPIRO_SHOWS = [
-  { date: "Fri 15 Jan 2027 · 6:00pm", venue: "Fremantle Arts Centre", city: "Perth", region: "Walyalup Fremantle, WA" },
-  { date: "Sat 16 Jan 2027 · 6:00pm", venue: "Fremantle Arts Centre", city: "Perth", region: "Walyalup Fremantle, WA" },
+  { date: "Fri 15 Jan 2027 · 6:00pm", venue: "Walyalup Fremantle Arts Centre", city: "Perth", region: "Fremantle, WA" },
+  { date: "Sat 16 Jan 2027 · 6:00pm", venue: "Walyalup Fremantle Arts Centre", city: "Perth", region: "Fremantle, WA" },
+  { date: "Date to be announced", venue: "Lion Arts Factory", city: "Adelaide", region: "Adelaide, SA" },
   { date: "Tue 19 Jan 2027 · 7:00pm", venue: "Festival Hall", city: "Melbourne", region: "West Melbourne, VIC" },
   { date: "Wed 20 Jan 2027 · 7:00pm", venue: "Festival Hall", city: "Melbourne", region: "West Melbourne, VIC" },
   { date: "Fri 22 Jan 2027 · 8:00pm", venue: "The Hordern Pavilion", city: "Sydney", region: "Moore Park, NSW" },
