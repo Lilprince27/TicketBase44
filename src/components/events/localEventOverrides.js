@@ -8,6 +8,7 @@
 import { getFormattedDbEvents, getNflOverride } from "./ticketekEventDatabase";
 import { AFL_MATCHES, AFL_KEYWORDS } from "./aflFixtures";
 import { TOUR_2027_OVERRIDES } from "./tour2027Overrides";
+import { GRACIE_ABRAMS_OVERRIDES } from "./gracieAbramsOverrides";
 
 const OLIVIA_DEAN_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/2433af8ed_IMG_4074.jpeg";
 const NOAH_KAHAN_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/47e6fd2a8_IMG_5079.jpeg";
@@ -50,6 +51,7 @@ const SIENNA_SPIRO_SHOWS = [
 
 export const LOCAL_EVENT_OVERRIDES = {
   ...TOUR_2027_OVERRIDES,
+  ...GRACIE_ABRAMS_OVERRIDES,
   "sienna spiro": SIENNA_SPIRO_SHOWS,
   "olivia dean": [
     {

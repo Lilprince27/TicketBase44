@@ -33,9 +33,11 @@ const ZACH_BRYAN_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9
 const SOAD_FAITH_IMAGE = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/db6bcc4b5_IMG_8841.jpeg";
 const KATSEYE_IMAGE = "https://base44.app/api/apps/6a29092b3d99cb9d297711be/files/mp/public/6a29092b3d99cb9d297711be/7895be4fa_katseye.jpeg";
 const SIENNA_SPIRO_IMAGE = "https://base44.app/api/apps/6a29092b3d99cb9d297711be/files/mp/public/6a29092b3d99cb9d297711be/f67b56a3a_sienna-spiro-my-house-tour.jpg";
+const GRACIE_ABRAMS_IMAGE = "https://base44.app/api/apps/6a29092b3d99cb9d297711be/files/mp/public/6a29092b3d99cb9d297711be/f5e884003_gracie-abrams.jpg";
 
 export const TICKETEK_DB_EVENTS = [
   // === CONCERTS ===
+  { title: "Gracie Abrams", subtitle: "Australian Tour 2027", date: "Tue 27 Jul 2027 - Fri 6 Aug 2027", venue: "Rod Laver Arena, Melbourne & Afterpay Arena, Sydney Olympic Park, NSW", image: GRACIE_ABRAMS_IMAGE, keys: ["gracie abrams", "gracie", "gracie abrams australian tour"] },
   { title: "Sienna Spiro — My House Tour", subtitle: "My House Tour", date: "Fri 15 Jan 2027 - Mon 25 Jan 2027", venue: "Fremantle Arts Centre Perth, Lion Arts Factory Adelaide, Festival Hall Melbourne, The Hordern Pavilion Sydney & Fortitude Music Hall Brisbane", image: SIENNA_SPIRO_IMAGE, keys: ["sienna spiro", "sienna", "my house tour", "my house"] },
   { title: "KATSEYE", subtitle: "THE WILDWORLD TOUR", date: "Sun 28 Feb 2027 · 8:00pm", venue: "Afterpay Arena, formerly known as Qudos Bank Arena, Sydney Olympic Park, NSW", image: KATSEYE_IMAGE, keys: ["katseye", "wildworld tour", "the wildworld tour"] },
   { title: "Stewart Copeland", date: "2027", venue: "Various venues, Australia", image: `${TK_CDN}/sfx369621.jpg`, keys: ["stewart copeland", "copeland"] },

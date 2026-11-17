@@ -4,8 +4,10 @@ const ZACH_BRYAN_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d2
 const SOAD_FAITH_IMG = "https://media.base44.com/images/public/6a29092b3d99cb9d297711be/db6bcc4b5_IMG_8841.jpeg";
 const KATSEYE_IMG = "https://base44.app/api/apps/6a29092b3d99cb9d297711be/files/mp/public/6a29092b3d99cb9d297711be/7895be4fa_katseye.jpeg";
 const SIENNA_SPIRO_IMG = "https://base44.app/api/apps/6a29092b3d99cb9d297711be/files/mp/public/6a29092b3d99cb9d297711be/f67b56a3a_sienna-spiro-my-house-tour.jpg";
+const GRACIE_ABRAMS_IMG = "https://base44.app/api/apps/6a29092b3d99cb9d297711be/files/mp/public/6a29092b3d99cb9d297711be/f5e884003_gracie-abrams.jpg";
 
 export const TICKETEK_HERO = [
+  { id: "gracieabrams", title: "Gracie Abrams", subtitle: "Australian Tour 2027", image: GRACIE_ABRAMS_IMG, venue: "Rod Laver Arena, Melbourne & Afterpay Arena, Sydney Olympic Park" },
   { id: "gabrieliglesias", title: "Gabriel Iglesias", subtitle: "The 1976 Tour: A Fluffy Celebration", image: `${CDN}/sfx363550.jpg`, venue: "Various venues, Australia" },
   { id: "stewartcopeland", title: "Stewart Copeland", subtitle: "", image: `${CDN}/sfx369621.jpg`, venue: "Various venues, Australia" },
   { id: "nazeemhussain", title: "Nazeem Hussain", subtitle: "I AM BEING CALM!", image: `${CDN}/sfx371212.jpg`, venue: "Various venues, Australia" },
@@ -19,6 +21,7 @@ export const TICKETEK_HERO = [
 ];
 
 export const TICKETEK_FEATURED = [
+  { id: "gracieabrams", title: "Gracie Abrams", subtitle: "Australian Tour 2027", image: GRACIE_ABRAMS_IMG, venue: "Rod Laver Arena, Melbourne & Afterpay Arena, Sydney Olympic Park" },
   { id: "gabrieliglesias", title: "Gabriel Iglesias", subtitle: "The 1976 Tour: A Fluffy Celebration", image: `${CDN}/sfx363550.jpg`, venue: "Various venues, Australia" },
   { id: "stewartcopeland", title: "Stewart Copeland", subtitle: "", image: `${CDN}/sfx369621.jpg`, venue: "Various venues, Australia" },
   { id: "nazeemhussain", title: "Nazeem Hussain", subtitle: "I AM BEING CALM!", image: `${CDN}/sfx371212.jpg`, venue: "Various venues, Australia" },
