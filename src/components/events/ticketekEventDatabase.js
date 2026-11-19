@@ -37,7 +37,9 @@ const GRACIE_ABRAMS_IMAGE = "https://base44.app/api/apps/6a29092b3d99cb9d297711b
 
 export const TICKETEK_DB_EVENTS = [
   // === CONCERTS ===
-  { title: "Gracie Abrams", subtitle: "Australian Tour 2027", date: "Tue 27 Jul 2027 - Fri 6 Aug 2027", venue: "Rod Laver Arena, Melbourne & Afterpay Arena, Sydney Olympic Park, NSW", image: GRACIE_ABRAMS_IMAGE, keys: ["gracie abrams", "gracie", "gracie abrams australian tour"] },
+  { title: "Gracie Abrams", subtitle: "The Look at My Life Tour", date: "Tue 27 Jul 2027 - Fri 6 Aug 2027", venue: "Rod Laver Arena, Melbourne & Afterpay Arena, Sydney Olympic Park, NSW", image: GRACIE_ABRAMS_IMAGE, keys: ["gracie abrams", "gracie", "look at my life"] },
+  { title: "Wicked", subtitle: "Part One In Concert", date: "2027", venue: "Adelaide Entertainment Centre, Brisbane Convention & Exhibition Centre & The Star Gold Coast", image: `${TK_CDN}/sfx371732.jpg`, keys: ["wicked", "part one in concert", "wicked in concert"] },
+  { title: "Guy Montgomery", subtitle: "What Do People Do All Day?", date: "2027", venue: "Various venues, Australia", image: `${TK_CDN}/sfx370805.jpg`, keys: ["guy montgomery", "what do people do all day"] },
   { title: "Sienna Spiro — My House Tour", subtitle: "My House Tour", date: "Fri 15 Jan 2027 - Mon 25 Jan 2027", venue: "Fremantle Arts Centre Perth, Lion Arts Factory Adelaide, Festival Hall Melbourne, The Hordern Pavilion Sydney & Fortitude Music Hall Brisbane", image: SIENNA_SPIRO_IMAGE, keys: ["sienna spiro", "sienna", "my house tour", "my house"] },
   { title: "KATSEYE", subtitle: "THE WILDWORLD TOUR", date: "Sun 28 Feb 2027 · 8:00pm", venue: "Afterpay Arena, formerly known as Qudos Bank Arena, Sydney Olympic Park, NSW", image: KATSEYE_IMAGE, keys: ["katseye", "wildworld tour", "the wildworld tour"] },
   { title: "Stewart Copeland", date: "2027", venue: "Various venues, Australia", image: `${TK_CDN}/sfx369621.jpg`, keys: ["stewart copeland", "copeland"] },

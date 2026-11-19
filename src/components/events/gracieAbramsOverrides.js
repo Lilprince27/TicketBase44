@@ -16,7 +16,7 @@ const GRACIE_ABRAMS_DATES = [
 
 export const GRACIE_ABRAMS_SHOWS = GRACIE_ABRAMS_DATES.map((show, i) => ({
   id: `local-gracie-abrams-${i + 1}`,
-  title: "Gracie Abrams",
+  title: "Gracie Abrams — The Look at My Life Tour",
   date: show.date,
   venue: show.venue,
   city: show.city,
@@ -27,7 +27,7 @@ export const GRACIE_ABRAMS_SHOWS = GRACIE_ABRAMS_DATES.map((show, i) => ({
     event_date: show.date,
     venue_name: `${show.venue}, ${show.region}`,
     event_image_url: GRACIE_ABRAMS_IMAGE,
-    presenter: "Live Nation",
+    presenter: "Frontier Touring",
   },
 }));
 
