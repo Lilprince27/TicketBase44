@@ -5,10 +5,13 @@ import { APP_BASE_URL, buildShareUrl, generateSecureToken } from "@/lib/ticketUt
 import { assertEmailQuotaAvailable, decrementEmailQuota } from "@/lib/emailQuota";
 import { sendEmailWithRetry } from "@/lib/sendEmailWithRetry";
 import { createTicketNotification } from "@/lib/ticketNotification";
+import SmsShareSuccess from "./SmsShareSuccess";
 
 export default function ShareModal({ ticket, onClose, onTransferred }) {
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [name, setName] = useState("");
+  const [phoneDelivery, setPhoneDelivery] = useState(false);
   const [senderName, setSenderName] = useState("");
   const [shareSettings, setShareSettings] = useState(null);
   const [loadingSettings, setLoadingSettings] = useState(true);
@@ -38,7 +41,10 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
   }, []);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const isValid = emailRegex.test(email.trim()) && name.trim() !== "";
+  const emailValid = emailRegex.test(email.trim());
+  const phoneValid = phone.replace(/\D/g, "").length >= 8;
+  const contactLabel = emailValid ? email.trim() : phone.trim();
+  const isValid = name.trim() !== "" && (emailValid || phoneValid);
 
   const handleShare = async () => {
     if (!isValid) return;
@@ -47,8 +53,8 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
     try {
       const me = await base44.auth.me();
 
-      // Check unified email quota (share + transfer share the same counter)
-      const quotaState = await assertEmailQuotaAvailable();
+      // Unified email quota only applies when we actually email the recipient
+      const quotaState = emailValid ? await assertEmailQuotaAvailable() : null;
 
       // Create a secure accept-into-wallet link (sender keeps their ticket)
       const token = generateSecureToken();
@@ -68,7 +74,8 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
         ticket_snapshot: snapshot,
         owner_email: me.email,
         event_image: ticket.event_image || "",
-        recipient_email: email.trim(),
+        recipient_email: emailValid ? email.trim() : "",
+        recipient_phone: phone.trim(),
       });
 
       // Create history record
@@ -79,10 +86,20 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
           owner_email: me.email,
           action: "transferred",
           actor_email: me.email,
-          recipient_email: email.trim(),
-          details: `Shared to ${email.trim()} (sender retains ticket)`,
+          recipient_email: emailValid ? email.trim() : "",
+          details: `Shared to ${contactLabel} (sender retains ticket)`,
         });
       } catch (e) {}
+
+      // Phone-only transfer: nothing to email — hand the accept link to the
+      // sender's messaging app so the recipient receives it by SMS.
+      if (!emailValid) {
+        setLastShareToken(token);
+        setPhoneDelivery(true);
+        setSuccess(true);
+        setTransferring(false);
+        return;
+      }
 
       // Send premium notification email to recipient with accept link (with retry)
       const emailHtml = buildTransferEmailHtml({
@@ -291,6 +308,23 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
     );
   }
 
+  // Phone delivery — sender sends the accept link by SMS
+  if (success && phoneDelivery) {
+    return (
+      <SmsShareSuccess
+        recipientName={name.trim()}
+        recipientPhone={phone.trim()}
+        senderName={senderName}
+        eventName={ticket.event_name}
+        shareUrl={buildShareUrl(lastShareToken)}
+        onDone={() => {
+          if (onTransferred) onTransferred();
+          else onClose();
+        }}
+      />
+    );
+  }
+
   // Success state
   if (success) {
     return (
@@ -319,13 +353,18 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
           </svg>
           <div>
             <h2 className="text-xl font-semibold text-gray-600">Share ticket{seatNumber ? ` for Seat ${seatNumber}` : ""}</h2>
-            <p className="text-sm text-gray-500 mt-1">Transfer this ticket to anyone via email.</p>
+            <p className="text-sm text-gray-500 mt-1">Transfer this ticket to anyone via email or phone number.</p>
           </div>
         </div>
 
         <div className="mb-4">
           <input type="email" value={email} onChange={e => setEmail(e.target.value)}
             placeholder="Enter recipient email"
+            className="w-full px-4 py-4 border border-gray-200 rounded-lg text-base outline-none text-gray-800 placeholder-gray-400" />
+        </div>
+        <div className="mb-4">
+          <input type="tel" inputMode="tel" value={phone} onChange={e => setPhone(e.target.value)}
+            placeholder="Enter recipient phone number"
             className="w-full px-4 py-4 border border-gray-200 rounded-lg text-base outline-none text-gray-800 placeholder-gray-400" />
         </div>
         <div className="mb-4">
@@ -337,7 +376,7 @@ export default function ShareModal({ ticket, onClose, onTransferred }) {
         {error && <p className="text-sm text-red-500 text-center mb-3">{error}</p>}
 
         <p className="text-sm text-gray-400 text-center my-5 px-2">
-          A secure accept link will be emailed to the recipient. Your ticket stays in your wallet.
+          A secure accept link will be sent to the recipient's email or phone. Your ticket stays in your wallet.
         </p>
 
         <div className="flex gap-3">

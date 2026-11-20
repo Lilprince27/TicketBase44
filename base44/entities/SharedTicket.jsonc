@@ -18,6 +18,10 @@
       "type": "string",
       "title": "Recipient Email"
     },
+    "recipient_phone": {
+      "type": "string",
+      "title": "Recipient Phone Number"
+    },
     "event_image": {
       "type": "string",
       "title": "Event Image URL"
