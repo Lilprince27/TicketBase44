@@ -23,27 +23,27 @@ export default function SendTicketLinkSheet({ recipientName, recipientPhone, sen
     return (
       <button
         onClick={() => setApp(id)}
-        className="w-full flex items-center gap-3 rounded-xl px-4 py-4 mb-3 cursor-pointer"
-        style={{ backgroundColor: "#1c1c1e", border: active ? "1.5px solid #0055FF" : "1px solid #333" }}
+        className="w-full flex items-center gap-3 rounded-lg px-4 py-4 mb-3 cursor-pointer bg-white"
+        style={{ border: active ? "1.5px solid #004b8d" : "1px solid #e2e2e2" }}
       >
         <span className="w-7 h-7 flex-shrink-0 flex items-center justify-center">{icon}</span>
-        <span className="flex-1 text-left text-[15px] font-semibold text-white">{label}</span>
+        <span className="flex-1 text-left text-base font-semibold text-gray-800">{label}</span>
         <span
           className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-          style={{ border: active ? "6px solid #0055FF" : "1.5px solid #6b7280" }}
+          style={{ border: active ? "6px solid #004b8d" : "1.5px solid #c9c9c9" }}
         />
       </button>
     );
   };
 
   return (
-    <div className="fixed inset-0 z-[2000] flex items-end justify-center" style={{ background: "rgba(0,0,0,0.6)" }}>
-      <div className="w-full max-w-[500px] rounded-t-2xl px-5 pt-6 pb-8" style={{ backgroundColor: "#121212" }}>
-        <h2 className="text-[13px] font-bold tracking-[0.12em] text-white uppercase mb-3">Send ticket link</h2>
-        <div style={{ height: 1, backgroundColor: "#333" }} className="mb-4" />
+    <div className="fixed inset-0 z-[2000] flex items-end justify-center" style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(2px)", WebkitBackdropFilter: "blur(2px)" }}>
+      <div className="bg-white w-full max-w-[500px] rounded-t-xl px-5 pt-6 pb-9 shadow-[0_-4px_20px_rgba(0,0,0,0.15)]">
+        <h2 className="text-base font-bold text-gray-900 mb-3">Send ticket link</h2>
+        <div className="h-px bg-gray-200 mb-4" />
 
-        <p className="text-[15px] font-bold text-white mb-1">Choose how to send to {recipientPhone}</p>
-        <p className="text-[13px] text-[#a0a0a0] mb-5">
+        <p className="text-base font-semibold text-gray-800 mb-1">Choose how to send to {recipientPhone}</p>
+        <p className="text-sm text-gray-500 mb-5">
           Select an app below and tap Share to open it with your ticket accept link.
         </p>
 
@@ -68,14 +68,18 @@ export default function SendTicketLinkSheet({ recipientName, recipientPhone, sen
           }
         />
 
-        <div className="flex items-center justify-between mt-6">
-          <button onClick={onBack} className="flex items-center gap-1 text-[14px] font-semibold text-white bg-transparent border-none cursor-pointer py-3">
+        <div className="flex gap-3 mt-6">
+          <button onClick={onBack}
+            className="flex-1 py-4 rounded-lg font-semibold text-base border border-gray-200 bg-white cursor-pointer flex items-center justify-center gap-1"
+            style={{ color: "#004b8d" }}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
               <polyline points="15 18 9 12 15 6" />
             </svg>
-            BACK
+            Back
           </button>
-          <button onClick={handleShare} className="px-8 py-3 rounded-lg text-[15px] font-bold text-white border-none cursor-pointer" style={{ backgroundColor: "#0055FF" }}>
+          <button onClick={handleShare}
+            className="flex-1 py-4 rounded-lg font-semibold text-base border-none cursor-pointer text-white"
+            style={{ backgroundColor: "#418029" }}>
             Share
           </button>
         </div>

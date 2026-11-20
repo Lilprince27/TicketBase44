@@ -5,6 +5,7 @@ import { buildTicketUrl } from "@/lib/ticketUtils";
 import TicketekLogo from "@/components/TicketekLogo";
 import AppleWalletModal from "@/components/tickets/AppleWalletModal";
 import AcceptTransferForm from "@/components/tickets/AcceptTransferForm";
+import RecipientEmailStep from "@/components/tickets/RecipientEmailStep";
 import TransferTicketDetail from "@/components/tickets/TransferTicketDetail";
 import TicketDoneAnimationModal from "@/components/tickets/TicketDoneAnimationModal";
 import { buildRecipientAcceptEmail } from "@/lib/recipientAcceptEmail";
@@ -61,12 +62,33 @@ export default function SharedTicketPage() {
       // If rejected, show declined screen
       if (rec.rejected_by) { setStep("declined"); setLoading(false); return; }
 
+      // Sent by text message — no email on the record yet, so collect it first
+      if (!rec.recipient_email) {
+        setStep("email");
+        setLoading(false);
+        return;
+      }
+
       // Go to login page (email pre-filled with recipient email)
       setStep("login");
       setLoading(false);
     } catch (e) {
       setStep("invalid");
       setLoading(false);
+    }
+  };
+
+  const handleSaveRecipientEmail = async (email) => {
+    if (busy || !sharedRecord) return;
+    setBusy(true);
+    try {
+      await base44.entities.SharedTicket.update(sharedRecord.id, { recipient_email: email });
+      setSharedRecord({ ...sharedRecord, recipient_email: email });
+      setStep("login");
+    } catch (e) {
+      setError(e.message || "Could not save your email. Please try again.");
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -260,6 +282,17 @@ export default function SharedTicketPage() {
           <div style={{ width: 36, height: 36, margin: "0 auto 16px", border: "3px solid #e0e0e0", borderTopColor: TK_NAVY, borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
           <p style={{ color: "#666", fontSize: 15 }}>Loading ticket...</p>
         </div>
+      )}
+
+      {/* EMAIL — ticket arrived by text message, so collect the recipient's email */}
+      {step === "email" && ticket && (
+        <RecipientEmailStep
+          senderName={senderName}
+          eventName={ticket.event_name}
+          busy={busy}
+          error={error}
+          onSave={handleSaveRecipientEmail}
+        />
       )}
 
       {/* LOGIN — Ticketek sign-in page (email pre-filled with recipient email) */}
