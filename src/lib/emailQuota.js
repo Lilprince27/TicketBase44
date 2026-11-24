@@ -15,15 +15,15 @@ import { base44 } from "@/api/base44Client";
 export async function getEmailQuota() {
   const me = await base44.auth.me();
   if (!me) return null;
-  // Admins have unlimited email quota — no profile lookup needed
-  if (me.role === "admin") {
-    return { quota: Infinity, used: 0, remaining: Infinity, profileId: null, isAdmin: true };
-  }
   const profiles = await base44.entities.UserProfile.filter({ user_email: me.email });
-  if (profiles.length === 0) return null;
-  const p = profiles[0];
+  const p = profiles[0] || null;
+  const used = p?.email_transfer_used || 0;
+  // Admins are never blocked, but every email they send is still counted
+  if (me.role === "admin") {
+    return { quota: Infinity, used, remaining: Infinity, profileId: p?.id || null, isAdmin: true };
+  }
+  if (!p) return null;
   const quota = p.email_transfer_quota || 0;
-  const used = p.email_transfer_used || 0;
   return {
     quota,
     used,
@@ -63,14 +63,13 @@ export async function assertEmailQuotaAvailable() {
  */
 export async function decrementEmailQuota(state) {
   let s = state;
-  if (!s || (!s.profileId && !s.isAdmin)) {
+  if (!s || !s.profileId) {
     s = await getEmailQuota();
   }
-  if (!s) return;
-  // Admins have unlimited quota — skip decrement
-  if (s.isAdmin) return Infinity;
+  if (!s || !s.profileId) return;
+  const nextUsed = (s.used || 0) + 1;
   await base44.entities.UserProfile.update(s.profileId, {
-    email_transfer_used: (s.used || 0) + 1,
+    email_transfer_used: nextUsed,
   });
-  return (s.used || 0) + 1;
+  return nextUsed;
 }

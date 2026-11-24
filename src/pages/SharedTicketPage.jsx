@@ -10,6 +10,7 @@ import TransferTicketDetail from "@/components/tickets/TransferTicketDetail";
 import TicketDoneAnimationModal from "@/components/tickets/TicketDoneAnimationModal";
 import { buildRecipientAcceptEmail } from "@/lib/recipientAcceptEmail";
 import { buildTicketAvailabilityEmail } from "@/lib/ticketAvailabilityEmail";
+import { claimAcceptedShares } from "@/lib/claimAcceptedShares";
 
 const TK_NAVY = "#001f2d";
 const TK_GREEN = "#4e783e";
@@ -189,6 +190,15 @@ export default function SharedTicketPage() {
           subject,
           body: availHtml,
         });
+      } catch (e) {}
+
+      // If the recipient is signed in on this device, put the ticket straight
+      // into their wallet so it shows on the Tickets page immediately.
+      try {
+        const me = await base44.auth.me();
+        if (me?.email && accepterEmail && me.email.toLowerCase() === accepterEmail.toLowerCase()) {
+          await claimAcceptedShares(me.email);
+        }
       } catch (e) {}
 
       setTicket(ticketData);

@@ -147,6 +147,11 @@ export default function TransferTicketModal({ ticket, user, onClose }) {
         body: emailHtml,
       });
       if (result.ok) {
+        // The resent email counts against the sender's email transfer quota
+        try {
+          const quotaState = await assertEmailQuotaAvailable();
+          await decrementEmailQuota(quotaState);
+        } catch (e) {}
         setStep("sent");
       } else {
         setEmailError(result.error);

@@ -17,6 +17,7 @@ import NotificationPermissionModal from './components/onboarding/NotificationPer
 import AdminNotificationBanner from './components/notifications/AdminNotificationBanner';
 import TicketNotificationBanner from './components/notifications/TicketNotificationBanner';
 import { getLocalSessionId, setLocalSessionId, clearLocalSessionId, generateSessionId } from '@/lib/singleDeviceSession';
+import { claimAcceptedShares } from '@/lib/claimAcceptedShares';
 
 const EventsPage = lazy(() => import('./pages/EventsPage'));
 const AccountPage = lazy(() => import('./pages/AccountPage.jsx'));
@@ -165,16 +166,7 @@ const AuthenticatedApp = () => {
           // Auto-claim accepted shared tickets into the user's wallet
           if (records[0].status === 'approved') {
             try {
-              const shares = await base44.entities.SharedTicket.filter({ accepted_by: me.email });
-              for (const share of shares) {
-                if (share.claimed_date) continue;
-                const ticketData = JSON.parse(share.ticket_snapshot);
-                await base44.entities.Ticket.create({
-                  ...ticketData,
-                  owner_email: me.email,
-                });
-                await base44.entities.SharedTicket.update(share.id, { claimed_date: new Date().toISOString() });
-              }
+              await claimAcceptedShares(me.email);
             } catch (e) {}
           }
         }

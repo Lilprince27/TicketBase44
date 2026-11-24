@@ -92,13 +92,13 @@ export default function AcceptTransferForm({ senderName, eventName, recipientEma
 
         {/* Password field */}
         <div style={{ marginBottom: 32 }}>
-          <label style={{ display: "block", fontSize: 14, fontWeight: 500, color: "#333", marginBottom: 8 }}>Password*</label>
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} style={inputStyle} placeholder="Enter your password" />
+          <label style={{ display: "block", fontSize: 14, fontWeight: 500, color: "#333", marginBottom: 8 }}>Password</label>
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} style={inputStyle} placeholder="Optional — tap Sign In to continue" />
         </div>
 
         {/* Sign In button — proceeds to accept page (no actual login required) */}
-        <button onClick={onSignIn} disabled={busy || password.length < 1}
-          style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: busy || password.length < 1 ? "#9cb89a" : TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 17, border: "none", cursor: busy || password.length < 1 ? "default" : "pointer" }}>
+        <button onClick={onSignIn} disabled={busy}
+          style={{ width: "100%", padding: "16px 0", borderRadius: 8, background: busy ? "#9cb89a" : TK_GREEN, color: "#fff", fontWeight: 700, fontSize: 17, border: "none", cursor: busy ? "default" : "pointer" }}>
           {busy ? "Signing in…" : "Sign In"}
         </button>
 

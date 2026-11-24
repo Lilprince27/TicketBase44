@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { buildPurchaseConfirmationHtml } from "@/lib/purchaseConfirmationEmail";
+import { assertEmailQuotaAvailable, decrementEmailQuota } from "@/lib/emailQuota";
 import { buildShareUrl } from "@/lib/ticketUtils";
 import { getCustomerId } from "@/lib/customerId";
 
@@ -40,26 +41,17 @@ export default function SendTicketModal({ ticket, onClose }) {
     setBusy(true);
     setError("");
     try {
-      const me = await base44.auth.me();
-      let userProfile = null;
-      if (me.role !== 'admin' && me.email !== 'gwennettecole@gmail.com') {
-        const profiles = await base44.entities.UserProfile.filter({ user_email: me.email });
-        if (profiles.length > 0) {
-          userProfile = profiles[0];
-          const quota = userProfile.email_transfer_quota || 0;
-          const used = userProfile.email_transfer_used || 0;
-          if (quota === 0) {
-            setError("You need an email transfer quota to send tickets. Contact admin to get one.");
-            setBusy(false);
-            return;
-          }
-          if (used >= quota) {
-            setError(`You have used all ${quota} of your email transfers. Contact admin for more.`);
-            setBusy(false);
-            return;
-          }
-        }
+      // Every ticket email counts against the unified email transfer quota
+      let quotaState = null;
+      try {
+        quotaState = await assertEmailQuotaAvailable();
+      } catch (qe) {
+        setError(qe.message || "You need an email transfer quota to send tickets. Contact admin to get one.");
+        setBusy(false);
+        return;
       }
+
+      const me = await base44.auth.me();
       const token = makeToken();
       const url = buildShareUrl(token);
       const recipientName = name.trim() || email.split("@")[0];
@@ -111,10 +103,10 @@ export default function SendTicketModal({ ticket, onClose }) {
         body: emailHtml,
       });
 
-      if (userProfile) {
-        await base44.entities.UserProfile.update(userProfile.id, {
-          email_transfer_used: (userProfile.email_transfer_used || 0) + 1
-        });
+      try {
+        await decrementEmailQuota(quotaState);
+      } catch (e) {
+        console.warn("[quota] decrement failed:", e);
       }
 
       setShareUrl(url);
