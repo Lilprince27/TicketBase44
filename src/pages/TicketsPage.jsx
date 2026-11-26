@@ -223,7 +223,16 @@ export default function TicketsPage() {
       if (s.rejected_by) continue;
       try {
         const snap = JSON.parse(s.ticket_snapshot);
-        if (snap.serial_number) shareMap[snap.serial_number] = s;
+        if (!snap.serial_number) continue;
+        const prev = shareMap[snap.serial_number];
+        // A ticket can carry several share records. Prefer an accepted one so a
+        // ticket never shows "pending" once a recipient has accepted it.
+        const prevAccepted = !!prev?.accepted_by;
+        const nextAccepted = !!s.accepted_by;
+        const isNewer = !prev || new Date(s.created_date || 0) > new Date(prev.created_date || 0);
+        if (!prev || (nextAccepted && !prevAccepted) || (nextAccepted === prevAccepted && isNewer)) {
+          shareMap[snap.serial_number] = s;
+        }
       } catch {}
     }
     setSharedTicketMap(shareMap);
@@ -235,8 +244,12 @@ export default function TicketsPage() {
       try {
         const snap = JSON.parse(t.ticket_snapshot);
         if (snap.serial_number) {
-          // Only keep the most recent transfer per serial number
-          if (!tMap[snap.serial_number] || new Date(t.created_date || 0) > new Date(tMap[snap.serial_number].created_date || 0)) {
+          // Prefer an accepted transfer, otherwise keep the most recent one
+          const prev = tMap[snap.serial_number];
+          const prevAccepted = prev?.status === "accepted";
+          const nextAccepted = t.status === "accepted";
+          const isNewer = !prev || new Date(t.created_date || 0) > new Date(prev.created_date || 0);
+          if (!prev || (nextAccepted && !prevAccepted) || (nextAccepted === prevAccepted && isNewer)) {
             tMap[snap.serial_number] = t;
           }
         }
@@ -262,7 +275,8 @@ export default function TicketsPage() {
           const next = { ...prev };
           if (event.type === "delete" || s.rejected_by) {
             delete next[snap.serial_number];
-          } else {
+          } else if (!next[snap.serial_number]?.accepted_by || s.accepted_by) {
+            // Never let a newer pending share hide an already accepted one
             next[snap.serial_number] = s;
           }
           return next;
@@ -284,7 +298,7 @@ export default function TicketsPage() {
           const next = { ...prev };
           if (event.type === "delete" || t.status === "declined" || t.status === "expired" || t.status === "cancelled") {
             delete next[snap.serial_number];
-          } else {
+          } else if (next[snap.serial_number]?.status !== "accepted" || t.status === "accepted") {
             next[snap.serial_number] = t;
           }
           return next;
