@@ -53,6 +53,12 @@ export default function UserApprovalPanel() {
     load();
   };
 
+  const handleDeleteRequest = async (record) => {
+    if (!window.confirm(`Delete the approval request from ${record.full_name || record.user_email}? The request is removed without approving or declining it.`)) return;
+    await base44.entities.UserApproval.delete(record.id);
+    load();
+  };
+
   const handleDeleteAndLogout = async (record) => {
     if (!window.confirm(`Delete and logout ${record.full_name || record.user_email}? This removes their profile, tickets, subscriptions, and approval. This cannot be undone.`)) return;
     const email = record.user_email;
@@ -108,7 +114,7 @@ export default function UserApprovalPanel() {
                 <div className="text-xs text-gray-400">{record.created_date ? new Date(record.created_date).toLocaleDateString() : ""}</div>
               </div>
               {activeTab === "pending" ? (
-                <div className="flex gap-2">
+                <div className="flex flex-wrap justify-end gap-2">
                   <button
                     onClick={() => handleApprove(record)}
                     className="px-3 py-2 rounded-lg text-white text-xs font-bold border-none cursor-pointer"
@@ -122,6 +128,12 @@ export default function UserApprovalPanel() {
                     style={{ backgroundColor: "#dc2626" }}
                   >
                     Reject
+                  </button>
+                  <button
+                    onClick={() => handleDeleteRequest(record)}
+                    className="px-3 py-2 rounded-lg text-xs font-bold cursor-pointer border border-gray-300 bg-white text-gray-700"
+                  >
+                    Delete
                   </button>
                 </div>
               ) : activeTab === "rejected" ? (
